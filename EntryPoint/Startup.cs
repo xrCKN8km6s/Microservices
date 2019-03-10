@@ -98,11 +98,6 @@ namespace EntryPoint
 
             app.UseHttpsRedirection();
             app.UseMvc();
-
-
-            //var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-
-            //eventBus.Subscribe<OrderStatusChangedIntegrationEvent, OrderStatusChangedIntegrationEventHandler>();
         }
     }
 }

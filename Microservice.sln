@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationEventLog", "Inte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.RabbitMQ", "EventBus.RabbitMQ\EventBus.RabbitMQ.csproj", "{F2F07D25-DFCF-4D72-9B2B-D7DA0D1F733E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audit", "Audit\Audit.csproj", "{1629E5F9-C29F-4D63-9118-5BA75B7E7E6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audit", "Audit\Audit.csproj", "{AB857136-95B0-4B5C-8797-4452A60C7376}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,10 +58,10 @@ Global
 		{F2F07D25-DFCF-4D72-9B2B-D7DA0D1F733E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2F07D25-DFCF-4D72-9B2B-D7DA0D1F733E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2F07D25-DFCF-4D72-9B2B-D7DA0D1F733E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1629E5F9-C29F-4D63-9118-5BA75B7E7E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1629E5F9-C29F-4D63-9118-5BA75B7E7E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1629E5F9-C29F-4D63-9118-5BA75B7E7E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1629E5F9-C29F-4D63-9118-5BA75B7E7E6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB857136-95B0-4B5C-8797-4452A60C7376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB857136-95B0-4B5C-8797-4452A60C7376}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB857136-95B0-4B5C-8797-4452A60C7376}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB857136-95B0-4B5C-8797-4452A60C7376}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -30,12 +30,12 @@ namespace EntryPoint.Application.IntegrationEvents
         {
             var pending = await _eventLogService.GetPendingAsync();
 
+            var assembly = Assembly.GetEntryAssembly();
+
             foreach (var e in pending)
             {
                 try
                 {
-                    var assembly = Assembly.GetEntryAssembly();
-
                     var type = assembly.GetType(e.Name);
                     
                     _eventBus.Publish(e.GetIntegrationEvent(type));
