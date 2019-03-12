@@ -22,9 +22,9 @@ namespace IntegrationEventLog
         {
             builder.ToTable("integration_event_logs");
 
-            builder.HasKey(p => p.Id);
+            builder.HasKey(p => p.EventId);
 
-            builder.Property(p => p.Name).IsRequired();
+            builder.Property(p => p.EventName).IsRequired();
 
             builder.Property(p => p.CreatedDate).IsRequired();
 

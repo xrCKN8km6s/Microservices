@@ -15,6 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntryPoint.Infrastructure",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{35AD0362-044E-46A3-834E-F67102D106DD}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
@@ -22,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationEventLog", "Inte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.RabbitMQ", "EventBus.RabbitMQ\EventBus.RabbitMQ.csproj", "{F2F07D25-DFCF-4D72-9B2B-D7DA0D1F733E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audit", "Audit\Audit.csproj", "{AB857136-95B0-4B5C-8797-4452A60C7376}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audit", "Audit\Audit.csproj", "{AB857136-95B0-4B5C-8797-4452A60C7376}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

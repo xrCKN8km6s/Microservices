@@ -5,8 +5,6 @@ namespace EntryPoint.Domain
 {
     public abstract class Entity
     {
-        private int? _requestedHashCode;
-
         public virtual long Id { get; protected set; }
 
         private List<INotification> _domainEvents;
@@ -46,11 +44,13 @@ namespace EntryPoint.Domain
 
             var item = (Entity)obj;
 
-            if (item.IsTransient() || this.IsTransient())
+            if (item.IsTransient() || IsTransient())
                 return false;
             else
-                return item.Id == this.Id;
+                return item.Id == Id;
         }
+
+        private int? _requestedHashCode;
 
         public override int GetHashCode()
         {
@@ -61,8 +61,8 @@ namespace EntryPoint.Domain
 
                 return _requestedHashCode.Value;
             }
-            else
-                return base.GetHashCode();
+
+            return base.GetHashCode();
 
         }
         public static bool operator ==(Entity left, Entity right)

@@ -45,12 +45,12 @@ namespace EntryPoint.Application.Behaviors
                     using (var transaction = await _dbContext.BeginTransactionAsync())
                     using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
-                        _logger.LogInformation("----- Begin transaction {TransactionId} for {CommandName} ({@Command})",
+                        _logger.LogInformation("Begin transaction {TransactionId} for {CommandName} ({@Command})",
                             transaction.TransactionId, typeName, request);
 
                         response = await next();
 
-                        _logger.LogInformation("----- Commit transaction {TransactionId} for {CommandName}",
+                        _logger.LogInformation("Commit transaction {TransactionId} for {CommandName}",
                             transaction.TransactionId, typeName);
 
                         await _dbContext.CommitTransactionAsync(transaction);
@@ -59,12 +59,11 @@ namespace EntryPoint.Application.Behaviors
                     await _orderingIntegrationEventService.PublishEventsAsync();
                 });
 
-
                 return response;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ERROR Handling transaction for {CommandName} ({@Command})", typeName, request);
+                _logger.LogError(ex, "Error while handling transaction for {CommandName} ({@Command})", typeName, request);
 
                 throw;
             }

@@ -38,10 +38,22 @@ namespace EventBus.RabbitMQ
             _subManager = subManager ?? throw new ArgumentNullException(nameof(subManager));
             _queueName = queueName;
             _retryCount = retryCount;
-            //_consumerChannel = CreateConsumerChannel();
         }
 
         public void Publish(IntegrationEvent e)
+        {
+            var eventName = e.GetType().Name;
+            var content = JsonConvert.SerializeObject(e);
+
+            PublishInternal(e.Id, eventName, content);
+        }
+
+        public void Publish(Guid eventId, string eventName, string content)
+        {
+            PublishInternal(eventId, eventName, content);
+        }
+
+        private void PublishInternal(Guid eventId, string eventName, string content)
         {
             if (!_connection.IsConnected)
             {
@@ -54,24 +66,24 @@ namespace EventBus.RabbitMQ
                     (exception, span) =>
                     {
                         _logger.LogWarning(exception,
-                            "Could not publish event: {EventId} after {Timeout}s ({ExceptionMessage})", e.Id,
+                            "Could not publish event: {EventId} after {Timeout}s ({ExceptionMessage})", eventId,
                             $"{span.TotalSeconds:n1}", exception.Message);
                     });
 
             using (var channel = _connection.CreateModel())
             {
-                var eventName = e.GetType().Name;
-
                 channel.ExchangeDeclare(EXCHANGE_NAME, ExchangeType.Direct, true);
 
-                var message = JsonConvert.SerializeObject(e);
-                var body = Encoding.UTF8.GetBytes(message);
+                var body = Encoding.UTF8.GetBytes(content);
 
                 var attempt = 0;
 
                 policy.Execute(() =>
                 {
                     attempt++;
+
+                    //Can't set InstantHandleAttribute
+                    // ReSharper disable AccessToDisposedClosure
 
                     var properties = channel.CreateBasicProperties();
 
@@ -82,6 +94,8 @@ namespace EventBus.RabbitMQ
                     };
 
                     channel.BasicPublish(EXCHANGE_NAME, eventName, true, properties, body);
+
+                    // ReSharper restore AccessToDisposedClosure
                 });
             }
         }
@@ -152,7 +166,7 @@ namespace EventBus.RabbitMQ
 
                 await ProcessEvent(eventName, message);
 
-                channel.BasicAck(ea.DeliveryTag, multiple: false);
+                channel.BasicAck(ea.DeliveryTag, false);
             };
 
             channel.BasicConsume(queue: _queueName, false, consumer);
@@ -176,7 +190,11 @@ namespace EventBus.RabbitMQ
                     foreach (var subscription in subscriptions)
                     {
                         var handler = scope.ServiceProvider.GetService(subscription.HandlerType);
-                        if (handler == null) continue;
+                        if (handler == null)
+                        {
+                            continue;
+                        }
+
                         var eventType = _subManager.GetEventTypeByName(eventName);
                         var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);

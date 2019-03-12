@@ -23,7 +23,7 @@ namespace EntryPoint.Application.DomainEventHandlers
             var integrationEvent =
                 new OrderStatusChangedIntegrationEvent(notification.Id, notification.OldStatus, notification.NewStatus);
 
-            await _eventLogService.AddEventAsync(integrationEvent);
+            await _eventLogService.SaveEventAsync(integrationEvent);
         }
     }
 }

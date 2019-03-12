@@ -7,6 +7,6 @@ namespace EntryPoint.Application.IntegrationEvents
     {
         Task PublishEventsAsync();
 
-        Task AddEventAsync(IntegrationEvent evt);
+        Task SaveEventAsync(IntegrationEvent evt);
     }
 }

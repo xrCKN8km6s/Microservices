@@ -1,22 +1,15 @@
 ﻿using System;
 using EventBus.Events;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace IntegrationEventLog
 {
     public class IntegrationEventLogItem
     {
-        public enum IntegrationEventState
-        {
-            NotPublished,
-            InProgress,
-            Published,
-            Failed
-        }
+        public Guid EventId { get; private set; }
 
-        public Guid Id { get; private set; }
-
-        public string Name { get; private set; }
+        public string EventName { get; private set; }
 
         public DateTime CreatedDate { get; private set; }
 
@@ -26,21 +19,23 @@ namespace IntegrationEventLog
 
         public IntegrationEventState State { get; set; }
 
+        //Used by EF
+        [UsedImplicitly]
         private IntegrationEventLogItem()
         {
         }
 
-        public IntegrationEventLogItem(IntegrationEvent e)
+        public static IntegrationEventLogItem Create(IntegrationEvent e)
         {
-            Id = e.Id;
-            CreatedDate = e.CreationDate;
-            Name = e.GetType().FullName;
-            State = IntegrationEventState.NotPublished;
-            TimesSent = 0;
-            Content = JsonConvert.SerializeObject(e);
+            return new IntegrationEventLogItem
+            {
+                EventId = e.Id,
+                CreatedDate = e.CreationDate,
+                EventName = e.GetType().Name,
+                State = IntegrationEventState.NotPublished,
+                TimesSent = 0,
+                Content = JsonConvert.SerializeObject(e)
+            };
         }
-
-        public IntegrationEvent GetIntegrationEvent(Type type) =>
-            JsonConvert.DeserializeObject(Content, type) as IntegrationEvent;
     }
 }
