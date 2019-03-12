@@ -26,7 +26,8 @@ namespace IntegrationEventLog.Services
             using (var trans = _context.Database.BeginTransaction())
             {
                 var res = await _context.IntegrationEventLogItems
-                    .FromSql("SELECT * FROM integration_event_logs WHERE \"State\"={0} FOR UPDATE SKIP LOCKED",
+                    .FromSql(
+                        "SELECT * FROM integration_event_logs WHERE \"State\"={0} ORDER BY \"CreatedDate\" FOR UPDATE SKIP LOCKED",
                         IntegrationEventState.NotPublished)
                     .ToListAsync();
 

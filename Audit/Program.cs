@@ -38,6 +38,7 @@ namespace Audit
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .SuppressStatusMessages(true)
                 .UseStartup<Startup>()
                 .UseSerilog();
     }

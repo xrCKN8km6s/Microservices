@@ -16,6 +16,12 @@ namespace EntryPoint.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("")]
+        public IActionResult About()
+        {
+            return Ok("OK");
+        }
+
         [HttpGet("create")]
         public async Task<IActionResult> CreateOrder([FromQuery] CreateOrderCommand command)
         {

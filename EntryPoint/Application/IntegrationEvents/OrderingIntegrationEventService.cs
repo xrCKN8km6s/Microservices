@@ -8,6 +8,7 @@ using IntegrationEventLog.Services;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace EntryPoint.Application.IntegrationEvents
 {
@@ -15,21 +16,25 @@ namespace EntryPoint.Application.IntegrationEvents
     {
         private readonly MicroserviceContext _context;
         private readonly IEventBus _eventBus;
+        private readonly ILogger<OrderingIntegrationEventService> _logger;
         private readonly IIntegrationEventLogService _eventLogService;
 
         public OrderingIntegrationEventService(
             [NotNull] Func<DbConnection, IIntegrationEventLogService> integrationEventLogServiceFactory,
             [NotNull] MicroserviceContext context,
-            [NotNull] IEventBus eventBus)
+            [NotNull] IEventBus eventBus,
+            [NotNull] ILogger<OrderingIntegrationEventService> logger)
         {
             if (integrationEventLogServiceFactory == null)
             {
                 throw new ArgumentNullException(nameof(integrationEventLogServiceFactory));
             }
 
+            _eventLogService = integrationEventLogServiceFactory(context.Database.GetDbConnection());
+
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _eventLogService = integrationEventLogServiceFactory(context.Database.GetDbConnection());
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task PublishEventsAsync()
@@ -43,8 +48,9 @@ namespace EntryPoint.Application.IntegrationEvents
                     _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
                     await _eventLogService.MarkAsPublishedAsync(integrationEvent.EventId);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Error while processing IntegrationEvent {EventId}", integrationEvent.EventId);
                     await _eventLogService.MarkAsFailedAsync(integrationEvent.EventId);
                 }
             }

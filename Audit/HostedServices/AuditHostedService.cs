@@ -25,6 +25,8 @@ namespace Audit.HostedServices
             _logger.LogInformation("Starting hosted service.");
             _eventBus.Subscribe<OrderStatusChangedIntegrationEvent, OrderStatusChangedIntegrationEventHandler>();
 
+            _eventBus.Consume();
+
             return Task.CompletedTask;
         }
 
