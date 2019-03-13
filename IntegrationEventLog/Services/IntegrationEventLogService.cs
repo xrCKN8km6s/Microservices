@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IntegrationEventLog.Services
 {
-    public class IntegrationEventLogService : IIntegrationEventLogService
+    public class IntegrationEventLogService : IIntegrationEventLogService, IDisposable
     {
         private readonly ILogger<IntegrationEventLogService> _logger;
         private readonly IntegrationEventLogContext _context;
@@ -17,7 +17,8 @@ namespace IntegrationEventLog.Services
         public IntegrationEventLogService(DbConnection connection, [NotNull] ILogger<IntegrationEventLogService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            var builder = new DbContextOptionsBuilder<IntegrationEventLogContext>().UseNpgsql(connection);
+            var builder = new DbContextOptionsBuilder<IntegrationEventLogContext>().UseNpgsql(connection,
+                npgsqlOptions => npgsqlOptions.EnableRetryOnFailure());
             _context = new IntegrationEventLogContext(builder.Options);
         }
 
@@ -96,6 +97,11 @@ namespace IntegrationEventLog.Services
                     _logger.LogError(e, "Ex");
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            _context?.Dispose();
         }
     }
 }

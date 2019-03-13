@@ -30,10 +30,13 @@ namespace EntryPoint
 
             services.AddMediatR(typeof(Startup));
 
-            services.AddEntityFrameworkNpgsql().AddDbContext<MicroserviceContext>(options =>
-            {
-                options.UseNpgsql("Host=localhost;Database=MicroserviceDb;Username=db_user;Password=db_pass");
-            });
+            services.AddEntityFrameworkNpgsql();
+
+            services.AddDbContext<MicroserviceContext>(options =>
+
+                options
+                    .UseNpgsql("Host=localhost;Database=MicroserviceDb;Username=db_user;Password=db_pass",
+                        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
             services.AddScoped<IOrderRepository, OrderRepository>();
 

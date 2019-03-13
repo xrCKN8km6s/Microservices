@@ -43,8 +43,6 @@ namespace EntryPoint.Infrastructure
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
-            if (_currentTransaction != null) return null;
-
             _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
 
             return _currentTransaction;
