@@ -58,7 +58,7 @@ namespace EntryPoint.Application.IntegrationEvents
 
         public async Task SaveEventAsync(IntegrationEvent e)
         {
-            await _eventLogService.AddAsync(e, _context.GetCurrentTransaction.GetDbTransaction());
+            await _eventLogService.AddAsync(e, _context.Database.CurrentTransaction.GetDbTransaction());
         }
     }
 }

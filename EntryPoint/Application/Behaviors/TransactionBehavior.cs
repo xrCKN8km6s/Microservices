@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -13,8 +14,8 @@ namespace EntryPoint.Application.Behaviors
 {
     public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly ILogger<TransactionBehaviour<TRequest, TResponse>> _logger;
         private readonly MicroserviceContext _dbContext;
+        private readonly ILogger<TransactionBehaviour<TRequest, TResponse>> _logger;
         private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
 
         public TransactionBehaviour(MicroserviceContext dbContext,
@@ -22,18 +23,20 @@ namespace EntryPoint.Application.Behaviors
             ILogger<TransactionBehaviour<TRequest, TResponse>> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentException(nameof(MicroserviceContext));
-            _orderingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentException(nameof(orderingIntegrationEventService));
+            _orderingIntegrationEventService = orderingIntegrationEventService ??
+                                               throw new ArgumentException(nameof(orderingIntegrationEventService));
             _logger = logger ?? throw new ArgumentException(nameof(ILogger));
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
+            RequestHandlerDelegate<TResponse> next)
         {
             var response = default(TResponse);
             var typeName = request.GetGenericTypeName();
 
             try
             {
-                if (_dbContext.HasActiveTransaction)
+                if (_dbContext.Database.CurrentTransaction != null)
                 {
                     return await next();
                 }
@@ -42,7 +45,9 @@ namespace EntryPoint.Application.Behaviors
 
                 await strategy.ExecuteAsync(async () =>
                 {
-                    using (var transaction = await _dbContext.BeginTransactionAsync())
+                    using (var transaction =
+                        await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken)
+                    )
                     using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
                         _logger.LogInformation("Begin transaction {TransactionId} for {CommandName} ({@Command})",
@@ -53,7 +58,7 @@ namespace EntryPoint.Application.Behaviors
                         _logger.LogInformation("Commit transaction {TransactionId} for {CommandName}",
                             transaction.TransactionId, typeName);
 
-                        await _dbContext.CommitTransactionAsync(transaction);
+                        transaction.Commit();
                     }
 
                     await _orderingIntegrationEventService.PublishEventsAsync();
@@ -63,7 +68,8 @@ namespace EntryPoint.Application.Behaviors
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while handling transaction for {CommandName} ({@Command})", typeName, request);
+                _logger.LogError(ex, "Error while handling transaction for {CommandName} ({@Command})", typeName,
+                    request);
 
                 throw;
             }
