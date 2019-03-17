@@ -66,7 +66,7 @@ namespace EntryPoint
 
                 var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
 
-                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "EntryPoint");
+                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "EntryPoint", 3);
             });
 
             services.AddSingleton<IRabbitMQConnection>(sp =>
@@ -75,7 +75,7 @@ namespace EntryPoint
 
                 var factory = new ConnectionFactory();
 
-                return new RabbitMQConnection(factory, logger);
+                return new RabbitMQConnection(factory, logger, 3);
             });
 
             services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();

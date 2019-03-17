@@ -17,7 +17,7 @@ namespace EntryPoint.Domain.Aggregates.Order
         public static Order CreateNew([NotNull] string name)
         {
             var order = new Order { _creationDateTime = DateTime.UtcNow, _orderStatus = -1 };
-            order.Rename(name);
+            order.SetName(name);
             return order;
         }
 
@@ -33,7 +33,7 @@ namespace EntryPoint.Domain.Aggregates.Order
             _orderStatus = newStatus;
         }
 
-        public void Rename(string newName)
+        public void SetName(string newName)
         {
             ValidateName(newName);
 

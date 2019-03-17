@@ -60,7 +60,8 @@ namespace EventBus.RabbitMQ
                 _connection.TryConnect();
             }
 
-            var policy = Policy.Handle<BrokerUnreachableException>()
+            var policy = Policy
+                .Handle<BrokerUnreachableException>()
                 .Or<SocketException>()
                 .WaitAndRetry(_retryCount, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
                     (exception, span) =>

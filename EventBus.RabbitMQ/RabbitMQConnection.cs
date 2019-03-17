@@ -41,7 +41,8 @@ namespace EventBus.RabbitMQ
 
             lock (_syncRoot)
             {
-                var policy = Policy.Handle<SocketException>()
+                var policy = Policy
+                    .Handle<SocketException>()
                     .Or<BrokerUnreachableException>()
                     .WaitAndRetry(_retryCount, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
                         (exception, span) =>
@@ -114,7 +115,7 @@ namespace EventBus.RabbitMQ
 
             try
             {
-                _connection.Dispose();
+                _connection?.Dispose();
                 _isDisposed = true;
             }
             catch (Exception e)

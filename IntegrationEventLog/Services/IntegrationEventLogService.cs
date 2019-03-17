@@ -94,7 +94,7 @@ namespace IntegrationEventLog.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Ex");
+                    _logger.LogError(e, "Exception during integration event state update.");
                 }
             }
         }

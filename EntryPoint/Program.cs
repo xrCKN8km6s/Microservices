@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EntryPoint
 {
@@ -14,15 +16,13 @@ namespace EntryPoint
         public static int Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
-                .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {ConnectionId} {Message:lj}{NewLine}{Exception}")
+                .ReadFrom.Configuration(BuildConfiguration(args))
                 .CreateLogger();
 
             try
             {
-                CreateWebHostBuilder(args).Build().Run();
+                var webHost = CreateWebHostBuilder(args).Build();
+                webHost.Run();
 
                 return 0;
             }
@@ -35,6 +35,19 @@ namespace EntryPoint
             {
                 Log.CloseAndFlush();
             }
+        }
+
+        private static IConfiguration BuildConfiguration(string[] args)
+        {
+            return new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile(
+                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
+                    true, true)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args)
+                .Build();
         }
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
