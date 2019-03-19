@@ -41,7 +41,7 @@ namespace IntegrationEventLog
         public IntegrationEventLogContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<IntegrationEventLogContext>()
-                .UseNpgsql("Host=localhost;Database=MicroserviceDb;Username=db_user;Password=db_pass");
+                .UseNpgsql("<ConnectionString>");
 
             return new IntegrationEventLogContext(optionsBuilder.Options);
         }

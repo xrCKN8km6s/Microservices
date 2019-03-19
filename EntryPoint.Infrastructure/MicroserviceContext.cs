@@ -68,7 +68,7 @@ namespace EntryPoint.Infrastructure
         {
             var optionsBuilder =
                 new DbContextOptionsBuilder<MicroserviceContext>().UseNpgsql(
-                    "Host=localhost;Database=MicroserviceDb;Username=db_user;Password=db_pass");
+                    "<ConnectionString>");
 
             return new MicroserviceContext(optionsBuilder.Options, new DesignTimeMediator());
         }

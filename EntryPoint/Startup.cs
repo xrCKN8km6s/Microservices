@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -23,6 +24,13 @@ namespace EntryPoint
 {
     public class Startup
     {
+        private readonly IConfiguration _config;
+
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -32,11 +40,12 @@ namespace EntryPoint
 
             services.AddEntityFrameworkNpgsql();
 
+            var connectionString = _config.GetValue<string>("ConnectionString");
+
             services.AddDbContext<MicroserviceContext>(options =>
 
                 options
-                    .UseNpgsql("Host=localhost;Database=MicroserviceDb;Username=db_user;Password=db_pass",
-                        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
+                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
             services.AddScoped<IOrderRepository, OrderRepository>();
 
@@ -52,9 +61,7 @@ namespace EntryPoint
                     return connection => new IntegrationEventLogService(connection, logger);
                 });
 
-
-            services
-                .AddTransient<OrderStatusChangedIntegrationEventHandler>();
+            services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
 
             services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
             {
