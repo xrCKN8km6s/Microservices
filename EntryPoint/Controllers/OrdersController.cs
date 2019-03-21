@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using EntryPoint.Application.Queries;
 
 namespace EntryPoint.Controllers
 {
@@ -10,16 +11,18 @@ namespace EntryPoint.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IOrderQueries _query;
 
-        public OrdersController(IMediator mediator)
+        public OrdersController(IMediator mediator, IOrderQueries query)
         {
             _mediator = mediator;
+            _query = query;
         }
 
         [HttpGet("")]
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
-            return Ok("OK");
+            return Ok(await _query.GetOrdersAsync());
         }
 
         [HttpGet("create")]

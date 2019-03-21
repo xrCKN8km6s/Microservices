@@ -3,6 +3,7 @@ using System.Data.Common;
 using EntryPoint.Application.Behaviors;
 using EntryPoint.Application.IntegrationEvents;
 using EntryPoint.Application.IntegrationEvents.EventHandlers;
+using EntryPoint.Application.Queries;
 using EntryPoint.Domain.Aggregates.Order;
 using EntryPoint.Infrastructure;
 using EntryPoint.Infrastructure.Repositories;
@@ -86,6 +87,10 @@ namespace EntryPoint
             });
 
             services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
+
+            services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,6 +105,8 @@ namespace EntryPoint
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCors(builder => builder.WithOrigins(_config.GetValue<string>("WebUrl")));
 
             app.UseHttpsRedirection();
             app.UseMvc();
