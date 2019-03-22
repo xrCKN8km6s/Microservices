@@ -91,6 +91,15 @@ namespace EntryPoint
             services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
 
             services.AddCors();
+
+
+            services.AddAuthentication().AddCookie("Cookies").AddOpenIdConnect(options =>
+            {
+                options.Authority = "http://localhost:3000";
+                options.RequireHttpsMetadata = false;
+
+                options.ClientId = "EntryPoint";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,6 +116,7 @@ namespace EntryPoint
             }
 
             app.UseCors(builder => builder.WithOrigins(_config.GetValue<string>("WebUrl")));
+
 
             app.UseHttpsRedirection();
             app.UseMvc();

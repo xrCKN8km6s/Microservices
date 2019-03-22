@@ -1,7 +1,3 @@
-<h2>Orders: </h2>
-<ul>
-  <li *ngFor="let order of orders">
-    Id: {{order.id}} Name: {{order.name}} Creation date: {{order.creationDateTime | date: 'short'}} Status: {{order.orderStatus}}
-  </li>
-</ul>
+<app-main-menu></app-main-menu>
 
+<router-outlet></router-outlet>
