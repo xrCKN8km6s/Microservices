@@ -19,8 +19,8 @@ import { MainMenuComponent } from './main-menu/main-menu.component';
 
 import { AuthGuard } from './auth/auth.guard';
 
-import { SignInCallbackComponent } from './sign-in-callback.component';
-import { SilentCallbackComponent } from './silent-callback.component';
+import { SignInCallbackComponent } from './auth/sign-in-callback.component';
+import { SilentCallbackComponent } from './auth/silent-callback.component';
 
 @NgModule({
   declarations: [
