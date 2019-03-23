@@ -7,6 +7,6 @@ export class AppService {
   constructor(private http: HttpClient) { }
 
   getOrders() {
-    return this.http.get('https://localhost:5001/api/orders');
+    return this.http.get<Order[]>('https://localhost:5001/api/orders');
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User } from 'oidc-client';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export { User };
 
@@ -8,6 +9,8 @@ export { User };
   providedIn: 'root'
 })
 export class AuthService {
+
+  private userManager: UserManager;
   private user: User;
   private userSignedInSubject = new BehaviorSubject<User>(null);
   private userSignedOutSubject = new BehaviorSubject<void>(null);
@@ -15,30 +18,19 @@ export class AuthService {
   public readonly userSignedIn = this.userSignedInSubject.asObservable();
   public readonly userSignedOut = this.userSignedOutSubject.asObservable();
 
-  userManager: UserManager;
-  path = 'http://localhost:4200';
+  private readonly backendUrl = 'http://localhost:4200';
 
   constructor() {
-    const settings = {
+
+    this.userManager = new UserManager({
       authority: 'http://localhost:3000',
       client_id: 'EntryPoint',
-      redirect_uri: `${this.path}/signin-callback`,
-      silent_redirect_uri: `${this.path}/silent-callback`,
-      post_logout_redirect_uri: `${this.path}`,
+      redirect_uri: `${this.backendUrl}/signin-callback`,
+      silent_redirect_uri: `${this.backendUrl}/silent-callback`,
+      post_logout_redirect_uri: `${this.backendUrl}`,
       response_type: 'id_token token',
       scope: 'openid profile email EntryPoint.rw',
       automaticSilentRenew: true
-    };
-
-    this.userManager = new UserManager(settings);
-  }
-
-  public getUser(): Promise<User> {
-    return this.userManager.getUser().then(user => {
-      this.user = user;
-      this.userSignedInSubject.next(user);
-
-      return user;
     });
   }
 
@@ -48,6 +40,19 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.user != null && !this.user.expired;
+  }
+
+  isLoggedInObs(): Observable<boolean> {
+    return from(this.userManager.getUser()).pipe(map(user => {
+
+      if (!user) {
+        return false;
+      }
+
+      this.user = user;
+      this.userSignedInSubject.next(user);
+      return true;
+    }));
   }
 
   startAuthentication(returnUrl: string): Promise<void> {

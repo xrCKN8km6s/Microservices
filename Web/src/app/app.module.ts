@@ -1,16 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule, Component, OnInit, Injectable } from '@angular/core';
-import { AppService } from './app.service';
-
-import { AppComponent } from './app.component';
-
-import { RouterModule, Routes, Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
-
-import { AuthService } from './auth/auth.service';
-
-import { HomeComponent } from './home/home.component';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule } from '@angular/material/menu';
@@ -19,54 +10,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatBadgeModule } from '@angular/material/badge';
 
+import { AppService } from './app.service';
+import { AppComponent } from './app.component';
 
+import { HomeComponent } from './home/home.component';
 
 import { MainMenuComponent } from './main-menu/main-menu.component';
 
+import { AuthGuard } from './auth/auth.guard';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-
-  constructor(private auth: AuthService) { }
-
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-
-    if (this.auth.isLoggedIn()) {
-      return true;
-    }
-
-    this.auth.startAuthentication(state.url);
-    return false;
-  }
-}
-
-
-@Component({
-  template: ''
-})
-export class SignInCallbackComponent implements OnInit {
-
-  constructor(private auth: AuthService, private router: Router) { }
-
-  ngOnInit(): void {
-    this.auth.competeSignIn().then(state => {
-      this.router.navigateByUrl(state.redirectUrl);
-    });
-  }
-}
-
-@Component({
-  template: ''
-})
-export class SilentCallbackComponent implements OnInit {
-
-  constructor(private auth: AuthService) { }
-
-  ngOnInit(): void {
-    this.auth.renewToken();
-  }
-}
-
+import { SignInCallbackComponent } from './sign-in-callback.component';
+import { SilentCallbackComponent } from './silent-callback.component';
 
 @NgModule({
   declarations: [
@@ -102,10 +56,3 @@ export class SilentCallbackComponent implements OnInit {
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
-
-
-
-
-
-
