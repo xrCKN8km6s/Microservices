@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SSOServer.Quickstart.Grants
+namespace IdentityServer4.Quickstart.UI
 {
     public class GrantsViewModel
     {

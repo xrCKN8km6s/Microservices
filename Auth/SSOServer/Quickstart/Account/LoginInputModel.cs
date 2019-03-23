@@ -4,7 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace SSOServer.Quickstart.Account
+namespace IdentityServer4.Quickstart.UI
 {
     public class LoginInputModel
     {
