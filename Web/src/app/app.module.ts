@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatBadgeModule } from '@angular/material/badge';
 
-import { AppService } from './app.service';
+import { HomeService } from './home/home.service';
 import { AppComponent } from './app.component';
 
 import { HomeComponent } from './home/home.component';
@@ -21,6 +21,7 @@ import { AuthGuard } from './auth/auth.guard';
 
 import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 import { SilentCallbackComponent } from './auth/silent-callback.component';
+import { TokenInterceptor } from './auth/token.interceptor';
 
 @NgModule({
   declarations: [
@@ -50,8 +51,9 @@ import { SilentCallbackComponent } from './auth/silent-callback.component';
     MatBadgeModule
   ],
   providers: [
-    AppService,
-    AuthGuard
+    HomeService,
+    AuthGuard,
+    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })

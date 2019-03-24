@@ -52,7 +52,7 @@ namespace SSOServer
                         AccessTokenType = AccessTokenType.Reference,
                         RequireConsent = false,
                         AllowedCorsOrigins = {"http://localhost:4200"},
-                        AccessTokenLifetime = 150
+                        AccessTokenLifetime = 3600
                     }
                 })
                 .AddInMemoryIdentityResources(new[]

@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.user != null && !this.user.expired;
+    return this.user != null;
   }
 
   isLoggedInObs(): Observable<boolean> {

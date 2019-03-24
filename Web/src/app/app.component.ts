@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AppService } from './app.service';
+import { HomeService } from './home/home.service';
 import { Order } from './Order';
 
 import { AuthService } from './auth/auth.service';
@@ -19,11 +19,9 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean;
   userName: any;
 
-  constructor(private service: AppService, private auth: AuthService) { }
+  constructor(private auth: AuthService) { }
 
   ngOnInit(): void {
-
-
     this.sub = this.auth.userSignedIn.subscribe(user => {
 
       if (!user) {
@@ -32,10 +30,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this.isLoggedIn = true;
       this.userName = user.profile.name;
-
-      // this.service.getOrders().subscribe((data: Order[]) => {
-      //   this.orders = data;
-      // });
     });
   }
 

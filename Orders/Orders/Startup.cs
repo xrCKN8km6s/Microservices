@@ -3,11 +3,14 @@ using System.Data.Common;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
+using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +38,14 @@ namespace Orders
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+                {
+                    var policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddMediatR(typeof(Startup));
 
@@ -92,14 +102,17 @@ namespace Orders
 
             services.AddCors();
 
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:3000";
+                    options.ApiName = "api";
+                    options.ApiSecret = "api.secret";
+                    options.RequireHttpsMetadata = false; //dev
 
-            services.AddAuthentication().AddCookie("Cookies").AddOpenIdConnect(options =>
-            {
-                options.Authority = "http://localhost:3000";
-                options.RequireHttpsMetadata = false;
 
-                options.ClientId = "EntryPoint";
-            });
+                    options.EnableCaching = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,10 +128,15 @@ namespace Orders
                 app.UseHsts();
             }
 
-            app.UseCors(builder => builder.WithOrigins(_config.GetValue<string>("WebUrl")));
-
+            app.UseCors(builder => builder
+                .WithOrigins(_config.GetValue<string>("WebUrl"))
+                .AllowAnyHeader()
+            );
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
+            app.UseMvc();
             app.UseMvc();
         }
     }
