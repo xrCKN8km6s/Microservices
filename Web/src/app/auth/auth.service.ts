@@ -24,12 +24,12 @@ export class AuthService {
 
     this.userManager = new UserManager({
       authority: 'http://localhost:3000',
-      client_id: 'EntryPoint',
+      client_id: 'spa',
       redirect_uri: `${this.backendUrl}/signin-callback`,
       silent_redirect_uri: `${this.backendUrl}/silent-callback`,
       post_logout_redirect_uri: `${this.backendUrl}`,
       response_type: 'id_token token',
-      scope: 'openid profile email EntryPoint.rw',
+      scope: 'openid profile email orders',
       automaticSilentRenew: true
     });
   }
@@ -45,7 +45,7 @@ export class AuthService {
   isLoggedInObs(): Observable<boolean> {
     return from(this.userManager.getUser()).pipe(map(user => {
 
-      if (!user) {
+      if (!user || !user.access_token) {
         return false;
       }
 
@@ -63,6 +63,7 @@ export class AuthService {
 
   public competeSignIn(): Promise<any> {
     return this.userManager.signinRedirectCallback().then(user => {
+      console.log('signinRedirectCallback.then', user);
       this.user = user;
       this.userSignedInSubject.next(user);
       return user.state;
@@ -70,7 +71,16 @@ export class AuthService {
   }
 
   public renewToken(): Promise<User> {
-    return this.userManager.signinSilentCallback();
+    console.log('silent renew', new Date());
+    return this.userManager.signinSilentCallback().then(res => {
+      console.log('signinSilentCallback.then', res);
+
+      this.userManager.getUser().then(resp => {
+        console.log('signinSilentCallback.then.getUser.then', resp);
+      });
+
+      return res;
+    });
   }
 
   public signOut(): Promise<void> {

@@ -39,6 +39,13 @@ services:
     volumes:
       - pgAdmin-data:/var/lib/pgadmin
 
+
+  redis:
+    image: redis:latest
+    container_name: redisCache
+    ports:
+      - 6379:6379
+
 volumes:
   rabbit-mnesia:
   postgres-data:
