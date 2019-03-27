@@ -26,6 +26,10 @@ namespace Identity
                 new ApiResource("orders", "Orders API")
                 {
                     ApiSecrets = {new Secret("orders.secret".Sha256())}
+                },
+                new ApiResource("users", "Users API")
+                {
+                    ApiSecrets = {new Secret("users.secret".Sha256())}
                 }
             };
         }
@@ -76,14 +80,15 @@ namespace Identity
                     RedirectUris =
                     {
                         "http://localhost:4200/signin-callback",
-                        "http://localhost:4200/silent-callback"
+                        "http://localhost:4200/assets/silent-callback.html"
                     },
 
                     PostLogoutRedirectUris = {"http://localhost:4200"},
                     AllowedCorsOrigins = {"http://localhost:4200"},
                     RequireConsent = false,
 
-                    AllowedScopes = {"openid", "profile", "email", "orders"}
+                    AllowedScopes = {"openid", "profile", "email", "orders", "users"},
+                    AccessTokenLifetime = 100
                 },
 
                 new Client

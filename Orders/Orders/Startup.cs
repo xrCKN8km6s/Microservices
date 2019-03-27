@@ -113,6 +113,7 @@ namespace Orders
 
 
                     options.EnableCaching = true;
+                    options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
 
             services.AddStackExchangeRedisCache(options =>

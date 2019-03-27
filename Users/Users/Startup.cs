@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Users
 {
@@ -28,6 +23,20 @@ namespace Users
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddCors();
+
+            services
+                .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:3000";
+                    options.ApiName = "users";
+                    options.ApiSecret = "users.secret";
+                    options.RequireHttpsMetadata = false; //dev
+
+
+                    options.EnableCaching = true;
+                    options.CacheDuration = TimeSpan.FromSeconds(20);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,11 +52,15 @@ namespace Users
                 app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
+
+            app.UseAuthentication();
+
             app.UseCors(builder => builder
                 .WithOrigins(Configuration.GetValue<string>("WebUrl"))
                 .AllowAnyHeader());
 
-            app.UseHttpsRedirection();
+            
 
             app.UseMvc();
         }

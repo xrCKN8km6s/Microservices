@@ -1,0 +1,8 @@
+<!-- TODO: investigate if it's possible to avoid referencing lib here. check dispatchEvent -->
+<script src="oidc-client.min.js"></script>
+<script>
+  var mgr = new Oidc.UserManager();
+  mgr.signinSilentCallback().catch(error => {
+    console.error(error);
+  });
+</script>

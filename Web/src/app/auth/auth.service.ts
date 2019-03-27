@@ -33,15 +33,16 @@ export class AuthService {
   constructor(private httpClient: HttpClient) {
 
     Oidc.Log.logger = console;
+    Oidc.Log.level = Oidc.Log.DEBUG;
 
     this.userManager = new UserManager({
       authority: 'http://localhost:3000',
       client_id: 'spa',
       redirect_uri: `${this.backendUrl}/signin-callback`,
-      silent_redirect_uri: `${this.backendUrl}/silent-callback`,
+      silent_redirect_uri: `${this.backendUrl}/assets/silent-callback.html`,
       post_logout_redirect_uri: `${this.backendUrl}`,
       response_type: 'id_token token',
-      scope: 'openid profile email orders',
+      scope: 'openid profile email orders users',
       automaticSilentRenew: true
     });
   }
@@ -55,7 +56,7 @@ export class AuthService {
   }
 
   private loadProfile(sub: string): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users/${sub}`);
+    return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users`);
   }
 
   private loadUser(): Observable<boolean> {
@@ -113,7 +114,7 @@ export class AuthService {
   public competeSignIn(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.userManager.signinRedirectCallback().then(user => {
-        console.log('signinRedirectCallback.then', user);
+        console.log('signinRedirectCallback.then', user.profile.name);
 
         this.loadProfile(user.profile.sub).subscribe(profile => {
           console.log('competeSignIn', profile);
@@ -127,17 +128,11 @@ export class AuthService {
     });
   }
 
-
-
-  public renewToken(): Promise<User> {
+  public renewToken(): void {
+    // todo: it's not called because of static html, investigate how to propagate event to angular
     console.log('silent renew', new Date());
-    return this.userManager.signinSilentCallback().then(res => {
+    this.userManager.signinSilentCallback().then(res => {
       console.log('signinSilentCallback.then', res);
-
-      this.userManager.getUser().then(resp => {
-        console.log('signinSilentCallback.then.getUser.then', resp);
-      });
-
       return res;
     });
   }

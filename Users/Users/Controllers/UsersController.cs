@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Users.Infrastructure;
@@ -12,6 +13,13 @@ namespace Users.Controllers
     {
         public UsersController()
         {
+        }
+
+        [HttpGet("")]
+        public Task<ActionResult<dynamic>> GetUserWithoutSub()
+        {
+            var sub = User.FindFirst(c => c.Type == JwtClaimTypes.Subject).Value;
+            return GetUser(sub);
         }
 
 
