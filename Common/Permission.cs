@@ -8,19 +8,22 @@ namespace Common
     //TODO: Refactor to extract base class
     public class Permission : IEquatable<Permission>
     {
-        public long Id { get; private set; }
+        public long Id { get; }
 
-        public string Description { get; private set; }
+        public string Name { get; }
 
-        private Permission(long id, string description)
+        public string Description { get; }
+
+        private Permission(long id, string name, string description)
         {
             Id = id;
+            Name = name;
             Description = description;
         }
 
-        public static Permission ViewOrders = new Permission(1, "View orders");
+        public static Permission ViewOrders = new Permission(1, nameof(ViewOrders), "View orders");
 
-        public static Permission EditOrders = new Permission(2, "Edit orders");
+        public static Permission EditOrders = new Permission(2, nameof(EditOrders), "Edit orders");
 
         public bool Equals(Permission other)
         {

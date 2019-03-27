@@ -26,6 +26,8 @@ namespace Users
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +43,12 @@ namespace Users
                 app.UseHsts();
             }
 
+            app.UseCors(builder => builder
+                .WithOrigins(Configuration.GetValue<string>("WebUrl"))
+                .AllowAnyHeader());
+
             app.UseHttpsRedirection();
+
             app.UseMvc();
         }
     }

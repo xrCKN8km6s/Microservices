@@ -11,7 +11,7 @@ export class SignInCallbackComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.competeSignIn().then(state => {
-      this.router.navigateByUrl(state.redirectUrl);
+      this.router.navigateByUrl(state);
     });
   }
 }

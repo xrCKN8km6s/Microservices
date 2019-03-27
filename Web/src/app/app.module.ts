@@ -22,6 +22,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 import { SilentCallbackComponent } from './auth/silent-callback.component';
 import { TokenInterceptor } from './auth/token.interceptor';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { TokenInterceptor } from './auth/token.interceptor';
     SignInCallbackComponent,
     SilentCallbackComponent,
     HomeComponent,
-    MainMenuComponent
+    MainMenuComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule,
@@ -38,6 +40,7 @@ import { TokenInterceptor } from './auth/token.interceptor';
       [
         { path: 'signin-callback', component: SignInCallbackComponent },
         { path: 'silent-callback', component: SilentCallbackComponent },
+        { path: 'unauthorized', component: UnauthorizedComponent },
         { path: 'home', pathMatch: 'full', component: HomeComponent, canActivate: [AuthGuard] },
         { path: '', pathMatch: 'full', redirectTo: '/home' }
       ],

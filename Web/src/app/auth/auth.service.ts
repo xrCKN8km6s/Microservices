@@ -1,9 +1,17 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User } from 'oidc-client';
-import { BehaviorSubject, Observable, from } from 'rxjs';
+import { BehaviorSubject, Observable, from, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import * as Oidc from 'oidc-client';
 
 export { User };
+
+export class UserProfile {
+  public sub: string;
+  public id: number;
+  public permissions: string[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +20,9 @@ export class AuthService {
 
   private userManager: UserManager;
   private user: User;
-  private userSignedInSubject = new BehaviorSubject<User>(null);
+  private userProfile: UserProfile;
+
+  private userSignedInSubject = new Subject<User>();
   private userSignedOutSubject = new BehaviorSubject<void>(null);
 
   public readonly userSignedIn = this.userSignedInSubject.asObservable();
@@ -20,7 +30,9 @@ export class AuthService {
 
   private readonly backendUrl = 'http://localhost:4200';
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
+
+    Oidc.Log.logger = console;
 
     this.userManager = new UserManager({
       authority: 'http://localhost:3000',
@@ -42,16 +54,53 @@ export class AuthService {
     return this.user != null;
   }
 
-  isLoggedInObs(): Observable<boolean> {
-    return from(this.userManager.getUser()).pipe(map(user => {
+  private loadProfile(sub: string): Observable<UserProfile> {
+    return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users/${sub}`);
+  }
 
-      if (!user || !user.access_token) {
+  private loadUser(): Observable<boolean> {
+
+    const ret = new Promise<boolean>((resolve, reject) => {
+      this.userManager.getUser().then(user => {
+
+        if (!user) {
+          resolve(false);
+          return;
+        }
+
+        console.log('loadUser.getUser', user.profile.name);
+        this.user = user;
+
+        if (user && !this.userProfile) {
+          const sub = user.profile.sub;
+          this.loadProfile(sub).subscribe(profile => {
+            console.log('loadUser.getUser.loadProfile', profile);
+            if (profile) {
+              this.userProfile = profile;
+              this.userSignedInSubject.next(user);
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          },
+            loadProfileReason => reject(loadProfileReason));
+        } else {
+          resolve(false);
+        }
+      },
+        getUserReason => reject(getUserReason));
+    });
+
+    return from(ret);
+  }
+
+  isLoggedInObs(): Observable<boolean> {
+    return this.loadUser().pipe(map(() => {
+      if (this.user && this.user.access_token && this.userProfile) {
+        return true;
+      } else {
         return false;
       }
-
-      this.user = user;
-      this.userSignedInSubject.next(user);
-      return true;
     }));
   }
 
@@ -61,14 +110,24 @@ export class AuthService {
     });
   }
 
-  public competeSignIn(): Promise<any> {
-    return this.userManager.signinRedirectCallback().then(user => {
-      console.log('signinRedirectCallback.then', user);
-      this.user = user;
-      this.userSignedInSubject.next(user);
-      return user.state;
+  public competeSignIn(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.userManager.signinRedirectCallback().then(user => {
+        console.log('signinRedirectCallback.then', user);
+
+        this.loadProfile(user.profile.sub).subscribe(profile => {
+          console.log('competeSignIn', profile);
+          this.user = user;
+          this.userProfile = profile;
+          this.userSignedInSubject.next(user);
+
+          resolve(user.state.redirectUrl);
+        }, err => reject(err));
+      });
     });
   }
+
+
 
   public renewToken(): Promise<User> {
     console.log('silent renew', new Date());

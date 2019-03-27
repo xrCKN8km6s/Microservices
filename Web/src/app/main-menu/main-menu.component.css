@@ -1,3 +1,11 @@
 .example-spacer {
   flex: 1 1 auto;
 }
+
+.header-title {
+  font-size: 24px;
+}
+
+.mat-button {
+  font-weight: bold;
+}
