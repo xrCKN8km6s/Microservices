@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Users.Infrastructure;
+using Users.Models;
 
 namespace Users.Controllers
 {
@@ -12,9 +14,22 @@ namespace Users.Controllers
     {
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var conn = "Host=localhost;Database=Users;Username=db_user;Password=db_pass";
+
+            var builder = new DbContextOptionsBuilder<UsersContext>().UseNpgsql(conn);
+
+            var context = new UsersContext(builder.Options);
+
+            var users = await context.Users.Include(u => u.UserRoles).ThenInclude(t => t.Role).ThenInclude(t => t.PermissionRoles).ToArrayAsync();
+
+            var permisisons = users.First().UserRoles.Select(s => s.Role).SelectMany(s => s.PermissionRoles)
+                .Select(s => s.Permission);
+
+            var ps = Permission.GetAll();
+
+            return Ok(new string[] { "value1", "value2" });
         }
 
         // GET api/values/5

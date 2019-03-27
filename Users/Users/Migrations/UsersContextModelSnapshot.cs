@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Users.Models;
+using Users.Infrastructure;
 
 namespace Users.Migrations
 {
@@ -18,36 +18,17 @@ namespace Users.Migrations
                 .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Users.Models.Permission", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id");
-
-                    b.ToTable("permissions");
-                });
-
             modelBuilder.Entity("Users.Models.PermissionRole", b =>
                 {
                     b.Property<long>("RoleId")
                         .HasColumnName("role_id");
 
-                    b.Property<long>("PermissionId")
-                        .HasColumnName("permission_id");
+                    b.Property<long>("Permission")
+                        .HasColumnName("permission");
 
-                    b.HasKey("RoleId", "PermissionId");
+                    b.HasKey("RoleId", "Permission");
 
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId", "PermissionId")
+                    b.HasIndex("RoleId", "Permission")
                         .IsUnique();
 
                     b.ToTable("permission_roles");
@@ -116,11 +97,6 @@ namespace Users.Migrations
 
             modelBuilder.Entity("Users.Models.PermissionRole", b =>
                 {
-                    b.HasOne("Users.Models.Permission", "Permission")
-                        .WithMany("PermissionRoles")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Users.Models.Role", "Role")
                         .WithMany("PermissionRoles")
                         .HasForeignKey("RoleId")

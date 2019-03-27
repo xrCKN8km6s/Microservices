@@ -3,23 +3,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Users.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "permissions",
-                columns: table => new
-                {
-                    id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    name = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_permissions", x => x.id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "roles",
                 columns: table => new
@@ -53,18 +40,12 @@ namespace Users.Migrations
                 name: "permission_roles",
                 columns: table => new
                 {
-                    permission_id = table.Column<long>(nullable: false),
+                    permission = table.Column<long>(nullable: false),
                     role_id = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_permission_roles", x => new { x.role_id, x.permission_id });
-                    table.ForeignKey(
-                        name: "FK_permission_roles_permissions_permission_id",
-                        column: x => x.permission_id,
-                        principalTable: "permissions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_permission_roles", x => new { x.role_id, x.permission });
                     table.ForeignKey(
                         name: "FK_permission_roles_roles_role_id",
                         column: x => x.role_id,
@@ -98,20 +79,10 @@ namespace Users.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_permission_roles_permission_id",
+                name: "IX_permission_roles_role_id_permission",
                 table: "permission_roles",
-                column: "permission_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_permission_roles_role_id_permission_id",
-                table: "permission_roles",
-                columns: new[] { "role_id", "permission_id" },
+                columns: new[] { "role_id", "permission" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_permissions_id",
-                table: "permissions",
-                column: "id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_roles_id",
@@ -134,17 +105,41 @@ namespace Users.Migrations
                 table: "users",
                 column: "id");
 
-            migrationBuilder.InsertData("roles", 
-                new[] {"name", "is_global", "is_active"},
-                new object[] {"Admin", true, true});
-
-            migrationBuilder.InsertData("users",
+            migrationBuilder.InsertData(
+                "users",
                 new[] {"sub", "is_active"},
-                new object[] {"affc1ed6-e923-461f-8199-e95c07dc373b", true});
+                new object[,]
+                {
+                    {"affc1ed6-e923-461f-8199-e95c07dc373b", true},
+                    {"6ddbe58f-b173-47b5-bc65-848833a93ba2", true}
+                });
 
-            migrationBuilder.InsertData("user_roles",
-                new[] {"role_id", "user_id"},
-                new object[] {1, 1});
+            migrationBuilder.InsertData(
+                "roles",
+                new[] { "name", "is_global", "is_active" },
+                new object[,]
+                {
+                    {"Admin", true, true},
+                    {"OrdersManager", false, true}
+                });
+
+            migrationBuilder.InsertData(
+                "user_roles",
+                new[] { "role_id", "user_id" },
+                new object[,]
+                {
+                    {1, 1},
+                    {2, 2}
+                });
+
+            migrationBuilder.InsertData(
+                "permission_roles",
+                new[] { "permission", "role_id" },
+                new object[,]
+                {
+                    {1, 2},
+                    {2, 2}
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -154,9 +149,6 @@ namespace Users.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_roles");
-
-            migrationBuilder.DropTable(
-                name: "permissions");
 
             migrationBuilder.DropTable(
                 name: "roles");
