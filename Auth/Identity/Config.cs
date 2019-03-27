@@ -73,9 +73,11 @@ namespace Identity
                     ClientId = "spa",
                     ClientName = "SPA Client",
 
-                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
                     AllowAccessTokensViaBrowser = true,
                     AccessTokenType = AccessTokenType.Reference,
+                    RequireClientSecret = false, //using secret in SPA is not secure anyway
 
                     RedirectUris =
                     {

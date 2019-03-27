@@ -41,7 +41,7 @@ export class AuthService {
       redirect_uri: `${this.backendUrl}/signin-callback`,
       silent_redirect_uri: `${this.backendUrl}/assets/silent-callback.html`,
       post_logout_redirect_uri: `${this.backendUrl}`,
-      response_type: 'id_token token',
+      response_type: 'code',
       scope: 'openid profile email orders users',
       automaticSilentRenew: true
     });
