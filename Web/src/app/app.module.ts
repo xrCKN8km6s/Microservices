@@ -11,15 +11,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTableModule } from '@angular/material/table';
 
-import { HomeService } from './home/home.service';
 import { AppComponent } from './app.component';
 
-import { HomeComponent } from './home/home.component';
+import { OrdersComponent } from './orders/orders.component';
+import { OrdersService } from './orders/orders.service';
+import { OrdersGuard } from './auth/orders.guard';
 
 import { MainMenuComponent } from './main-menu/main-menu.component';
 
 import { AuthGuard } from './auth/auth.guard';
-import { OrdersGuard } from './auth/orders.guard';
 
 import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 import { TokenInterceptor } from './auth/token.interceptor';
@@ -29,7 +29,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
   declarations: [
     AppComponent,
     SignInCallbackComponent,
-    HomeComponent,
+    OrdersComponent,
     MainMenuComponent,
     UnauthorizedComponent
   ],
@@ -41,7 +41,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
         {
           path: '', canActivate: [AuthGuard], children: [
             { path: 'unauthorized', component: UnauthorizedComponent },
-            { path: 'home', pathMatch: 'full', component: HomeComponent, canActivate: [OrdersGuard] },
+            { path: 'orders', pathMatch: 'full', component: OrdersComponent, canActivate: [OrdersGuard] },
           ]
         },
         { path: 'signin-callback', component: SignInCallbackComponent }
@@ -57,7 +57,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     MatTableModule
   ],
   providers: [
-    HomeService,
+    OrdersService,
     AuthGuard,
     OrdersGuard,
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }

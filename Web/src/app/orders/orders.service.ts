@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Order } from '../Order';
+import { Order } from './order.model';
 
 @Injectable()
-export class HomeService {
+export class OrdersService {
   constructor(private http: HttpClient) { }
 
   getOrders() {

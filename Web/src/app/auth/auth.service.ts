@@ -1,24 +1,11 @@
 import { Injectable } from '@angular/core';
-import { UserManager, UserManagerSettings, User } from 'oidc-client';
+import { UserManager, User } from 'oidc-client';
 import { BehaviorSubject, Observable, from, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import * as Oidc from 'oidc-client';
 
 export { User };
-
-export class Permission {
-  public id: number;
-  public name: string;
-  public description: string;
-}
-
-export class UserProfile {
-  public sub: string;
-  public id: number;
-  public isGlobal: boolean;
-  public permissions: Permission[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +55,7 @@ export class AuthService {
   }
 
   private loadProfile(sub: string): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users`);
+    return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users/profile`);
   }
 
   private loadUser(): Observable<boolean> {
@@ -152,4 +139,17 @@ export class AuthService {
 
     return this.userProfile.permissions.some(el => el.name === permissionName);
   }
+}
+
+class UserProfile {
+  public sub: string;
+  public id: number;
+  public isGlobal: boolean;
+  public permissions: Permission[];
+}
+
+class Permission {
+  public id: number;
+  public name: string;
+  public description: string;
 }

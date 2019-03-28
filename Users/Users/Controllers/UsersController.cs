@@ -17,7 +17,7 @@ namespace Users.Controllers
             _queries = queries ?? throw new ArgumentNullException(nameof(queries));
         }
 
-        [HttpGet("")]
+        [HttpGet("profile")]
         public Task<ActionResult<UserProfileDto>> GetUserProfile()
         {
             var sub = User.FindFirst(c => c.Type == JwtClaimTypes.Subject).Value;
