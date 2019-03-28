@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatTableModule } from '@angular/material/table';
 
 import { HomeService } from './home/home.service';
 import { AppComponent } from './app.component';
@@ -51,7 +52,8 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatTableModule
   ],
   providers: [
     HomeService,

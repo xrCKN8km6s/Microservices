@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { HomeService } from './home.service';
 import { Order } from '../Order';
 
@@ -7,13 +7,14 @@ import { Order } from '../Order';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements AfterViewInit {
 
-  orders: Order[];
+  public orders: Order[];
+  public displayedColumns: string[] = ['id', 'name', 'creationDateTime', 'orderStatus'];
 
   constructor(private svc: HomeService) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.svc.getOrders().subscribe(res => {
       this.orders = res;
     });
