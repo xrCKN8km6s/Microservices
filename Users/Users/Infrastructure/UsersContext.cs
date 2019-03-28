@@ -14,6 +14,8 @@ namespace Users.Infrastructure
 
         public DbSet<UserRole> UserRoles { get; set; }
 
+        public DbSet<PermissionRole> PermissionRoles { get; set; }
+
         public UsersContext(DbContextOptions<UsersContext> options) : base(options)
         {
         }
@@ -37,6 +39,8 @@ namespace Users.Infrastructure
             builder.Property(p => p.Id).HasColumnName("id").IsRequired();
             builder.Property(p => p.Sub).HasColumnName("sub").IsRequired();
             builder.Property(p => p.IsActive).HasColumnName("is_active").IsRequired();
+
+            builder.HasQueryFilter(user => user.IsActive);
         }
     }
 
@@ -87,6 +91,8 @@ namespace Users.Infrastructure
             builder.Property(p => p.Name).HasColumnName("name").IsRequired();
             builder.Property(p => p.IsGlobal).HasColumnName("is_global").IsRequired();
             builder.Property(p => p.IsActive).HasColumnName("is_active").IsRequired();
+
+            builder.HasQueryFilter(role => role.IsActive);
         }
     }
 

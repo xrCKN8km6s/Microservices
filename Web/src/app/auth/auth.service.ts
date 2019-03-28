@@ -7,10 +7,17 @@ import * as Oidc from 'oidc-client';
 
 export { User };
 
+export class Permission {
+  public id: number;
+  public name: string;
+  public description: string;
+}
+
 export class UserProfile {
   public sub: string;
   public id: number;
-  public permissions: string[];
+  public isGlobal: boolean;
+  public permissions: Permission[];
 }
 
 @Injectable({
@@ -133,17 +140,16 @@ export class AuthService {
     });
   }
 
-  public renewToken(): void {
-    // todo: it's not called because of static html, investigate how to propagate event to angular
-    console.log('silent renew', new Date());
-    this.userManager.signinSilentCallback().then(res => {
-      console.log('signinSilentCallback.then', res);
-      return res;
-    });
-  }
-
   public signOut(): Promise<void> {
     this.userSignedOutSubject.next();
     return this.userManager.signoutRedirect();
+  }
+
+  public hasPermission(permissionName: string): boolean {
+    if (this.userProfile.isGlobal) {
+      return true;
+    }
+
+    return this.userProfile.permissions.some(el => el.name === permissionName);
   }
 }

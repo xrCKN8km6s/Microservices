@@ -3,8 +3,11 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Users.Infrastructure;
+using Users.Queries;
 
 namespace Users
 {
@@ -37,6 +40,15 @@ namespace Users
                     options.EnableCaching = true;
                     options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
+
+            services.AddScoped<IUsersQueries, UsersQueries>();
+
+            var connectionString = Configuration.GetValue<string>("ConnectionString");
+
+            services.AddDbContext<UsersContext>(options =>
+
+                options
+                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

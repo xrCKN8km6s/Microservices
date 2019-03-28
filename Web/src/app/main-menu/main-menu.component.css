@@ -3,9 +3,9 @@
 }
 
 .header-title {
-  font-size: 24px;
+  font-size: 20px;
 }
 
-.mat-button {
-  font-weight: bold;
+.icon {
+  margin-bottom: 4px;
 }

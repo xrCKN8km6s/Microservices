@@ -1,9 +1,8 @@
-﻿using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Users.Infrastructure;
+using Users.Queries;
 
 namespace Users.Controllers
 {
@@ -11,12 +10,15 @@ namespace Users.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        public UsersController()
+        private readonly IUsersQueries _queries;
+
+        public UsersController(IUsersQueries queries)
         {
+            _queries = queries ?? throw new ArgumentNullException(nameof(queries));
         }
 
         [HttpGet("")]
-        public Task<ActionResult<dynamic>> GetUserWithoutSub()
+        public Task<ActionResult<UserProfileDto>> GetUserProfile()
         {
             var sub = User.FindFirst(c => c.Type == JwtClaimTypes.Subject).Value;
             return GetUser(sub);
@@ -24,37 +26,16 @@ namespace Users.Controllers
 
 
         [HttpGet("{sub}")]
-        public async Task<ActionResult<dynamic>> GetUser(string sub)
+        public async Task<ActionResult<UserProfileDto>> GetUser(string sub)
         {
-            var conn = "Host=localhost;Database=Users;Username=db_user;Password=db_pass";
+            var res = await _queries.GetUserProfileAsync(sub);
 
-            var builder = new DbContextOptionsBuilder<UsersContext>().UseNpgsql(conn);
-
-            var context = new UsersContext(builder.Options);
-
-            var user = await context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(t => t.Role)
-                .ThenInclude(t => t.PermissionRoles)
-                .Where(w => w.IsActive)
-                .FirstOrDefaultAsync(f => f.Sub == sub);
-
-            if (user == null)
+            if (res == null)
             {
                 return NotFound();
             }
 
-            return new
-            {
-                user.Sub,
-                user.Id,
-                IsGlobal = user.UserRoles.Select(s => s.Role).Any(a => a.IsGlobal),
-                Permissions = user.UserRoles
-                    .Select(s => s.Role)
-                    .SelectMany(s => s.PermissionRoles)
-                    .Select(s => s.Permission)
-                    .ToArray()
-            };
+            return Ok(res);
         }
     }
 }

@@ -19,9 +19,9 @@ import { HomeComponent } from './home/home.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 
 import { AuthGuard } from './auth/auth.guard';
+import { OrdersGuard } from './auth/orders.guard';
 
 import { SignInCallbackComponent } from './auth/sign-in-callback.component';
-import { SilentCallbackComponent } from './auth/silent-callback.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
@@ -29,7 +29,6 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
   declarations: [
     AppComponent,
     SignInCallbackComponent,
-    SilentCallbackComponent,
     HomeComponent,
     MainMenuComponent,
     UnauthorizedComponent
@@ -39,11 +38,13 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     HttpClientModule,
     RouterModule.forRoot(
       [
-        { path: 'signin-callback', component: SignInCallbackComponent },
-        { path: 'silent-callback', component: SilentCallbackComponent },
-        { path: 'unauthorized', component: UnauthorizedComponent },
-        { path: 'home', pathMatch: 'full', component: HomeComponent, canActivate: [AuthGuard] },
-        { path: '', pathMatch: 'full', redirectTo: '/home' }
+        {
+          path: '', canActivate: [AuthGuard], children: [
+            { path: 'unauthorized', component: UnauthorizedComponent },
+            { path: 'home', pathMatch: 'full', component: HomeComponent, canActivate: [OrdersGuard] },
+          ]
+        },
+        { path: 'signin-callback', component: SignInCallbackComponent }
       ],
       { enableTracing: false }
     ),
@@ -58,7 +59,8 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
   providers: [
     HomeService,
     AuthGuard,
-    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}
+    OrdersGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
