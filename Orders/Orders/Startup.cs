@@ -112,8 +112,8 @@ namespace Orders
                     options.RequireHttpsMetadata = false; //dev
 
 
-                    options.EnableCaching = true;
-                    options.CacheDuration = TimeSpan.FromSeconds(20);
+                    //options.EnableCaching = true;
+                    //options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
 
             services.AddStackExchangeRedisCache(options =>

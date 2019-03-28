@@ -33,7 +33,7 @@ export class AuthService {
   constructor(private httpClient: HttpClient) {
 
     Oidc.Log.logger = console;
-    Oidc.Log.level = Oidc.Log.DEBUG;
+    Oidc.Log.level = Oidc.Log.INFO;
 
     this.userManager = new UserManager({
       authority: 'http://localhost:3000',
@@ -44,6 +44,11 @@ export class AuthService {
       response_type: 'code',
       scope: 'openid profile email orders users',
       automaticSilentRenew: true
+    });
+
+    this.userManager.events.addUserLoaded((user: User) => {
+      console.log('addUserLoaded', user.access_token);
+      this.user = user;
     });
   }
 
@@ -115,10 +120,10 @@ export class AuthService {
     return new Promise<string>((resolve, reject) => {
       this.userManager.signinRedirectCallback().then(user => {
         console.log('signinRedirectCallback.then', user.profile.name);
-
+        this.user = user;
         this.loadProfile(user.profile.sub).subscribe(profile => {
           console.log('competeSignIn', profile);
-          this.user = user;
+
           this.userProfile = profile;
           this.userSignedInSubject.next(user);
 
