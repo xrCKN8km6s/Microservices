@@ -4,6 +4,7 @@
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
+using IdentityModel;
 
 namespace Identity
 {
@@ -25,7 +26,12 @@ namespace Identity
             {
                 new ApiResource("orders", "Orders API")
                 {
-                    ApiSecrets = {new Secret("orders.secret".Sha256())}
+                    ApiSecrets = {new Secret("orders.secret".Sha256())},
+                    UserClaims =
+                    {
+                        JwtClaimTypes.Name,
+                        JwtClaimTypes.Email
+                    }
                 },
                 new ApiResource("users", "Users API")
                 {

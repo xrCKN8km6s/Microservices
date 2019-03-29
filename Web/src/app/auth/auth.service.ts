@@ -3,6 +3,7 @@ import { UserManager, User } from 'oidc-client';
 import { BehaviorSubject, Observable, from, Subject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import * as Oidc from 'oidc-client';
 
 export { User };
 
@@ -33,6 +34,8 @@ export class AuthService {
       scope: 'openid profile email orders users',
       automaticSilentRenew: true
     });
+
+    Oidc.Log.logger = console;
   }
 
   getAuthorizationHeaderValue(): Observable<string> {

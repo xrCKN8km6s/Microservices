@@ -111,7 +111,6 @@ namespace Orders
                     options.ApiSecret = "orders.secret";
                     options.RequireHttpsMetadata = false; //dev
 
-
                     //options.EnableCaching = true;
                     //options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
