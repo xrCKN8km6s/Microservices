@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserManager, User } from 'oidc-client';
-import { BehaviorSubject, Observable, from, Subject } from 'rxjs';
+import { Observable, from, Subject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import * as Oidc from 'oidc-client';
@@ -12,16 +12,16 @@ export { User };
 })
 export class AuthService {
 
+  private readonly backendUrl = 'http://localhost:4200';
+
   private userManager: UserManager;
   private userProfile: UserProfile;
 
   private userSignedInSubject = new Subject<User>();
-  private userSignedOutSubject = new BehaviorSubject<void>(null);
-
   public readonly userSignedIn = this.userSignedInSubject.asObservable();
-  public readonly userSignedOut = this.userSignedOutSubject.asObservable();
 
-  private readonly backendUrl = 'http://localhost:4200';
+  private userSignedOutSubject = new Subject();
+  public readonly userSignedOut = this.userSignedOutSubject.asObservable();
 
   constructor(private httpClient: HttpClient) {
     this.userManager = new UserManager({
@@ -38,25 +38,29 @@ export class AuthService {
     Oidc.Log.logger = console;
   }
 
-  getAuthorizationHeaderValue(): Observable<string> {
-    return from(this.userManager.getUser()).pipe(
-      map(user => `${user.token_type} ${user.access_token}`)
-    );
+  private getUser(): Observable<User> {
+    return from(this.userManager.getUser());
   }
 
   private loadProfile(): Observable<UserProfile> {
     return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users/profile`);
   }
 
-  isLoggedInObs(): Observable<boolean> {
-    return from(this.userManager.getUser()).pipe(
+  public getAuthorizationHeaderValue(): Observable<string> {
+    return this.getUser().pipe(
+      map(user => `${user.token_type} ${user.access_token}`)
+    );
+  }
+
+  public isLoggedIn(): Observable<boolean> {
+    return this.getUser().pipe(
       map(user => {
         return !!user && !!user.access_token && !!this.userProfile;
       })
     );
   }
 
-  startAuthentication(url: string): Promise<void> {
+  public startAuthentication(url: string): Promise<void> {
     return this.userManager.signinRedirect({
       data: { returnUrl: url }
     });
