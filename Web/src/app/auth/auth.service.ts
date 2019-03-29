@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UserManager, User } from 'oidc-client';
 import { BehaviorSubject, Observable, from, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import * as Oidc from 'oidc-client';
 
 export { User };
 
@@ -13,7 +12,6 @@ export { User };
 export class AuthService {
 
   private userManager: UserManager;
-  private user: User;
   private userProfile: UserProfile;
 
   private userSignedInSubject = new Subject<User>();
@@ -25,10 +23,6 @@ export class AuthService {
   private readonly backendUrl = 'http://localhost:4200';
 
   constructor(private httpClient: HttpClient) {
-
-    Oidc.Log.logger = console;
-    Oidc.Log.level = Oidc.Log.INFO;
-
     this.userManager = new UserManager({
       authority: 'http://localhost:3000',
       client_id: 'spa',
@@ -39,92 +33,41 @@ export class AuthService {
       scope: 'openid profile email orders users',
       automaticSilentRenew: true
     });
-
-    this.userManager.events.addUserLoaded((user: User) => {
-      console.log('addUserLoaded', user.access_token);
-      this.user = user;
-    });
   }
 
-  getAuthorizationHeaderValue(): string {
-    return `${this.user.token_type} ${this.user.access_token}`;
+  getAuthorizationHeaderValue(): Observable<string> {
+    return from(this.userManager.getUser()).pipe(
+      map(user => `${user.token_type} ${user.access_token}`)
+    );
   }
 
-  isLoggedIn(): boolean {
-    return this.user != null;
-  }
-
-  private loadProfile(sub: string): Observable<UserProfile> {
+  private loadProfile(): Observable<UserProfile> {
     return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users/profile`);
   }
 
-  private loadUser(): Observable<boolean> {
-
-    const ret = new Promise<boolean>((resolve, reject) => {
-      this.userManager.getUser().then(user => {
-
-        if (!user) {
-          resolve(false);
-          return;
-        }
-
-        console.log('loadUser.getUser', user.profile.name);
-        this.user = user;
-
-        if (user && !this.userProfile) {
-          const sub = user.profile.sub;
-          this.loadProfile(sub).subscribe(profile => {
-            console.log('loadUser.getUser.loadProfile', profile);
-            if (profile) {
-              this.userProfile = profile;
-              this.userSignedInSubject.next(user);
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          },
-            loadProfileReason => reject(loadProfileReason));
-        } else {
-          resolve(false);
-        }
-      },
-        getUserReason => reject(getUserReason));
-    });
-
-    return from(ret);
-  }
-
   isLoggedInObs(): Observable<boolean> {
-    return this.loadUser().pipe(map(() => {
-      if (this.user && this.user.access_token && this.userProfile) {
-        return true;
-      } else {
-        return false;
-      }
-    }));
+    return from(this.userManager.getUser()).pipe(
+      map(user => {
+        return !!user && !!user.access_token && !!this.userProfile;
+      })
+    );
   }
 
-  startAuthentication(returnUrl: string): Promise<void> {
+  startAuthentication(url: string): Promise<void> {
     return this.userManager.signinRedirect({
-      data: { rediectUrl: returnUrl }
+      data: { returnUrl: url }
     });
   }
 
-  public competeSignIn(): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      this.userManager.signinRedirectCallback().then(user => {
-        console.log('signinRedirectCallback.then', user.profile.name);
-        this.user = user;
-        this.loadProfile(user.profile.sub).subscribe(profile => {
-          console.log('competeSignIn', profile);
-
+  public competeSignIn(): Observable<string> {
+    return from(this.userManager.signinRedirectCallback()).pipe(
+      mergeMap(user => {
+        return this.loadProfile().pipe(map(profile => {
           this.userProfile = profile;
           this.userSignedInSubject.next(user);
-
-          resolve(user.state.redirectUrl);
-        }, err => reject(err));
-      });
-    });
+          return user.state.returnUrl;
+        }));
+      }));
   }
 
   public signOut(): Promise<void> {
@@ -133,10 +76,9 @@ export class AuthService {
   }
 
   public hasPermission(permissionName: string): boolean {
-    if (this.userProfile.isGlobal) {
+    if (this.userProfile.hasGlobalRole) {
       return true;
     }
-
     return this.userProfile.permissions.some(el => el.name === permissionName);
   }
 }
@@ -144,7 +86,7 @@ export class AuthService {
 class UserProfile {
   public sub: string;
   public id: number;
-  public isGlobal: boolean;
+  public hasGlobalRole: boolean;
   public permissions: Permission[];
 }
 

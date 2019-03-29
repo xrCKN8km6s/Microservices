@@ -24,6 +24,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { LandingComponent } from './landing/landing.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     SignInCallbackComponent,
     OrdersComponent,
     MainMenuComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,
@@ -40,10 +42,12 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
       [
         {
           path: '', canActivate: [AuthGuard], children: [
-            { path: 'unauthorized', component: UnauthorizedComponent },
-            { path: 'orders', pathMatch: 'full', component: OrdersComponent, canActivate: [OrdersGuard] },
+            { path: 'landing', component: LandingComponent },
+            { path: 'orders', component: OrdersComponent, canActivate: [OrdersGuard] },
+            { path: '', pathMatch: 'full', redirectTo: '/landing' },
           ]
         },
+        { path: 'unauthorized', component: UnauthorizedComponent },
         { path: 'signin-callback', component: SignInCallbackComponent }
       ],
       { enableTracing: false }
