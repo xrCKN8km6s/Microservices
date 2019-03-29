@@ -36,14 +36,17 @@ namespace Users.Queries
 
         private static UserProfileDto MapToDto(User user)
         {
+            var hasGlobalRole = user.UserRoles.Any(a => a.Role.IsGlobal);
             return new UserProfileDto
             {
                 Id = user.Id,
                 Sub = user.Sub,
-                HasGlobalRole = user.UserRoles.Any(a => a.Role.IsGlobal),
-                Permissions = user.UserRoles.Select(s => s.Role)
-                    .SelectMany(s => s.PermissionRoles)
-                    .Select(s => MapPermissionToDto(s.Permission)).ToArray()
+                HasGlobalRole = hasGlobalRole,
+                Permissions = hasGlobalRole
+                    ? Permission.GetAll().Select(MapPermissionToDto).ToArray()
+                    : user.UserRoles.Select(s => s.Role)
+                        .SelectMany(s => s.PermissionRoles)
+                        .Select(s => MapPermissionToDto(s.Permission)).ToArray()
             };
         }
 

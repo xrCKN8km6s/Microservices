@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Security.Claims;
+using Common;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
+using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog.Services;
 using MediatR;
@@ -140,6 +143,12 @@ namespace Orders
                     { "oauth2", new[] { "orders" } }
                 });
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ViewOrders",
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.ViewOrders.Name));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -158,6 +167,21 @@ namespace Orders
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
+
+            app.Use(async (context, next) =>
+            {
+                //request user profile from users
+                //var sub = context.User.FindFirst(JwtClaimTypes.Subject);
+
+                var customIdentity = new ClaimsIdentity(new[]
+                {
+                    new Claim(JwtClaimTypes.Role, Permission.ViewOrders.Name)
+                });
+
+                context.User.AddIdentity(customIdentity);
+
+                await next.Invoke();
+            });
 
             app.UseCors(builder => builder
                 .WithOrigins(_config.GetValue<string>("WebUrl"))

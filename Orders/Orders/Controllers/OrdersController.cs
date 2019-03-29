@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Application.Commands;
 using Orders.Application.Queries;
@@ -20,7 +21,8 @@ namespace Orders.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> About()
+        [Authorize(Policy = "ViewOrders")]
+        public async Task<IActionResult> Get()
         {
             return Ok(await _query.GetOrdersAsync());
         }

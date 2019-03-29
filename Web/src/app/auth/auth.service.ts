@@ -83,9 +83,6 @@ export class AuthService {
   }
 
   public hasPermission(permissionName: string): boolean {
-    if (this.userProfile.hasGlobalRole) {
-      return true;
-    }
     return this.userProfile.permissions.some(el => el.name === permissionName);
   }
 }
