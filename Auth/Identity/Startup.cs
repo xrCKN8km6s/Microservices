@@ -2,51 +2,48 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using Identity.Data;
-using Identity.Models;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
+using Microsoft.Extensions.Configuration;
 
 namespace Identity
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
         public IHostingEnvironment Environment { get; }
+        public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IHostingEnvironment environment, IConfiguration configuration)
         {
-            Configuration = configuration;
             Environment = environment;
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+            services.Configure<IISOptions>(options =>
+            {
+                options.AutomaticAuthentication = false;
+                options.AuthenticationDisplayName = "Windows";
+            });
 
             var builder = services.AddIdentityServer(options =>
-                {
-                    options.Events.RaiseErrorEvents = true;
-                    options.Events.RaiseInformationEvents = true;
-                    options.Events.RaiseFailureEvents = true;
-                    options.Events.RaiseSuccessEvents = true;
-                })
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Config.GetClients())
-                .AddAspNetIdentity<ApplicationUser>();
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+            })
+                .AddTestUsers(TestUsers.Users);
+
+            // in-memory, code config
+            builder.AddInMemoryIdentityResources(Config.GetIdentityResources());
+            builder.AddInMemoryApiResources(Config.GetApis());
+            builder.AddInMemoryClients(Config.GetClients());
 
             if (Environment.IsDevelopment())
             {
@@ -56,6 +53,8 @@ namespace Identity
             {
                 throw new Exception("need to configure key material");
             }
+
+            services.AddAuthentication();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -63,15 +62,10 @@ namespace Identity
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
             app.UseIdentityServer();
+            app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
         }
     }
