@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   private loadProfile(): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`https://localhost:5101/api/users/profile`);
+    return this.httpClient.get<UserProfile>(`http://localhost:5100/api/users/profile`);
   }
 
   public getAuthorizationHeaderValue(): Observable<string> {

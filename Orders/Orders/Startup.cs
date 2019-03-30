@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using Common;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
 using IdentityModel;
+using IdentityModel.Client;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog.Services;
 using MediatR;
@@ -57,7 +60,6 @@ namespace Orders
             var connectionString = _config.GetValue<string>("ConnectionString");
 
             services.AddDbContext<MicroserviceContext>(options =>
-
                 options
                     .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
@@ -118,14 +120,11 @@ namespace Orders
                     //options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
 
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = "localhost";
-            });
+            services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = "Orders API", Version = "v1" });
+                options.SwaggerDoc("v1", new Info {Title = "Orders API", Version = "v1"});
 
                 options.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 {
@@ -134,13 +133,13 @@ namespace Orders
                     AuthorizationUrl = "http://localhost:3000/connect/authorize",
                     Scopes = new Dictionary<string, string>
                     {
-                        { "orders", "Orders API" }
+                        {"orders", "Orders API"}
                     }
                 });
 
                 options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 {
-                    { "oauth2", new[] { "orders" } }
+                    {"oauth2", new[] {"orders"}}
                 });
             });
 
@@ -158,35 +157,48 @@ namespace Orders
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
 
-            app.UseHttpsRedirection();
+            app.UseCors(builder => builder
+                .WithOrigins(_config.GetValue<string>("WebUrl"))
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
 
             app.UseAuthentication();
 
+            //TODO: this will go to BFF and to Users.Client
             app.Use(async (context, next) =>
             {
                 //request user profile from users
-                //var sub = context.User.FindFirst(JwtClaimTypes.Subject);
+                var sub = context.User.FindFirst(JwtClaimTypes.Subject).Value;
 
-                var customIdentity = new ClaimsIdentity(new[]
+                var tokenEndpoint = "http://localhost:3000/connect/token";
+
+                var httpClient = new HttpClient();
+
+                var token = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
                 {
-                    new Claim(JwtClaimTypes.Role, Permission.ViewOrders.Name)
+                    Address = tokenEndpoint,
+                    ClientId = "orders",
+                    ClientSecret = "orders.secret",
+                    Scope = "users"
                 });
+
+                httpClient.SetBearerToken(token.AccessToken);
+
+                var resp = await httpClient.GetAsync($"http://localhost:5100/api/users/profile/{sub}");
+                var r = await resp.Content.ReadAsAsync<UserProfileDto>();
+
+                var claims = new List<Claim> {new Claim("UserId", r.Id.ToString())};
+
+                claims.AddRange(r.Permissions.Select(s => new Claim(JwtClaimTypes.Role, s.Name)));
+
+                var customIdentity = new ClaimsIdentity(claims);
 
                 context.User.AddIdentity(customIdentity);
 
                 await next.Invoke();
             });
-
-            app.UseCors(builder => builder
-                .WithOrigins(_config.GetValue<string>("WebUrl"))
-                .AllowAnyHeader()
-            );
 
             app.UseMvc();
 
@@ -199,5 +211,27 @@ namespace Orders
                     options.OAuthAppName("Orders Swagger UI");
                 });
         }
+    }
+
+    //TODO: this will go to Users.Client
+    public class UserProfileDto
+    {
+        public long Id { get; set; }
+
+        public string Sub { get; set; }
+
+        public bool HasGlobalRole { get; set; }
+
+        public PermissionDto[] Permissions { get; set; }
+    }
+
+    //TODO: this will go to Users.Client
+    public class PermissionDto
+    {
+        public long Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
     }
 }

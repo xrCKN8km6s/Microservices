@@ -7,6 +7,6 @@ export class OrdersService {
   constructor(private http: HttpClient) { }
 
   getOrders() {
-    return this.http.get<Order[]>('https://localhost:5001/api/orders');
+    return this.http.get<Order[]>('http://localhost:5000/api/orders');
   }
 }

@@ -80,6 +80,19 @@ namespace Identity
                     RedirectUris = {"https://localhost:5001/swagger/oauth2-redirect.html"},
 
                     AllowedScopes = {"orders"}
+                },
+
+                new Client
+                {
+                    ClientId = "orders",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+
+                    ClientSecrets =
+                    {
+                        new Secret("orders.secret".Sha256())
+                    },
+
+                    AllowedScopes = {"users"}
                 }
             };
         }

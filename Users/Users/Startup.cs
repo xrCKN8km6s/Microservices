@@ -58,21 +58,13 @@ namespace Users
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthentication();
 
             app.UseCors(builder => builder
                 .WithOrigins(Configuration.GetValue<string>("WebUrl"))
+                .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            
+            app.UseAuthentication();
 
             app.UseMvc();
         }

@@ -25,7 +25,7 @@ namespace Users.Controllers
         }
 
 
-        [HttpGet("{sub}")]
+        [HttpGet("profile/{sub}")]
         public async Task<ActionResult<UserProfileDto>> GetUser(string sub)
         {
             var res = await _queries.GetUserProfileAsync(sub);

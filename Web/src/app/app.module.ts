@@ -25,6 +25,7 @@ import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { LandingComponent } from './landing/landing.component';
+import { ContentTypeInterceptor } from './auth/content-type.interceptor';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { LandingComponent } from './landing/landing.component';
     OrdersService,
     AuthGuard,
     OrdersGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: ContentTypeInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
