@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
 using Common;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
 using IdentityModel;
-using IdentityModel.Client;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog.Services;
 using MediatR;
@@ -31,6 +27,8 @@ using Orders.Infrastructure;
 using Orders.Infrastructure.Repositories;
 using RabbitMQ.Client;
 using Swashbuckle.AspNetCore.Swagger;
+using Users.Client;
+using Users.Client.Contracts;
 
 namespace Orders
 {
@@ -77,8 +75,6 @@ namespace Orders
                     return connection => new IntegrationEventLogService(connection, logger);
                 });
 
-            services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
-
             services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
             {
                 var connection = sp.GetRequiredService<IRabbitMQConnection>();
@@ -103,6 +99,8 @@ namespace Orders
 
             services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
 
+            services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
+
             services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
 
             services.AddCors();
@@ -115,9 +113,6 @@ namespace Orders
                     options.ApiName = "orders";
                     options.ApiSecret = "orders.secret";
                     options.RequireHttpsMetadata = false; //dev
-
-                    //options.EnableCaching = true;
-                    //options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
 
             services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
@@ -148,6 +143,17 @@ namespace Orders
                 options.AddPolicy("ViewOrders",
                     policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.ViewOrders.Name));
             });
+
+            services.AddHttpContextAccessor();
+
+            services.AddHttpClient<ITokenAccessor, TokenAccessor>(c => c.BaseAddress = new Uri("http://localhost:3000/connect/token"));
+
+            services.AddClient<IUsersClient, UsersClient>("http://localhost:5100", new ClientConfiguration
+            {
+                ClientId = "orders",
+                ClientSecret = "orders.secret",
+                Scope = "users"
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -166,72 +172,31 @@ namespace Orders
 
             app.UseAuthentication();
 
-            //TODO: this will go to BFF and to Users.Client
-            app.Use(async (context, next) =>
-            {
-                //request user profile from users
-                var sub = context.User.FindFirst(JwtClaimTypes.Subject).Value;
-
-                var tokenEndpoint = "http://localhost:3000/connect/token";
-
-                var httpClient = new HttpClient();
-
-                var token = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-                {
-                    Address = tokenEndpoint,
-                    ClientId = "orders",
-                    ClientSecret = "orders.secret",
-                    Scope = "users"
-                });
-
-                httpClient.SetBearerToken(token.AccessToken);
-
-                var resp = await httpClient.GetAsync($"http://localhost:5100/api/users/profile/{sub}");
-                var r = await resp.Content.ReadAsAsync<UserProfileDto>();
-
-                var claims = new List<Claim> {new Claim("UserId", r.Id.ToString())};
-
-                claims.AddRange(r.Permissions.Select(s => new Claim(JwtClaimTypes.Role, s.Name)));
-
-                var customIdentity = new ClaimsIdentity(claims);
-
-                context.User.AddIdentity(customIdentity);
-
-                await next.Invoke();
-            });
-
-            app.UseMvc();
+            app.UseMiddleware<UserProfileMiddleware>();
 
             app
                 .UseSwagger()
                 .UseSwaggerUI(options =>
                 {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Orders API");
                     options.OAuthClientId("ordersswaggerui");
                     options.OAuthAppName("Orders Swagger UI");
                 });
+
+            app.UseMvc();
         }
     }
 
-    //TODO: this will go to Users.Client
-    public class UserProfileDto
+    public static class ClientExtensions
     {
-        public long Id { get; set; }
-
-        public string Sub { get; set; }
-
-        public bool HasGlobalRole { get; set; }
-
-        public PermissionDto[] Permissions { get; set; }
-    }
-
-    //TODO: this will go to Users.Client
-    public class PermissionDto
-    {
-        public long Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
+        public static void AddClient<TI, TC>(this IServiceCollection services, string baseAddress, ClientConfiguration config)
+            where TI : class where TC : class, TI
+        {
+            services.AddHttpClient<TI, TC>(c => { c.BaseAddress = new Uri(baseAddress); })
+                .AddHttpMessageHandler(sp =>
+                {
+                    var tokenAccessor = sp.GetRequiredService<ITokenAccessor>();
+                    return new BearerTokenDelegatingHandler(tokenAccessor, config);
+                });
+        }
     }
 }

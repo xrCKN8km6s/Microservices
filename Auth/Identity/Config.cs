@@ -77,9 +77,22 @@ namespace Identity
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
 
-                    RedirectUris = {"https://localhost:5001/swagger/oauth2-redirect.html"},
+                    RedirectUris = {"http://localhost:5000/swagger/oauth2-redirect.html"},
 
                     AllowedScopes = {"orders"}
+                },
+
+                new Client
+                {
+                    ClientId = "usersswaggerui",
+                    ClientName = "Users Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false,
+
+                    RedirectUris = {"http://localhost:5100/swagger/oauth2-redirect.html"},
+
+                    AllowedScopes = {"users"}
                 },
 
                 new Client
