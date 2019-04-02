@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Orders
+namespace BFF
 {
     //TODO: logging/error handling
     public class BearerTokenDelegatingHandler : DelegatingHandler

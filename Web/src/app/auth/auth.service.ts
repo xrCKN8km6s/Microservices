@@ -31,7 +31,7 @@ export class AuthService {
       silent_redirect_uri: `${this.backendUrl}/assets/silent-callback.html`,
       post_logout_redirect_uri: `${this.backendUrl}`,
       response_type: 'code',
-      scope: 'openid profile email orders users',
+      scope: 'openid profile email bff',
       automaticSilentRenew: true
     });
 
@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   private loadProfile(): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`http://localhost:5100/api/users/profile`);
+    return this.httpClient.get<UserProfile>(`http://localhost:5000/api/users/profile`);
   }
 
   public getAuthorizationHeaderValue(): Observable<string> {

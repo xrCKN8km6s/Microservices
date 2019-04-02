@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Common;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
-using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog.Services;
 using MediatR;
@@ -29,8 +27,6 @@ using Orders.Domain.Aggregates.Order;
 using Orders.Infrastructure;
 using Orders.Infrastructure.Repositories;
 using RabbitMQ.Client;
-using Users.Client;
-using Users.Client.Contracts;
 
 namespace Orders
 {
@@ -141,22 +137,11 @@ namespace Orders
                     new OperationSecurityScopeProcessor("oauth2"));
             });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ViewOrders",
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.ViewOrders.Name));
-            });
-
-            services.AddHttpContextAccessor();
-
-            services.AddHttpClient<ITokenAccessor, TokenAccessor>(c => c.BaseAddress = new Uri("http://localhost:3000/connect/token"));
-
-            services.AddClient<IUsersClient, UsersClient>("http://localhost:5100", new ClientConfiguration
-            {
-                ClientId = "orders",
-                ClientSecret = "orders.secret",
-                Scope = "users"
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("ViewOrders",
+            //        policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.ViewOrders.Name));
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -175,9 +160,6 @@ namespace Orders
 
             app.UseAuthentication();
 
-            app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
-                builder => { builder.UseMiddleware<UserProfileMiddleware>(); });
-
             app.UseSwagger();
             app.UseSwaggerUi3(options =>
             {
@@ -188,20 +170,6 @@ namespace Orders
             });
 
             app.UseMvc();
-        }
-    }
-
-    public static class ClientExtensions
-    {
-        public static void AddClient<TI, TC>(this IServiceCollection services, string baseAddress, ClientConfiguration config)
-            where TI : class where TC : class, TI
-        {
-            services.AddHttpClient<TI, TC>(c => { c.BaseAddress = new Uri(baseAddress); })
-                .AddHttpMessageHandler(sp =>
-                {
-                    var tokenAccessor = sp.GetRequiredService<ITokenAccessor>();
-                    return new BearerTokenDelegatingHandler(tokenAccessor, config);
-                });
         }
     }
 }

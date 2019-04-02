@@ -1,4 +1,4 @@
-﻿namespace Orders
+﻿namespace BFF
 {
     public class ClientConfiguration
     {

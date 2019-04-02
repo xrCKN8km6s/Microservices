@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Application.Commands;
 using Orders.Application.Queries;
@@ -21,14 +21,14 @@ namespace Orders.Controllers
         }
 
         [HttpGet("")]
-        [Authorize(Policy = "ViewOrders")]
-        public async Task<IActionResult> Get()
+        //[Authorize(Policy = "ViewOrders")]
+        public async Task<ActionResult<IEnumerable<OrderModel>>> Get()
         {
             return Ok(await _query.GetOrdersAsync());
         }
 
         [HttpGet("create")]
-        public async Task<IActionResult> CreateOrder([FromQuery] CreateOrderCommand command)
+        public async Task<ActionResult> CreateOrder([FromQuery] CreateOrderCommand command)
         {
             await _mediator.Send(command);
 
@@ -36,7 +36,7 @@ namespace Orders.Controllers
         }
 
         [HttpGet("setStatus")]
-        public async Task<IActionResult> UpdateOrderStatus([FromQuery] ChangeOrderStatusCommand command)
+        public async Task<ActionResult> UpdateOrderStatus([FromQuery] ChangeOrderStatusCommand command)
         {
             await _mediator.Send(command);
 

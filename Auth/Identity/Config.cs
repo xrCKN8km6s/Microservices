@@ -27,15 +27,19 @@ namespace Identity
                 new ApiResource("orders", "Orders API")
                 {
                     ApiSecrets = {new Secret("orders.secret".Sha256())},
+                },
+                new ApiResource("users", "Users API")
+                {
+                    ApiSecrets = {new Secret("users.secret".Sha256())}
+                },
+                new ApiResource("bff", "BFF API")
+                {
+                    ApiSecrets = {new Secret("bff.api.secret".Sha256())},
                     UserClaims =
                     {
                         JwtClaimTypes.Name,
                         JwtClaimTypes.Email
                     }
-                },
-                new ApiResource("users", "Users API")
-                {
-                    ApiSecrets = {new Secret("users.secret".Sha256())}
                 }
             };
         }
@@ -65,8 +69,20 @@ namespace Identity
                     AllowedCorsOrigins = {"http://localhost:4200"},
                     RequireConsent = false,
 
-                    AllowedScopes = {"openid", "profile", "email", "orders", "users"},
-                    AccessTokenLifetime = 100
+                    AllowedScopes = {"openid", "profile", "email", "bff"}
+                },
+
+                new Client
+                {
+                    ClientId = "bffswaggerui",
+                    ClientName = "BFF Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false,
+
+                    RedirectUris = {"http://localhost:5000/swagger/oauth2-redirect.html"},
+
+                    AllowedScopes = {"bff"}
                 },
 
                 new Client
@@ -77,7 +93,7 @@ namespace Identity
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
 
-                    RedirectUris = {"http://localhost:5000/swagger/oauth2-redirect.html"},
+                    RedirectUris = {"http://localhost:5200/swagger/oauth2-redirect.html"},
 
                     AllowedScopes = {"orders"}
                 },
@@ -97,15 +113,15 @@ namespace Identity
 
                 new Client
                 {
-                    ClientId = "orders",
+                    ClientId = "bff",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
 
                     ClientSecrets =
                     {
-                        new Secret("orders.secret".Sha256())
+                        new Secret("bff.client.secret".Sha256())
                     },
 
-                    AllowedScopes = {"users"}
+                    AllowedScopes = {"users", "orders"}
                 }
             };
         }

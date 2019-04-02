@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 
-namespace Orders
+namespace BFF
 {
     public interface ITokenAccessor
     {
