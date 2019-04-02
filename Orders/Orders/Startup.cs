@@ -18,6 +18,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NSwag;
+using NSwag.AspNetCore;
+using NSwag.SwaggerGeneration.Processors.Security;
 using Orders.Application.Behaviors;
 using Orders.Application.IntegrationEvents;
 using Orders.Application.IntegrationEvents.EventHandlers;
@@ -26,7 +29,6 @@ using Orders.Domain.Aggregates.Order;
 using Orders.Infrastructure;
 using Orders.Infrastructure.Repositories;
 using RabbitMQ.Client;
-using Swashbuckle.AspNetCore.Swagger;
 using Users.Client;
 using Users.Client.Contracts;
 
@@ -117,25 +119,26 @@ namespace Orders
 
             services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
 
-            services.AddSwaggerGen(options =>
+            services.AddSwaggerDocument(document =>
             {
-                options.SwaggerDoc("v1", new Info {Title = "Orders API", Version = "v1"});
+                document.PostProcess = d => d.Info.Title = "Orders API";
 
-                options.AddSecurityDefinition("oauth2", new OAuth2Scheme
-                {
-                    Type = "oauth2",
-                    Flow = "implicit",
-                    AuthorizationUrl = "http://localhost:3000/connect/authorize",
-                    Scopes = new Dictionary<string, string>
+                document.DocumentProcessors.Add(
+                    new SecurityDefinitionAppender("oauth2", new SwaggerSecurityScheme
                     {
-                        {"orders", "Orders API"}
-                    }
-                });
+                        Type = SwaggerSecuritySchemeType.OAuth2,
+                        Flow = SwaggerOAuth2Flow.Implicit,
+                        AuthorizationUrl = "http://localhost:3000/connect/authorize",
+                        TokenUrl = "http://localhost:3000/connect/token",
+                        Scopes = new Dictionary<string, string>
+                        {
+                            {"orders", "Orders"}
+                        }
+                    })
+                );
 
-                options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                {
-                    {"oauth2", new[] {"orders"}}
-                });
+                document.OperationProcessors.Add(
+                    new OperationSecurityScopeProcessor("oauth2"));
             });
 
             services.AddAuthorization(options =>
@@ -172,15 +175,17 @@ namespace Orders
 
             app.UseAuthentication();
 
-            app.UseMiddleware<UserProfileMiddleware>();
+            app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
+                builder => { builder.UseMiddleware<UserProfileMiddleware>(); });
 
-            app
-                .UseSwagger()
-                .UseSwaggerUI(options =>
+            app.UseSwagger();
+            app.UseSwaggerUi3(options =>
+            {
+                options.OAuth2Client = new OAuth2ClientSettings
                 {
-                    options.OAuthClientId("ordersswaggerui");
-                    options.OAuthAppName("Orders Swagger UI");
-                });
+                    ClientId = "ordersswaggerui"
+                };
+            });
 
             app.UseMvc();
         }

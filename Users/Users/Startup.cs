@@ -97,8 +97,6 @@ namespace Users
 
             app.UseAuthentication();
 
-            app.UseMvc();
-
             app.UseSwagger();
             app.UseSwaggerUi3(options =>
             {
@@ -107,6 +105,10 @@ namespace Users
                     ClientId = "usersswaggerui"
                 };
             });
+
+            app.UseMvc();
+
+
         }
     }
 }

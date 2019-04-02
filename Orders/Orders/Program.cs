@@ -48,7 +48,7 @@ namespace Orders
                 .Build();
         }
 
-        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .SuppressStatusMessages(true)
                 .UseStartup<Startup>()
