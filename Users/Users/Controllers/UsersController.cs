@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Users.Queries;
 
@@ -16,14 +15,6 @@ namespace Users.Controllers
         {
             _queries = queries ?? throw new ArgumentNullException(nameof(queries));
         }
-
-        [HttpGet("profile")]
-        public Task<ActionResult<UserProfileDto>> GetUserProfile()
-        {
-            var sub = User.FindFirst(c => c.Type == JwtClaimTypes.Subject).Value;
-            return GetUser(sub);
-        }
-
 
         [HttpGet("profile/{sub}")]
         public async Task<ActionResult<UserProfileDto>> GetUser(string sub)

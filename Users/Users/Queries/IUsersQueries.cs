@@ -31,7 +31,7 @@ namespace Users.Queries
                 .ThenInclude(t => t.PermissionRoles)
                 .FirstOrDefaultAsync(f => f.Sub == sub);
 
-            return MapToDto(user);
+            return user == null ? null : MapToDto(user);
         }
 
         private static UserProfileDto MapToDto(User user)

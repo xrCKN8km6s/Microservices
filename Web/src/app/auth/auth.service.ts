@@ -46,10 +46,18 @@ export class AuthService {
     return this.httpClient.get<UserProfile>(`http://localhost:5000/api/users/profile`);
   }
 
+  private formatHeader(user: User): string {
+    return `${user.token_type} ${user.access_token}`;
+  }
+
   public getAuthorizationHeaderValue(): Observable<string> {
     return this.getUser().pipe(
-      map(user => `${user.token_type} ${user.access_token}`)
+      map(this.formatHeader)
     );
+  }
+
+  public renewToken(): Observable<string> {
+    return from(this.userManager.signinSilent()).pipe(map(this.formatHeader));
   }
 
   public isLoggedIn(): Observable<boolean> {

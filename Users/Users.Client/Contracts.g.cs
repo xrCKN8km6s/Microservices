@@ -12,13 +12,6 @@ namespace Users.Client.Contracts
     public partial interface IUsersClient
     {
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserProfileDto> GetUserProfileAsync();
-    
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task<UserProfileDto> GetUserProfileAsync(System.Threading.CancellationToken cancellationToken);
-    
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfileDto> GetUserAsync(string sub);
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>

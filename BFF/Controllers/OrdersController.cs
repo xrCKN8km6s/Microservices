@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Client.Contracts;
 
@@ -8,6 +9,7 @@ namespace BFF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "ViewOrders")]
     public class OrdersController : ControllerBase
     {
         private readonly IOrdersClient _client;
@@ -25,6 +27,7 @@ namespace BFF.Controllers
         }
 
         [HttpGet("create")]
+        [Authorize(Policy = "EditOrders")]
         public async Task<ActionResult> CreateOrder([FromQuery]string name)
         {
             await _client.CreateOrderAsync(name, HttpContext.RequestAborted);
@@ -32,6 +35,7 @@ namespace BFF.Controllers
         }
 
         [HttpGet("setStatus")]
+        [Authorize(Policy = "EditOrders")]
         public async Task<ActionResult> SetOrderStatus([FromQuery]long orderId, [FromQuery]int status)
         {
             await _client.UpdateOrderStatusAsync(orderId, status, HttpContext.RequestAborted);
