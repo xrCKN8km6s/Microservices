@@ -15,9 +15,8 @@ bob | bob |
 # Startup
 * Open Solution directory
 * Run `docker-compose up -d`
-* Locate all implementations of `IDesignTimeDbContextFactory` and replace `<ConnectionString>` with appropriate connection strings
-* Go to `/IntegrationEventLog` and run `dotnet ef database update`
-* Go to `/Orders/Orders.Infrastructure` and run `dotnet ef database update`
+* Go to `/IntegrationEventLog` and run `dotnet ef database update --context IntegrationEventLogContext --startup-project ../Orders/Orders/Orders.csproj`
+* Go to `/Orders/Orders.Infrastructure` and run `dotnet ef database update --context OrdersContext --startup-project ../Orders/Orders.csproj`
 * Go to `/Users/Users` and run `dotnet ef database update`
 * Open solution and set multiple startup projects to:
   * BFF
