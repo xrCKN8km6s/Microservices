@@ -2,6 +2,7 @@ Learning repository based on https://github.com/dotnet-architecture/eShopOnConta
 
 Microservice | Url | Swagger
 --- | --- | ---
+Identity | http://localhost:3000 | NA
 BFF | http://localhost:5000 | http://localhost:5000/swagger
 Users | http://localhost:5100 | http://localhost:5100/swagger
 Orders | http://localhost:5200 | http://localhost:5200/swagger
