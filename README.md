@@ -1,10 +1,11 @@
 Learning repository based on https://github.com/dotnet-architecture/eShopOnContainers
 
-Microservice | Url
---- | ---
-BFF | http://localhost:5000
-Users | http://localhost:5100
-Orders | http://localhost:5200
+Microservice | Url | Swagger
+--- | --- | ---
+BFF | http://localhost:5000 | http://localhost:5000/swagger
+Users | http://localhost:5100 | http://localhost:5100/swagger
+Orders | http://localhost:5200 | http://localhost:5200/swagger
+Web | http://localhost:4200 | NA
 
 # Test users:
 Username | Password | Comment
@@ -12,12 +13,16 @@ Username | Password | Comment
 alice | alice | global role
 bob | bob | 
 
+# Prerequisites
+* Node
+* Angular `npm install -g @angular/cli`
+
 # Startup
 * Open Solution directory
 * Run `docker-compose up -d`
-* Go to `/IntegrationEventLog` and run `dotnet ef database update --context IntegrationEventLogContext --startup-project ../Orders/Orders/Orders.csproj`
-* Go to `/Orders/Orders.Infrastructure` and run `dotnet ef database update --context OrdersContext --startup-project ../Orders/Orders.csproj`
-* Go to `/Users/Users` and run `dotnet ef database update`
+* Run `dotnet ef database update --project IntegrationEventLog/IntegrationEventLog.csproj --startup-project Orders/Orders/Orders.csproj --context IntegrationEventLogContext`
+* Run `dotnet ef database update --project Orders/Orders.Infrastructure/Orders.Infrastructure.csproj --startup-project Orders/Orders/Orders.csproj --context OrdersContext`
+* Run `dotnet ef database update --project Users/Users/Users.csproj`
 * Open solution and set multiple startup projects to:
   * BFF
   * Identity
@@ -25,6 +30,7 @@ bob | bob |
   * Users
 * Press Start
 * Go to `/Web` and run `ng serve --open`
+* Navigate to web url
 * Login using username/password provided above
 
 
