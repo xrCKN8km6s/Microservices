@@ -4,7 +4,6 @@ import { AuthService } from '../auth/auth.service';
 import { Observable, throwError } from 'rxjs';
 import { mergeMap, catchError } from 'rxjs/operators';
 
-// todo: handle 401 error
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
