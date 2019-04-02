@@ -15,6 +15,7 @@ alice | alice | global role
 bob | bob | 
 
 # Prerequisites
+* NET Core 2.2 SDK
 * Node
 * Angular `npm install -g @angular/cli`
 
