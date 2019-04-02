@@ -7,7 +7,7 @@ namespace Orders.Infrastructure
 {
     public static class MediatorExtension
     {
-        public static async Task DispatchDomainEventsAsync(this IMediator mediator, MicroserviceContext ctx)
+        public static async Task DispatchDomainEventsAsync(this IMediator mediator, OrdersContext ctx)
         {
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()

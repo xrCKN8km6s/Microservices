@@ -14,15 +14,15 @@ namespace Orders.Application.Behaviors
 {
     public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly MicroserviceContext _dbContext;
+        private readonly OrdersContext _dbContext;
         private readonly ILogger<TransactionBehaviour<TRequest, TResponse>> _logger;
         private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
 
-        public TransactionBehaviour(MicroserviceContext dbContext,
+        public TransactionBehaviour(OrdersContext dbContext,
             IOrderingIntegrationEventService orderingIntegrationEventService,
             ILogger<TransactionBehaviour<TRequest, TResponse>> logger)
         {
-            _dbContext = dbContext ?? throw new ArgumentException(nameof(MicroserviceContext));
+            _dbContext = dbContext ?? throw new ArgumentException(nameof(OrdersContext));
             _orderingIntegrationEventService = orderingIntegrationEventService ??
                                                throw new ArgumentException(nameof(orderingIntegrationEventService));
             _logger = logger ?? throw new ArgumentException(nameof(ILogger));

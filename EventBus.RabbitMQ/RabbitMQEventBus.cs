@@ -153,10 +153,10 @@ namespace EventBus.RabbitMQ
                 true);
 
             channel.QueueDeclare(_queueName,
-                true,
-                false,
-                false,
-                null);
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
 
 
             var consumer = new EventingBasicConsumer(channel);

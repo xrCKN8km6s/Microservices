@@ -14,12 +14,10 @@ namespace IntegrationEventLog.Services
         private readonly ILogger<IntegrationEventLogService> _logger;
         private readonly IntegrationEventLogContext _context;
 
-        public IntegrationEventLogService(DbConnection connection, [NotNull] ILogger<IntegrationEventLogService> logger)
+        public IntegrationEventLogService(IntegrationEventLogContext context, [NotNull] ILogger<IntegrationEventLogService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            var builder = new DbContextOptionsBuilder<IntegrationEventLogContext>().UseNpgsql(connection,
-                npgsqlOptions => npgsqlOptions.EnableRetryOnFailure());
-            _context = new IntegrationEventLogContext(builder.Options);
+            _context = context;
         }
 
         public async Task<IReadOnlyCollection<IntegrationEventLogItem>> GetPendingAsync()

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Collections.Generic;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
 using IdentityServer4.AccessTokenValidation;
+using IntegrationEventLog;
 using IntegrationEventLog.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -55,9 +54,20 @@ namespace Orders
 
             var connectionString = _config.GetValue<string>("ConnectionString");
 
-            services.AddDbContext<MicroserviceContext>(options =>
-                options
-                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
+            services.AddDbContext<OrdersContext>(options =>
+            {
+                options.UseNpgsql(connectionString, npgsqlOptions => { npgsqlOptions.EnableRetryOnFailure(); });
+            });
+
+            services.AddDbContext<IntegrationEventLogContext>((sp, options) =>
+            {
+                var context = sp.GetRequiredService<OrdersContext>();
+                var dbConnection = context.Database.GetDbConnection();
+
+                options.UseNpgsql(dbConnection, npgsqlOptions => { npgsqlOptions.EnableRetryOnFailure(); });
+            });
+
+            services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
 
             services.AddScoped<IOrderRepository, OrderRepository>();
 
@@ -65,13 +75,6 @@ namespace Orders
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviour<,>));
 
             services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
-
-            services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
-                sp =>
-                {
-                    var logger = sp.GetRequiredService<ILogger<IntegrationEventLogService>>();
-                    return connection => new IntegrationEventLogService(connection, logger);
-                });
 
             services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
             {
@@ -83,7 +86,7 @@ namespace Orders
 
                 var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
 
-                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "EntryPoint", 3);
+                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "Orders", 3);
             });
 
             services.AddSingleton<IRabbitMQConnection>(sp =>
@@ -136,12 +139,6 @@ namespace Orders
                 document.OperationProcessors.Add(
                     new OperationSecurityScopeProcessor("oauth2"));
             });
-
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("ViewOrders",
-            //        policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.ViewOrders.Name));
-            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

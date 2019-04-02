@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-// ReSharper disable All
 
 namespace Orders.Infrastructure.Migrations
 {
@@ -9,16 +8,12 @@ namespace Orders.Infrastructure.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateSequence(
-                name: "EntityFrameworkHiLoSequence",
-                incrementBy: 10);
-
             migrationBuilder.CreateTable(
                 name: "orders",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SequenceHiLo),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreationDateTime = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     OrderStatus = table.Column<int>(nullable: false)
@@ -38,9 +33,6 @@ namespace Orders.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "orders");
-
-            migrationBuilder.DropSequence(
-                name: "EntityFrameworkHiLoSequence");
         }
     }
 }

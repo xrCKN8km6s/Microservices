@@ -7,11 +7,11 @@ namespace Orders.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly MicroserviceContext _context;
+        private readonly OrdersContext _context;
 
         public IUnitOfWork UnitOfWork => _context;
 
-        public OrderRepository(MicroserviceContext context)
+        public OrderRepository(OrdersContext context)
         {
             _context = context;
         }

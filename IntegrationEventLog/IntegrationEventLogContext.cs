@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IntegrationEventLog
@@ -33,17 +32,6 @@ namespace IntegrationEventLog
             builder.Property(p => p.Content).HasColumnType("json").IsRequired();
 
             builder.Property(p => p.State).IsRequired();
-        }
-    }
-
-    internal class IntegrationEventLogContextDesignFactory : IDesignTimeDbContextFactory<IntegrationEventLogContext>
-    {
-        public IntegrationEventLogContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<IntegrationEventLogContext>()
-                .UseNpgsql("<ConnectionString>");
-
-            return new IntegrationEventLogContext(optionsBuilder.Options);
         }
     }
 }
