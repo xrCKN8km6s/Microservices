@@ -34,7 +34,7 @@ namespace BFF
         {
             services.AddMvc(options =>
             {
-                var policy = ScopePolicy.Create("orders");
+                var policy = ScopePolicy.Create("bff");
                 options.Filters.Add(new AuthorizeFilter(policy));
             })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
