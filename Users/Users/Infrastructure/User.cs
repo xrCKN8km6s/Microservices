@@ -8,6 +8,10 @@ namespace Users.Infrastructure
 
         public string Sub { get; set; }
 
+        public string Name { get; set; }
+
+        public string Email { get; set; }
+
         public List<UserRole> UserRoles { get; set; }
 
         public bool IsActive { get; set; }

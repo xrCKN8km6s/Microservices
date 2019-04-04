@@ -35,14 +35,14 @@ namespace Orders.Client
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> GetAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> Orders_GetAsync()
         {
-            return GetAsync(System.Threading.CancellationToken.None);
+            return Orders_GetAsync(System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> GetAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> Orders_GetAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Orders");
@@ -109,14 +109,14 @@ namespace Orders.Client
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<FileResponse> CreateOrderAsync(string name)
+        public System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name)
         {
-            return CreateOrderAsync(name, System.Threading.CancellationToken.None);
+            return Orders_CreateOrderAsync(name, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<FileResponse> CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Orders/create?");
@@ -178,14 +178,14 @@ namespace Orders.Client
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<FileResponse> UpdateOrderStatusAsync(long orderId, int status)
+        public System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status)
         {
-            return UpdateOrderStatusAsync(orderId, status, System.Threading.CancellationToken.None);
+            return Orders_UpdateOrderStatusAsync(orderId, status, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<FileResponse> UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken)
         {
             if (orderId == null)
                 throw new System.ArgumentNullException("orderId");

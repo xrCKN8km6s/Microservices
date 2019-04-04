@@ -37,6 +37,8 @@ namespace Users.Infrastructure
             builder.HasIndex(p => p.Id);
             builder.Property(p => p.Id).HasColumnName("id").IsRequired();
             builder.Property(p => p.Sub).HasColumnName("sub").IsRequired();
+            builder.Property(p => p.Name).HasColumnName("name").IsRequired();
+            builder.Property(p => p.Email).HasColumnName("email").IsRequired();
             builder.Property(p => p.IsActive).HasColumnName("is_active").IsRequired();
 
             builder.HasQueryFilter(user => user.IsActive);

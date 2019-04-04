@@ -23,14 +23,14 @@ namespace BFF.Controllers
         public async Task<ActionResult<IEnumerable<OrderModel>>> Get()
         {
             var sub = User.FindFirst(JwtClaimTypes.Subject).Value;
-            return Ok(await _client.GetAsync(HttpContext.RequestAborted));
+            return Ok(await _client.Orders_GetAsync(HttpContext.RequestAborted));
         }
 
         [HttpGet("create")]
         [Authorize(Policy = "EditOrders")]
         public async Task<ActionResult> CreateOrder([FromQuery]string name)
         {
-            await _client.CreateOrderAsync(name, HttpContext.RequestAborted);
+            await _client.Orders_CreateOrderAsync(name, HttpContext.RequestAborted);
             return Ok();
         }
 
@@ -38,7 +38,7 @@ namespace BFF.Controllers
         [Authorize(Policy = "EditOrders")]
         public async Task<ActionResult> SetOrderStatus([FromQuery]long orderId, [FromQuery]int status)
         {
-            await _client.UpdateOrderStatusAsync(orderId, status, HttpContext.RequestAborted);
+            await _client.Orders_UpdateOrderStatusAsync(orderId, status, HttpContext.RequestAborted);
             return Ok();
         }
     }
