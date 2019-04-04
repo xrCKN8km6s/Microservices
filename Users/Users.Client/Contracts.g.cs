@@ -12,39 +12,67 @@ namespace Users.Client.Contracts
     public partial interface IUsersClient
     {
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserProfileDto> GetUserAsync(string sub);
+        System.Threading.Tasks.Task<RolesViewModel> Roles_GetAllRolesAsync();
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task<UserProfileDto> GetUserAsync(string sub, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<RolesViewModel> Roles_GetAllRolesAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserProfileDto> Users_GetUserAsync(string sub);
+    
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task<UserProfileDto> Users_GetUserAsync(string sub, System.Threading.CancellationToken cancellationToken);
     
     }
     
     
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.28.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class UserProfileDto 
+    public partial class RolesViewModel 
     {
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long Id { get; set; }
+        [Newtonsoft.Json.JsonProperty("roles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IReadOnlyCollection<RoleDto> Roles { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("sub", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Sub { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("hasGlobalRole", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool HasGlobalRole { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<PermissionDto> Permissions { get; set; }
+        [Newtonsoft.Json.JsonProperty("allPermissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IReadOnlyCollection<PermissionDto> AllPermissions { get; set; }
     
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
     
-        public static UserProfileDto FromJson(string data)
+        public static RolesViewModel FromJson(string data)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfileDto>(data);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<RolesViewModel>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.28.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class RoleDto 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IReadOnlyCollection<PermissionDto> Permissions { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("isGlobal", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsGlobal { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static RoleDto FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<RoleDto>(data);
         }
     
     }
@@ -69,6 +97,33 @@ namespace Users.Client.Contracts
         public static PermissionDto FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<PermissionDto>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.28.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class UserProfileDto 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sub", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Sub { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hasGlobalRole", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool HasGlobalRole { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IReadOnlyCollection<PermissionDto> Permissions { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static UserProfileDto FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfileDto>(data);
         }
     
     }

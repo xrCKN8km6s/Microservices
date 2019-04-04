@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Users.Client.Contracts;
 
@@ -7,20 +6,19 @@ namespace BFF.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class RolesController : ControllerBase
     {
         private readonly IUsersClient _client;
 
-        public UsersController(IUsersClient client)
+        public RolesController(IUsersClient client)
         {
             _client = client;
         }
 
         [HttpGet("profile")]
-        public async Task<ActionResult<UserProfileDto>> Get()
+        public async Task<ActionResult<RolesViewModel>> Get()
         {
-            var sub = User.FindFirst(JwtClaimTypes.Subject).Value;
-            return await _client.Users_GetUserAsync(sub, HttpContext.RequestAborted);
+            return await _client.Roles_GetAllRolesAsync(HttpContext.RequestAborted);
         }
     }
 }

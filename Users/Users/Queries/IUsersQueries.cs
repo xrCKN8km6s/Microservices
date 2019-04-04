@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Common;
 using Microsoft.EntityFrameworkCore;
 using Users.Infrastructure;
-using Users.Models;
 
 namespace Users.Queries
 {
     public interface IUsersQueries
     {
         Task<UserProfileDto> GetUserProfileAsync(string sub);
+        Task<RolesViewModel> GetRolesViewModelAsync();
     }
 
     public class UsersQueries : IUsersQueries
@@ -31,10 +31,23 @@ namespace Users.Queries
                 .ThenInclude(t => t.PermissionRoles)
                 .FirstOrDefaultAsync(f => f.Sub == sub);
 
-            return user == null ? null : MapToDto(user);
+            return user == null ? null : MapUserToDto(user);
         }
 
-        private static UserProfileDto MapToDto(User user)
+        public async Task<RolesViewModel> GetRolesViewModelAsync()
+        {
+            var roles = await _context.Roles.AsNoTracking()
+                .Include(i => i.PermissionRoles)
+                .ToArrayAsync();
+
+            return new RolesViewModel
+            {
+                Roles = roles.Select(MapRoleToDto).ToArray(),
+                AllPermissions = Permission.GetAll().Select(MapPermissionToDto).ToArray()
+            };
+        }
+
+        private static UserProfileDto MapUserToDto(User user)
         {
             var hasGlobalRole = user.UserRoles.Any(a => a.Role.IsGlobal);
             return new UserProfileDto
@@ -59,6 +72,17 @@ namespace Users.Queries
                 Description = permission.Description
             };
         }
+
+        private static RoleDto MapRoleToDto(Role role)
+        {
+            return new RoleDto
+            {
+                Id = role.Id,
+                Name = role.Name,
+                IsGlobal = role.IsGlobal,
+                Permissions = role.PermissionRoles.Select(s => MapPermissionToDto(s.Permission)).ToArray()
+            };
+        }
     }
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
@@ -81,5 +105,23 @@ namespace Users.Queries
         public string Name { get; set; }
 
         public string Description { get; set; }
+    }
+
+    public class RoleDto
+    {
+        public long Id { get; set; }
+
+        public string Name { get; set; }
+
+        public PermissionDto[] Permissions { get; set; }
+
+        public bool IsGlobal { get; set; }
+    }
+
+    public class RolesViewModel
+    {
+        public RoleDto[] Roles { get; set; }
+
+        public PermissionDto[] AllPermissions { get; set; }
     }
 }

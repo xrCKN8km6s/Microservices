@@ -33,7 +33,7 @@ namespace BFF
                 return;
             }
 
-            var profile = await _usersClient.GetUserAsync(subClaim.Value);
+            var profile = await _usersClient.Users_GetUserAsync(subClaim.Value);
 
             var claims = new List<Claim> { new Claim("UserId", profile.Id.ToString()) };
 
