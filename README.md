@@ -1,3 +1,9 @@
+# Prerequisites
+* Docker
+* NET Core 2.2 SDK
+* Node
+* Angular `npm install -g @angular/cli`
+
 # Microservices information:
 Microservice | Url | Swagger
 --- | --- | ---
@@ -13,12 +19,6 @@ Username | Password | Comment
 alice | alice | global role
 bob | bob | 
 
-# Prerequisites
-* Docker
-* NET Core 2.2 SDK
-* Node
-* Angular `npm install -g @angular/cli`
-
 # Startup
 * Open Solution directory
 * Run:
@@ -26,7 +26,11 @@ bob | bob |
   * `dotnet ef database update --project IntegrationEventLog/IntegrationEventLog.csproj --startup-project Orders/Orders/Orders.csproj --context IntegrationEventLogContext`
   * `dotnet ef database update --project Orders/Orders.Infrastructure/Orders.Infrastructure.csproj --startup-project Orders/Orders/Orders.csproj --context OrdersContext`
   * `dotnet ef database update --project Users/Users/Users.csproj`
-* Open solution and set multiple startup projects to: BFF, Identity, Orders, Users
+* Open solution and set multiple startup projects to:
+  * BFF
+  * Identity
+  * Orders
+  * Users
 * Press Start
 * Go to `/Web` and run `ng serve --open`
 * Navigate to web url
