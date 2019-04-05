@@ -1,0 +1,42 @@
+<table mat-table [dataSource]="roles">
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+    <mat-cell *matCellDef="let role"> {{role.name}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="isGlobal">
+    <mat-header-cell *matHeaderCellDef> Global </mat-header-cell>
+    <mat-cell *matCellDef="let order">
+
+      <mat-checkbox class="checkbox-margin" [(ngModel)]="order.isGlobal" disabled>
+      </mat-checkbox>
+
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+</table>
