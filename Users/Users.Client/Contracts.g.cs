@@ -33,6 +33,13 @@ namespace Users.Client.Contracts
         System.Threading.Tasks.Task Roles_CreateRoleAsync(CreateRoleDto role, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task Roles_UpdateRoleAsync(RoleDto role);
+    
+        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task Roles_UpdateRoleAsync(RoleDto role, System.Threading.CancellationToken cancellationToken);
+    
+        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RoleDto> Roles_GetRoleByIdAsync(long id);
     
         /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
@@ -79,7 +86,7 @@ namespace Users.Client.Contracts
         public string Name { get; set; }
     
         [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.IEnumerable<PermissionDto> Permissions { get; set; }
+        public System.Collections.Generic.IEnumerable<long> Permissions { get; set; }
     
         [Newtonsoft.Json.JsonProperty("isGlobal", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool IsGlobal { get; set; }

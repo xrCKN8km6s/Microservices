@@ -29,6 +29,12 @@ namespace Common
             return GetAll().Single(f => f.Id == id);
         }
 
+        public static bool TryParse(long id, out Permission permission)
+        {
+            permission = GetAll().FirstOrDefault(f => f.Id == id);
+            return permission != null;
+        }
+
         public static IReadOnlyCollection<Permission> GetAll()
         {
             var fields = typeof(Permission).GetFields(BindingFlags.DeclaredOnly | BindingFlags.Static |

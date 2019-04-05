@@ -89,6 +89,45 @@ namespace Users.Controllers
             return NoContent();
         }
 
+        [HttpPut]
+        [SwaggerResponse(typeof(void))]
+        public async Task<ActionResult> UpdateRole([FromBody] RoleDto role)
+        {
+            var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == role.Id);
+            if (dbRole == null)
+            {
+                return NotFound();
+            }
+
+            if (role.IsGlobal && role.Permissions.Length > 0)
+            {
+                return BadRequest("Global role can't have permissions");
+            }
+
+            dbRole.Name = role.Name;
+
+            if (!dbRole.IsGlobal && role.IsGlobal)
+            {
+                dbRole.PermissionRoles.Clear();
+            }
+
+            dbRole.IsGlobal = role.IsGlobal;
+
+            var permissions = role.Permissions
+                .Select(s => Permission.TryParse(s, out var permission) ? permission : null)
+                .Where(w => w != null);
+
+            dbRole.PermissionRoles.Clear();
+            dbRole.PermissionRoles.AddRange(permissions.Select(p => new PermissionRole
+            {
+                Permission = p
+            }));
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private static Role MapCreateDtoToRole(CreateRoleDto dto)
         {
             return new Role
@@ -114,7 +153,7 @@ namespace Users.Controllers
 
             if (role.PermissionRoles.Count > 0)
             {
-                dto.Permissions = role.PermissionRoles.Select(s => MapPermissionToDto(s.Permission)).ToArray();
+                dto.Permissions = role.PermissionRoles.Select(s => s.Permission.Id).ToArray();
             }
 
             return dto;

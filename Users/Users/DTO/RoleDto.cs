@@ -4,7 +4,7 @@
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public PermissionDto[] Permissions { get; set; }
+        public long[] Permissions { get; set; }
         public bool IsGlobal { get; set; }
     }
 

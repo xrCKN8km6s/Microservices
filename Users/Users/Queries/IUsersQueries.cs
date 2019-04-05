@@ -81,7 +81,7 @@ namespace Users.Queries
                 Id = role.Id,
                 Name = role.Name,
                 IsGlobal = role.IsGlobal,
-                Permissions = role.PermissionRoles.Select(s => MapPermissionToDto(s.Permission)).ToArray()
+                Permissions = role.PermissionRoles.Select(s => s.Permission.Id).ToArray()
             };
         }
     }
