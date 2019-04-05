@@ -21,15 +21,12 @@ bob | bob |
 
 # Startup
 * Open Solution directory
-* Run `docker-compose up -d`
-* Run `dotnet ef database update --project IntegrationEventLog/IntegrationEventLog.csproj --startup-project Orders/Orders/Orders.csproj --context IntegrationEventLogContext`
-* Run `dotnet ef database update --project Orders/Orders.Infrastructure/Orders.Infrastructure.csproj --startup-project Orders/Orders/Orders.csproj --context OrdersContext`
-* Run `dotnet ef database update --project Users/Users/Users.csproj`
-* Open solution and set multiple startup projects to:
-  * BFF
-  * Identity
-  * Orders
-  * Users
+* Run:
+  * `docker-compose up -d`
+  * `dotnet ef database update --project IntegrationEventLog/IntegrationEventLog.csproj --startup-project Orders/Orders/Orders.csproj --context IntegrationEventLogContext`
+  * `dotnet ef database update --project Orders/Orders.Infrastructure/Orders.Infrastructure.csproj --startup-project Orders/Orders/Orders.csproj --context OrdersContext`
+  * `dotnet ef database update --project Users/Users/Users.csproj`
+* Open solution and set multiple startup projects to: BFF, Identity, Orders, Users
 * Press Start
 * Go to `/Web` and run `ng serve --open`
 * Navigate to web url
