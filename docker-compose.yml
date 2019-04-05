@@ -28,7 +28,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   pgAdmin:
-    image: dpage/pgadmin4:4.3
+    image: dpage/pgadmin4:4.4
     container_name: pgAdmin
     environment:
       PGADMIN_LISTEN_PORT: 15432

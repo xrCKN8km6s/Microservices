@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
+using Common.ExceptionHandling;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.SwaggerGeneration.Processors.Security;
@@ -128,7 +133,50 @@ namespace BFF
             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
                 builder => { builder.UseMiddleware<UserProfileMiddleware>(); });
 
+            //TODO: refactor
+            app.UseExceptionHandler(options =>
+            {
+                options.Run(async context =>
+                {
+                    var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    var exception = errorFeature.Error;
+
+                    var error = new ErrorDetails
+                    {
+                        TraceId = context.TraceIdentifier,
+                        Exception = exception
+                    };
+
+                    switch (exception)
+                    {
+                        case ClientResponseException clientException:
+                            context.Response.StatusCode = clientException.StatusCode;
+                            break;
+                        default:
+                            context.Response.StatusCode = 500;
+                            error.Message = exception.Message;
+                            break;
+
+                    }
+
+                    context.Response.ContentType = "application/problem+json";
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(error, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        
+                    }));
+                });
+            });
+
             app.UseMvc();
         }
+    }
+
+    public class ErrorDetails
+    {
+        public string TraceId { get; set; }
+        public string Message { get; set; }
+        public Exception Exception { get; set; }
     }
 }

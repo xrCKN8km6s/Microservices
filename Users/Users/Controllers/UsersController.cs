@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Users.DTO;
 using Users.Queries;
 
 namespace Users.Controllers

@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.EntityFrameworkCore;
+using Users.DTO;
 using Users.Infrastructure;
 
 namespace Users.Queries
 {
+    //TODO: remove mappings, convert to repository
     public interface IUsersQueries
     {
         Task<UserProfileDto> GetUserProfileAsync(string sub);
@@ -83,45 +84,5 @@ namespace Users.Queries
                 Permissions = role.PermissionRoles.Select(s => MapPermissionToDto(s.Permission)).ToArray()
             };
         }
-    }
-
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-    public class UserProfileDto
-    {
-        public long Id { get; set; }
-
-        public string Sub { get; set; }
-
-        public bool HasGlobalRole { get; set; }
-
-        public PermissionDto[] Permissions { get; set; }
-    }
-
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-    public class PermissionDto
-    {
-        public long Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-    }
-
-    public class RoleDto
-    {
-        public long Id { get; set; }
-
-        public string Name { get; set; }
-
-        public PermissionDto[] Permissions { get; set; }
-
-        public bool IsGlobal { get; set; }
-    }
-
-    public class RolesViewModel
-    {
-        public RoleDto[] Roles { get; set; }
-
-        public PermissionDto[] AllPermissions { get; set; }
     }
 }

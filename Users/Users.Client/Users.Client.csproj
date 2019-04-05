@@ -6,10 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="NSwag.MSBuild" Version="12.0.20">
+    <PackageReference Include="NSwag.MSBuild" Version="12.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common.ExceptionHandling\Common.ExceptionHandling.csproj" />
   </ItemGroup>
 
   <Target Name="NSwag" AfterTargets="Build">

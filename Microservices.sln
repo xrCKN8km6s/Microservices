@@ -38,9 +38,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Auth\Identity\I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.Client", "Users\Users.Client\Users.Client.csproj", "{8B4337C4-A7A5-4F46-B4F4-AF68085659C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders.Client", "Orders\Orders.Client\Orders.Client.csproj", "{79C52F5F-A36A-47CF-BE17-6C0C556B2CF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orders.Client", "Orders\Orders.Client\Orders.Client.csproj", "{79C52F5F-A36A-47CF-BE17-6C0C556B2CF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BFF", "BFF\BFF.csproj", "{323A30B2-B762-4BAA-A25E-31A7C2E826B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BFF", "BFF\BFF.csproj", "{323A30B2-B762-4BAA-A25E-31A7C2E826B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.ExceptionHandling", "Common.ExceptionHandling\Common.ExceptionHandling.csproj", "{68FE2BE9-4111-4670-9E55-059E4E086DDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -196,6 +198,18 @@ Global
 		{323A30B2-B762-4BAA-A25E-31A7C2E826B0}.Release|x64.Build.0 = Release|Any CPU
 		{323A30B2-B762-4BAA-A25E-31A7C2E826B0}.Release|x86.ActiveCfg = Release|Any CPU
 		{323A30B2-B762-4BAA-A25E-31A7C2E826B0}.Release|x86.Build.0 = Release|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Debug|x64.Build.0 = Debug|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Debug|x86.Build.0 = Debug|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Release|x64.ActiveCfg = Release|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Release|x64.Build.0 = Release|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Release|x86.ActiveCfg = Release|Any CPU
+		{68FE2BE9-4111-4670-9E55-059E4E086DDC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
