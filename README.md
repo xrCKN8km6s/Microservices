@@ -1,12 +1,11 @@
-Learning repository based on https://github.com/dotnet-architecture/eShopOnContainers
-
+# Microservices information:
 Microservice | Url | Swagger
 --- | --- | ---
 Identity | http://localhost:3000 | NA
+Web | http://localhost:4200 | NA
 BFF | http://localhost:5000 | http://localhost:5000/swagger
 Users | http://localhost:5100 | http://localhost:5100/swagger
 Orders | http://localhost:5200 | http://localhost:5200/swagger
-Web | http://localhost:4200 | NA
 
 # Test users:
 Username | Password | Comment
@@ -15,6 +14,7 @@ alice | alice | global role
 bob | bob | 
 
 # Prerequisites
+* Docker
 * NET Core 2.2 SDK
 * Node
 * Angular `npm install -g @angular/cli`
@@ -31,6 +31,3 @@ bob | bob |
 * Go to `/Web` and run `ng serve --open`
 * Navigate to web url
 * Login using username/password provided above
-
-
-**TODO: Improve DEV setup process**
