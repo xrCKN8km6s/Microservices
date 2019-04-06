@@ -39,14 +39,15 @@ namespace Identity
             builder.AddInMemoryApiResources(Config.GetApis());
             builder.AddInMemoryClients(Config.GetClients());
 
-            if (Environment.IsDevelopment())
-            {
+            //NOTE: There won't be Prod so this is fine
+            //if (Environment.IsDevelopment())
+            //{
                 builder.AddDeveloperSigningCredential();
-            }
-            else
-            {
-                throw new Exception("need to configure key material");
-            }
+            //}
+            //else
+            //{
+            //    throw new Exception("need to configure key material");
+            //}
 
             services.AddAuthentication();
         }

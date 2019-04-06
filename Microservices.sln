@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auth", "Auth", "{EA2097BC-1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{6E744D14-8F3C-4806-BEB5-39134DABB8DD}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
@@ -42,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orders.Client", "Orders\Ord
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BFF", "BFF\BFF.csproj", "{323A30B2-B762-4BAA-A25E-31A7C2E826B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.ExceptionHandling", "Common.ExceptionHandling\Common.ExceptionHandling.csproj", "{68FE2BE9-4111-4670-9E55-059E4E086DDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.ExceptionHandling", "Common.ExceptionHandling\Common.ExceptionHandling.csproj", "{68FE2BE9-4111-4670-9E55-059E4E086DDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
