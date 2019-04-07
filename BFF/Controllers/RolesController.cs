@@ -16,25 +16,18 @@ namespace BFF.Controllers
             _client = client;
         }
 
-        [HttpGet("viewmodel")]
-        public async Task<ActionResult<RolesViewModel>> Get()
+        [HttpPost]
+        public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
         {
-            var res = await _client.Roles_GetRolesViewModelAsync(HttpContext.RequestAborted);
-            return Ok(res);
+            await _client.Roles_CreateRoleAsync(role, HttpContext.RequestAborted);
+            return NoContent();
         }
 
-        [HttpGet("")]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
         {
-            var res = await _client.Roles_GetRolesAsync(HttpContext.RequestAborted);
-            return Ok(res);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RoleDto>> GetRoleById(long id)
-        {
-            var res = await _client.Roles_GetRoleByIdAsync(id, HttpContext.RequestAborted);
-            return Ok(res);
+            await _client.Roles_UpdateRoleAsync(id, role);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -44,11 +37,25 @@ namespace BFF.Controllers
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateRole([FromBody] CreateRoleDto role)
+        [HttpGet("")]
+        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
-            await _client.Roles_CreateRoleAsync(role, HttpContext.RequestAborted);
-            return NoContent();
+            var res = await _client.Roles_GetRolesAsync(HttpContext.RequestAborted);
+            return Ok(res);
+        }
+
+        [HttpGet("viewmodel")]
+        public async Task<ActionResult<RolesViewModel>> GetRolesViewModel()
+        {
+            var res = await _client.Roles_GetRolesViewModelAsync(HttpContext.RequestAborted);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RoleDto>> GetRoleById(long id)
+        {
+            var res = await _client.Roles_GetRoleByIdAsync(id, HttpContext.RequestAborted);
+            return Ok(res);
         }
     }
 }

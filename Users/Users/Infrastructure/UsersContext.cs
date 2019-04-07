@@ -96,16 +96,4 @@ namespace Users.Infrastructure
             builder.HasQueryFilter(role => role.IsActive);
         }
     }
-
-    internal class MicroserviceContextDesignFactory : IDesignTimeDbContextFactory<UsersContext>
-    {
-        public UsersContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder =
-                new DbContextOptionsBuilder<UsersContext>().UseNpgsql(
-                    "Host=localhost;Database=Users;Username=db_user;Password=db_pass");
-
-            return new UsersContext(optionsBuilder.Options);
-        }
-    }
 }

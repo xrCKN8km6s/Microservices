@@ -81,7 +81,7 @@ namespace Users.Controllers
 
         [HttpPost]
         [SwaggerResponse(typeof(void))]
-        public async Task<ActionResult> CreateRole([FromBody] CreateRoleDto role)
+        public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
         {
             var newRole = MapCreateDtoToRole(role);
             _context.Roles.Add(newRole);
@@ -89,11 +89,11 @@ namespace Users.Controllers
             return NoContent();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [SwaggerResponse(typeof(void))]
-        public async Task<ActionResult> UpdateRole([FromBody] RoleDto role)
+        public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
         {
-            var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == role.Id);
+            var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (dbRole == null)
             {
                 return NotFound();
@@ -104,31 +104,37 @@ namespace Users.Controllers
                 return BadRequest("Global role can't have permissions");
             }
 
-            dbRole.Name = role.Name;
+            dbRole.IsGlobal = role.IsGlobal;
+
+            if (!string.IsNullOrWhiteSpace(role.Name))
+            {
+                dbRole.Name = role.Name;
+            }
 
             if (!dbRole.IsGlobal && role.IsGlobal)
             {
                 dbRole.PermissionRoles.Clear();
             }
 
-            dbRole.IsGlobal = role.IsGlobal;
+            var dbPermissions = dbRole.PermissionRoles.Select(s => s.Permission).ToArray();
 
             var permissions = role.Permissions
                 .Select(s => Permission.TryParse(s, out var permission) ? permission : null)
-                .Where(w => w != null);
+                .Where(w => w != null)
+                .ToArray();
 
-            dbRole.PermissionRoles.Clear();
-            dbRole.PermissionRoles.AddRange(permissions.Select(p => new PermissionRole
-            {
-                Permission = p
-            }));
+            var permissionsToAdd = permissions.Except(dbPermissions);
+            var permissionsToRemove = dbPermissions.Except(permissions);
+
+            dbRole.PermissionRoles.AddRange(permissionsToAdd.Select(p => new PermissionRole {Permission = p}));
+            dbRole.PermissionRoles.RemoveAll(pr => permissionsToRemove.Contains(pr.Permission));
 
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private static Role MapCreateDtoToRole(CreateRoleDto dto)
+        private static Role MapCreateDtoToRole(CreateEditRoleDto dto)
         {
             return new Role
             {

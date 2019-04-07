@@ -1,0 +1,13 @@
+.mat-dialog-content > * {
+  width: 100%
+}
+
+/*https://github.com/angular/material2/issues/4609*/
+.fix-action-row {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.spacer {
+  flex-grow: 1;
+}

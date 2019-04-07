@@ -15,6 +15,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { AppComponent } from './app.component';
 
@@ -34,6 +37,7 @@ import { ContentTypeInterceptor } from './auth/content-type.interceptor';
 import { AdminComponent } from './admin/admin.component';
 import { RolesComponent } from './admin/roles/roles.component';
 import { RolesService } from './admin/roles/roles.service';
+import { EditRoleDialogComponent } from './admin/roles/edit-role-dialog/edit-role-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +48,8 @@ import { RolesService } from './admin/roles/roles.service';
     UnauthorizedComponent,
     LandingComponent,
     AdminComponent,
-    RolesComponent
+    RolesComponent,
+    EditRoleDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +80,13 @@ import { RolesService } from './admin/roles/roles.service';
     MatSnackBarModule,
     MatTabsModule,
     MatListModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
+  entryComponents: [
+    EditRoleDialogComponent
   ],
   providers: [
     OrdersService,

@@ -8,7 +8,7 @@
         public bool IsGlobal { get; set; }
     }
 
-    public class CreateRoleDto
+    public class CreateEditRoleDto
     {
         public string Name { get; set; }
         public long[] Permissions { get; set; }

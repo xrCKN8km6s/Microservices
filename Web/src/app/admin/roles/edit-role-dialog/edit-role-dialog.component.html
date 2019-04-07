@@ -1,0 +1,27 @@
+<div class="fix-action-row">
+  <h1 mat-dialog-title>Edit role</h1>
+
+  <div mat-dialog-content *ngIf="!!role" class="spacer">
+    <mat-form-field>
+      <input matInput placeholder="Role name" [(ngModel)]="role.name" required>
+    </mat-form-field>
+
+    <!-- <mat-form-field> -->
+    <mat-checkbox [(ngModel)]="role.isGlobal">Global role</mat-checkbox>
+    <!-- </mat-form-field> -->
+
+    <mat-selection-list [(ngModel)]="role.permissions" *ngIf="!role.isGlobal">
+      <h3 mat-subheader>Permissions:</h3>
+      <mat-list-option *ngFor="let permission of data.allPermissions" [value]="permission.id">
+        {{permission.description}}
+      </mat-list-option>
+    </mat-selection-list>
+
+  </div>
+
+  <div mat-dialog-actions align="end" >
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button mat-button (click)="onSaveClick()">Save</button>
+  </div>
+
+</div>

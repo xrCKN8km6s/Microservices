@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { RolesService } from './roles.service';
-import { Role } from './role.type';
+import { RolesService, RoleDto, PermissionDto } from './roles.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditRoleDialogComponent, EditRoleDialogData } from './edit-role-dialog/edit-role-dialog.component';
 
 @Component({
   selector: 'app-roles',
@@ -10,13 +11,34 @@ import { Role } from './role.type';
 export class RolesComponent implements OnInit {
 
   public displayedColumns: string[] = ['name', 'isGlobal', 'actions'];
-  public roles: Role[];
+  public roles: RoleDto[];
+  private allPermissions: PermissionDto[];
 
-  constructor(private svc: RolesService) { }
+  constructor(private svc: RolesService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.svc.getRoles().subscribe(roles => {
-      this.roles = roles;
+    this.loadRoles();
+  }
+
+  public onEdit(role: RoleDto): void {
+    const dialogRef = this.dialog.open(EditRoleDialogComponent, {
+      autoFocus: false,
+      width: '400px',
+      height: '600px',
+      data: new EditRoleDialogData(role.id, this.allPermissions)
+    });
+
+    dialogRef.afterClosed().subscribe(_ => this.loadRoles());
+  }
+
+  public onDelete(role: RoleDto): void {
+
+  }
+
+  private loadRoles(): void {
+    this.svc.getRolesViewModel().subscribe(vm => {
+      this.roles = vm.roles;
+      this.allPermissions = vm.allPermissions;
     });
   }
 }

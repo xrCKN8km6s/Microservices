@@ -45,10 +45,6 @@ namespace Users
                     options.ApiName = "users";
                     options.ApiSecret = "users.secret";
                     options.RequireHttpsMetadata = false; //dev
-
-
-                    options.EnableCaching = true;
-                    options.CacheDuration = TimeSpan.FromSeconds(20);
                 });
 
             services.AddScoped<IUsersQueries, UsersQueries>();
@@ -107,8 +103,6 @@ namespace Users
             });
 
             app.UseMvc();
-
-
         }
     }
 }
