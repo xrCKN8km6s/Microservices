@@ -1,15 +1,19 @@
-﻿namespace Common.ExceptionHandling
+﻿using System;
+using System.Collections.Generic;
+
+namespace Common.ExceptionHandling
 {
-    public class ClientResponseException : System.Exception
+    public class ClientResponseException : Exception
     {
-        public int StatusCode { get; private set; }
+        public int StatusCode { get; }
 
-        public string Response { get; private set; }
+        public string Response { get; }
 
-        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
+        public Dictionary<string, IEnumerable<string>> Headers { get; }
 
-        public ClientResponseException(string message, int statusCode, string response, System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
-            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + response.Substring(0, response.Length >= 512 ? 512 : response.Length), innerException)
+        public ClientResponseException(string message, int statusCode, string response,
+            Dictionary<string, IEnumerable<string>> headers, Exception innerException)
+            : base(message, innerException)
         {
             StatusCode = statusCode;
             Response = response;
@@ -19,17 +23,6 @@
         public override string ToString()
         {
             return $"HTTP Response: \n\n{Response}\n\n{base.ToString()}";
-        }
-    }
-
-    public class ClientResponseException<TResult> : ClientResponseException
-    {
-        public TResult Result { get; private set; }
-
-        public ClientResponseException(string message, int statusCode, string response, System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
-            : base(message, statusCode, response, headers, innerException)
-        {
-            Result = result;
         }
     }
 }

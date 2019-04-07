@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
-using Common.ExceptionHandling;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.SwaggerGeneration.Processors.Security;
@@ -38,10 +34,11 @@ namespace BFF
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(options =>
-            {
-                var policy = ScopePolicy.Create("bff");
-                options.Filters.Add(new AuthorizeFilter(policy));
-            })
+                {
+                    var policy = ScopePolicy.Create("bff");
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddCors();
@@ -58,7 +55,8 @@ namespace BFF
 
             services.AddHttpContextAccessor();
 
-            services.AddHttpClient<ITokenAccessor, TokenAccessor>(c => c.BaseAddress = new Uri("http://localhost:3000/connect/token"));
+            services.AddHttpClient<ITokenAccessor, TokenAccessor>(c =>
+                c.BaseAddress = new Uri("http://localhost:3000/connect/token"));
 
             services.AddClient<IUsersClient, UsersClient>("http://localhost:5100", new ClientConfiguration
             {
@@ -108,10 +106,7 @@ namespace BFF
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseCors(builder => builder
                 .WithOrigins(Configuration.GetValue<string>("WebUrl"))
@@ -133,50 +128,7 @@ namespace BFF
             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
                 builder => { builder.UseMiddleware<UserProfileMiddleware>(); });
 
-            //TODO: refactor
-            app.UseExceptionHandler(options =>
-            {
-                options.Run(async context =>
-                {
-                    var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
-                    var exception = errorFeature.Error;
-
-                    var error = new ErrorDetails
-                    {
-                        TraceId = context.TraceIdentifier,
-                        Exception = exception
-                    };
-
-                    switch (exception)
-                    {
-                        case ClientResponseException clientException:
-                            context.Response.StatusCode = clientException.StatusCode;
-                            break;
-                        default:
-                            context.Response.StatusCode = 500;
-                            error.Message = exception.Message;
-                            break;
-
-                    }
-
-                    context.Response.ContentType = "application/problem+json";
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(error, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                        
-                    }));
-                });
-            });
-
             app.UseMvc();
         }
-    }
-
-    public class ErrorDetails
-    {
-        public string TraceId { get; set; }
-        public string Message { get; set; }
-        public Exception Exception { get; set; }
     }
 }
