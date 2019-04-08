@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -34,8 +33,6 @@ namespace Users
                 var policy = ScopePolicy.Create("users");
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddCors();
 
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
@@ -85,11 +82,6 @@ namespace Users
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseCors(builder => builder
-                .WithOrigins(Configuration.GetValue<string>("WebUrl"))
-                .AllowAnyMethod()
-                .AllowAnyHeader());
 
             app.UseAuthentication();
 

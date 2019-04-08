@@ -35,10 +35,9 @@ export class RolesService {
 }
 
 export class CreateEditRoleDto {
-  constructor(
-    public name: string,
-    public isGlobal: boolean,
-    public permissions: number[]) { }
+    public name: string;
+    public isGlobal: boolean;
+    public permissions: number[];
 }
 
 export class RoleDto {

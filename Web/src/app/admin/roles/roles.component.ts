@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RolesService, RoleDto, PermissionDto } from './roles.service';
 import { MatDialog } from '@angular/material/dialog';
-import { EditRoleDialogComponent, EditRoleDialogData } from './edit-role-dialog/edit-role-dialog.component';
+import { EditRoleDialogComponent, EditRoleDialogData, DialogMode } from './edit-role-dialog/edit-role-dialog.component';
 
 @Component({
   selector: 'app-roles',
@@ -21,18 +21,26 @@ export class RolesComponent implements OnInit {
   }
 
   public onEdit(role: RoleDto): void {
-    const dialogRef = this.dialog.open(EditRoleDialogComponent, {
-      autoFocus: false,
-      width: '400px',
-      height: '600px',
-      data: new EditRoleDialogData(role.id, this.allPermissions)
-    });
+    this.openDialog(DialogMode.Edit, this.allPermissions, role.id);
+  }
 
-    dialogRef.afterClosed().subscribe(_ => this.loadRoles());
+  public onCreate(): void {
+    this.openDialog(DialogMode.Create, this.allPermissions);
   }
 
   public onDelete(role: RoleDto): void {
 
+  }
+
+  private openDialog(mode: DialogMode, allPermissions: PermissionDto[], roleId: number = null): void {
+    const dialogRef = this.dialog.open(EditRoleDialogComponent, {
+      autoFocus: false,
+      width: '400px',
+      height: '600px',
+      data: new EditRoleDialogData(mode, allPermissions, roleId)
+    });
+
+    dialogRef.afterClosed().subscribe(_ => this.loadRoles());
   }
 
   private loadRoles(): void {

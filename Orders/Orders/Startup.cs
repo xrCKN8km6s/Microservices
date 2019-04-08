@@ -104,8 +104,6 @@ namespace Orders
 
             services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
 
-            services.AddCors();
-
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -148,12 +146,6 @@ namespace Orders
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseCors(builder => builder
-                .WithOrigins(_config.GetValue<string>("WebUrl"))
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-            );
 
             app.UseAuthentication();
 
