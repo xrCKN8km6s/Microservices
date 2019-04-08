@@ -30,10 +30,10 @@ export class EditRoleDialogComponent implements OnInit {
     }
   }
 
-  public onSaveClick(): void {
+  public onSave(): void {
 
     if (this.role.isGlobal) {
-      this.role.permissions.length = 0;
+      this.role.permissions = [];
     }
 
     let action: Observable<void>;
@@ -49,7 +49,7 @@ export class EditRoleDialogComponent implements OnInit {
     });
   }
 
-  public onCancelClick(): void {
+  public onCancel(): void {
     this.dialogRef.close();
   }
 }

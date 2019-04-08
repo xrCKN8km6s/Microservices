@@ -38,6 +38,7 @@ import { AdminComponent } from './admin/admin.component';
 import { RolesComponent } from './admin/roles/roles.component';
 import { RolesService } from './admin/roles/roles.service';
 import { EditRoleDialogComponent } from './admin/roles/edit-role-dialog/edit-role-dialog.component';
+import { ConfirmDeleteDialogComponent } from './admin/roles/confirm-delete-dialog/confirm-delete-dialog.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { EditRoleDialogComponent } from './admin/roles/edit-role-dialog/edit-rol
     LandingComponent,
     AdminComponent,
     RolesComponent,
-    EditRoleDialogComponent
+    EditRoleDialogComponent,
+    ConfirmDeleteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -86,7 +88,8 @@ import { EditRoleDialogComponent } from './admin/roles/edit-role-dialog/edit-rol
     MatInputModule
   ],
   entryComponents: [
-    EditRoleDialogComponent
+    EditRoleDialogComponent,
+    ConfirmDeleteDialogComponent
   ],
   providers: [
     OrdersService,

@@ -1,0 +1,13 @@
+<div class="fix-action-row">
+  <h1 mat-dialog-title>Confirm delete</h1>
+
+  <div mat-dialog-content class="spacer">
+    <p class="mat-body">{{content}}</p>
+  </div>
+
+  <div mat-dialog-actions align="end" >
+    <button mat-raised-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">Confirm</button>
+  </div>
+
+</div>

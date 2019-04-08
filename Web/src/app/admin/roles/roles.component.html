@@ -8,12 +8,12 @@
   <table mat-table [dataSource]="roles">
 
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-      <mat-cell *matCellDef="let role"> {{role.name}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+      <mat-cell *matCellDef="let role">{{role.name}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="isGlobal">
-      <mat-header-cell *matHeaderCellDef> Global </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef>Global</mat-header-cell>
       <mat-cell *matCellDef="let role">
 
         <mat-checkbox class="checkbox-margin" [(ngModel)]="role.isGlobal" disabled>
