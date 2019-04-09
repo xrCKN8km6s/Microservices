@@ -42,7 +42,7 @@ namespace Users.Controllers
         [HttpGet("")]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
-            var roles = await _context.Roles.ToArrayAsync();
+            var roles = await _context.Roles.AsNoTracking().ToArrayAsync();
             var dto = roles.Select(MapRoleToDto);
 
             return Ok(dto);
@@ -51,7 +51,7 @@ namespace Users.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<RoleDto>> GetRoleById(long id)
         {
-            var role = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
+            var role = await _context.Roles.AsNoTracking().Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (role == null)
             {
                 return NotFound();
@@ -146,7 +146,7 @@ namespace Users.Controllers
             };
         }
 
-        private static RoleDto MapRoleToDto(Role role)
+        public static RoleDto MapRoleToDto(Role role)
         {
             var dto = new RoleDto
             {

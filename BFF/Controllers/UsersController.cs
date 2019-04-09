@@ -22,5 +22,18 @@ namespace BFF.Controllers
             var sub = User.FindFirst(JwtClaimTypes.Subject).Value;
             return await _client.Users_GetUserAsync(sub, HttpContext.RequestAborted);
         }
+
+        [HttpGet("viewmodel")]
+        public async Task<ActionResult<UsersViewModel>> GetViewModel()
+        {
+            return await _client.Users_GetViewModelAsync(HttpContext.RequestAborted);
+        }
+
+        [HttpPut("{id}/roles")]
+        public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody] UpdateUserRolesDto roles)
+        {
+            await _client.Users_UpdateUserRolesAsync(id, roles, HttpContext.RequestAborted);
+            return NoContent();
+        }
     }
 }

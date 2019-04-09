@@ -60,6 +60,20 @@ namespace Users.Client.Contracts
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task<UserProfileDto> Users_GetUserAsync(string sub, System.Threading.CancellationToken cancellationToken);
     
+        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UsersViewModel> Users_GetViewModelAsync();
+    
+        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task<UsersViewModel> Users_GetViewModelAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task Users_UpdateUserRolesAsync(long id, UpdateUserRolesDto roles);
+    
+        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task Users_UpdateUserRolesAsync(long id, UpdateUserRolesDto roles, System.Threading.CancellationToken cancellationToken);
+    
     }
     
     
@@ -138,6 +152,42 @@ namespace Users.Client.Contracts
     
         [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.IEnumerable<PermissionDto> Permissions { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.28.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class UsersViewModel 
+    {
+        [Newtonsoft.Json.JsonProperty("users", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IEnumerable<UserDto> Users { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("roles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IEnumerable<RoleDto> Roles { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.28.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class UserDto 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("roles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IEnumerable<long> Roles { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.28.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class UpdateUserRolesDto 
+    {
+        [Newtonsoft.Json.JsonProperty("roles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IEnumerable<long> Roles { get; set; }
     
     
     }

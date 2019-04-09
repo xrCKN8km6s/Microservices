@@ -60,7 +60,9 @@ namespace Users.Queries
                     ? Permission.GetAll().Select(MapPermissionToDto).ToArray()
                     : user.UserRoles.Select(s => s.Role)
                         .SelectMany(s => s.PermissionRoles)
-                        .Select(s => MapPermissionToDto(s.Permission)).ToArray()
+                        .Select(s => MapPermissionToDto(s.Permission))
+                        .Distinct()
+                        .ToArray()
             };
         }
 
