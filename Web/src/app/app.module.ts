@@ -39,6 +39,9 @@ import { RolesComponent } from './admin/roles/roles.component';
 import { RolesService } from './admin/roles/roles.service';
 import { EditRoleDialogComponent } from './admin/roles/edit-role-dialog/edit-role-dialog.component';
 import { ConfirmDeleteDialogComponent } from './admin/roles/confirm-delete-dialog/confirm-delete-dialog.component';
+import { EditUserRoleDialogComponent } from './admin/user-roles/edit-user-role-dialog/edit-user-role-dialog.component';
+import { UserRolesService } from './admin/user-roles/user-roles.service';
+import { UserRolesComponent } from './admin/user-roles/user-roles.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,9 @@ import { ConfirmDeleteDialogComponent } from './admin/roles/confirm-delete-dialo
     LandingComponent,
     AdminComponent,
     RolesComponent,
+    UserRolesComponent,
     EditRoleDialogComponent,
+    EditUserRoleDialogComponent,
     ConfirmDeleteDialogComponent
   ],
   imports: [
@@ -89,11 +94,13 @@ import { ConfirmDeleteDialogComponent } from './admin/roles/confirm-delete-dialo
   ],
   entryComponents: [
     EditRoleDialogComponent,
+    EditUserRoleDialogComponent,
     ConfirmDeleteDialogComponent
   ],
   providers: [
     OrdersService,
     RolesService,
+    UserRolesService,
     AuthGuard,
     OrdersGuard,
     { provide: HTTP_INTERCEPTORS, useClass: ContentTypeInterceptor, multi: true },

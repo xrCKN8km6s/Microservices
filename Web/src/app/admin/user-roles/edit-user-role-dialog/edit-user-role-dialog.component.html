@@ -1,0 +1,21 @@
+<div class="fix-action-row">
+  <h1 mat-dialog-title>Edit user roles</h1>
+
+  <div mat-dialog-content class="spacer">
+    <p class="mat-body">{{user.name}}</p>
+
+    <mat-selection-list [(ngModel)]="user.roles">
+      <h3 mat-subheader>Roles:</h3>
+      <mat-list-option *ngFor="let role of roles" [value]="role.id">
+        {{role.name}}
+      </mat-list-option>
+    </mat-selection-list>
+
+  </div>
+
+  <div mat-dialog-actions align="end" >
+    <button mat-raised-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+  </div>
+
+</div>

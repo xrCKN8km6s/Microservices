@@ -15,7 +15,9 @@
       <mat-icon class="tab-icon">person</mat-icon>
       Users
     </ng-template>
-    Users here
+    <ng-template matTabContent>
+      <app-user-roles></app-user-roles>
+    </ng-template>
   </mat-tab>
 
 </mat-tab-group>

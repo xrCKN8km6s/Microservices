@@ -1,0 +1,32 @@
+<div class="user-roles-container">
+
+  <table mat-table [dataSource]="users">
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>User Name</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let user">
+
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="onEdit(user)">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+        </mat-menu>
+
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </table>
+
+</div>

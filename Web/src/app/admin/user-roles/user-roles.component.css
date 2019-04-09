@@ -1,0 +1,15 @@
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  justify-content: end;
+}
+
+.checkbox-margin {
+  margin: 0 10px;
+}
+
+.user-roles-container {
+  margin-top: 10px;
+}
