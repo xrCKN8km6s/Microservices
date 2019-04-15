@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   rabbit:
-    image: rabbitmq:3.7-management
+    image: rabbitmq:management
     container_name: rabbit-main
     hostname: rabbitmq-main
     environment:
@@ -16,7 +16,7 @@ services:
       - rabbit-mnesia:/var/lib/rabbitmq/mnesia/rabbit@rabbitmq-main
 
   postgreSql:
-    image: postgres:11.2
+    image: postgres:latest
     container_name: postgres
     hostname: postgres
     environment:
@@ -28,7 +28,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   pgAdmin:
-    image: dpage/pgadmin4:4.4
+    image: dpage/pgadmin4:latest
     container_name: pgAdmin
     environment:
       PGADMIN_LISTEN_PORT: 15432
@@ -57,3 +57,4 @@ volumes:
   rabbit-mnesia:
   postgres-data:
   pgAdmin-data:
+  
