@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Client.Contracts;
 
-namespace BFF.Controllers
+namespace BFF.Controllers.Orders
 {
     [Route("api/[controller]")]
     [ApiController]

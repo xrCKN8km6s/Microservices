@@ -3,7 +3,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Users.Client.Contracts;
 
-namespace BFF.Controllers
+namespace BFF.Controllers.Users
 {
     [Route("api/[controller]")]
     [ApiController]

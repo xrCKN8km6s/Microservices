@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NSwag.Annotations;
@@ -49,15 +50,17 @@ namespace Users.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult<RoleDto>> GetRoleById(long id)
         {
             var role = await _context.Roles.AsNoTracking().Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (role == null)
             {
-                return NotFound();
+                return NotFound($"Role {id} was not found.");
             }
 
-            return Ok(MapRoleToDto(role));
+            return MapRoleToDto(role);
         }
 
         [HttpDelete("{id}")]

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Users.Client.Contracts;
 
-namespace BFF.Controllers
+namespace BFF.Controllers.Users
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -52,6 +53,8 @@ namespace BFF.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult<RoleDto>> GetRoleById(long id)
         {
             var res = await _client.Roles_GetRoleByIdAsync(id, HttpContext.RequestAborted);

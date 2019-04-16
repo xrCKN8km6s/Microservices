@@ -41,6 +41,10 @@ namespace BFF
 
                 switch (ex)
                 {
+                    case ClientResponseException<string> clientException:
+                        context.Response.StatusCode = clientException.StatusCode;
+                        error.Message = clientException.Result;
+                        break;
                     case ClientResponseException clientException:
                         context.Response.StatusCode = clientException.StatusCode;
                         error.Message = clientException.Response;

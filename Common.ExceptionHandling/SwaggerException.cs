@@ -25,4 +25,16 @@ namespace Common.ExceptionHandling
             return $"HTTP Response: \n\n{Response}\n\n{base.ToString()}";
         }
     }
+
+    public class ClientResponseException<TResult> : ClientResponseException
+    {
+        public TResult Result { get; }
+
+        public ClientResponseException(string message, int statusCode, string response,
+            Dictionary<string, IEnumerable<string>> headers, TResult result, Exception innerException)
+            : base(message, statusCode, response, headers, innerException)
+        {
+            Result = result;
+        }
+    }
 }
