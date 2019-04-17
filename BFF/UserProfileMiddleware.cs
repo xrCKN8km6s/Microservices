@@ -45,10 +45,10 @@ namespace BFF
 
             if (string.IsNullOrWhiteSpace(cached))
             {
-                profile = await _usersClient.Users_GetUserAsync(subClaim.Value);
+                profile = await _usersClient.Profile_GetUserProfileAsync(subClaim.Value);
                 var content = JsonConvert.SerializeObject(profile);
                 await _cache.SetStringAsync(profileCacheKey, content,
-                    new DistributedCacheEntryOptions {AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15)});
+                    new DistributedCacheEntryOptions {AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)});
             }
             else
             {

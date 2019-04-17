@@ -4,6 +4,7 @@ import { Observable, from, Subject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import * as Oidc from 'oidc-client';
+import { Permission } from './permission.model';
 
 export { User };
 
@@ -43,7 +44,7 @@ export class AuthService {
   }
 
   private loadProfile(): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`http://localhost:5000/api/users/profile`);
+    return this.httpClient.get<UserProfile>(`http://localhost:5000/api/profile`);
   }
 
   private formatHeader(user: User): string {
@@ -54,6 +55,11 @@ export class AuthService {
     return this.getUser().pipe(
       map(this.formatHeader)
     );
+  }
+
+  public async getAccessTokenValue(): Promise<string> {
+    const u = await this.userManager.getUser();
+    return u.access_token;
   }
 
   public renewToken(): Observable<string> {
@@ -90,7 +96,7 @@ export class AuthService {
     return this.userManager.signoutRedirect();
   }
 
-  public hasPermission(permissionName: string): boolean {
+  public hasPermission(permissionName: Permission): boolean {
     return this.userProfile.permissions.some(el => el.name === permissionName);
   }
 }
@@ -99,10 +105,10 @@ class UserProfile {
   public sub: string;
   public id: number;
   public hasGlobalRole: boolean;
-  public permissions: Permission[];
+  public permissions: PermissionDto[];
 }
 
-class Permission {
+class PermissionDto {
   public id: number;
   public name: string;
   public description: string;

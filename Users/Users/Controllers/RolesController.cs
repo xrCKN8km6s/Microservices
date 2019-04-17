@@ -120,7 +120,7 @@ namespace Users.Controllers
             var dbPermissions = dbRole.PermissionRoles.Select(s => s.Permission).ToArray();
 
             var permissions = role.Permissions
-                .Select(s => Permission.TryParse(s, out var permission) ? permission : null)
+                .Select(s => Enumeration.TryParse<Permission>(s, out var permission) ? permission : null)
                 .Where(w => w != null)
                 .ToArray();
 
@@ -144,7 +144,7 @@ namespace Users.Controllers
                 IsActive = true,
                 PermissionRoles = dto.Permissions.Select(p => new PermissionRole
                 {
-                    Permission = Permission.Parse(p)
+                    Permission = Enumeration.Parse<Permission>(p)
                 }).ToList()
             };
         }

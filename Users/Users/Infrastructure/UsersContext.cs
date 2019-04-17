@@ -73,7 +73,7 @@ namespace Users.Infrastructure
             builder.HasKey(k => new {k.RoleId, k.Permission});
             builder.HasIndex(k => new {k.RoleId, k.Permission}).IsUnique();
             builder.Property(p => p.RoleId).HasColumnName("role_id").IsRequired();
-            builder.Property(p => p.Permission).HasConversion(v => v.Id, v => Permission.Parse(v))
+            builder.Property(p => p.Permission).HasConversion(v => v.Id, v => Enumeration.Parse<Permission>(v))
                 .HasColumnName("permission").IsRequired();
             builder.HasOne(o => o.Role)
                 .WithMany(m => m.PermissionRoles)

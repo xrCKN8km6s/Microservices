@@ -3,6 +3,7 @@ import { UserRolesService, UserDto } from './user-roles.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RoleDto } from '../roles/roles.service';
 import { EditUserRoleDialogData, EditUserRoleDialogComponent } from './edit-user-role-dialog/edit-user-role-dialog.component';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-user-roles',
@@ -14,10 +15,12 @@ export class UserRolesComponent implements OnInit {
   public displayedColumns: string[] = ['name', 'actions'];
   private allRoles: RoleDto[];
   public users: UserDto[];
+  public canEdit: boolean;
 
-  constructor(private svc: UserRolesService, public dialog: MatDialog) { }
+  constructor(private svc: UserRolesService, private auth: AuthService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.canEdit = this.auth.hasPermission('AdminUsersEdit');
     this.loadUserRoles();
   }
 

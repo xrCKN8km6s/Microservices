@@ -3,6 +3,7 @@ import { RolesService, RoleDto, PermissionDto } from './roles.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EditRoleDialogComponent, EditRoleDialogData, DialogMode } from './edit-role-dialog/edit-role-dialog.component';
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-roles',
@@ -14,10 +15,15 @@ export class RolesComponent implements OnInit {
   public displayedColumns: string[] = ['name', 'isGlobal', 'actions'];
   public roles: RoleDto[];
   private allPermissions: PermissionDto[];
+  public canEdit: boolean;
+  public canDelete: boolean;
 
-  constructor(private svc: RolesService, public dialog: MatDialog) { }
+  constructor(private svc: RolesService, private auth: AuthService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.canEdit = this.auth.hasPermission('AdminRolesEdit');
+    this.canDelete = this.auth.hasPermission('AdminRolesDelete');
+
     this.loadRoles();
   }
 

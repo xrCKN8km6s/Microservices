@@ -6,11 +6,11 @@
       <mat-icon class="icon">view_agenda</mat-icon> Microservices front-end
     </a>
 
-    <a mat-button routerLink="orders">
+    <a mat-button routerLink="orders" *ngIf="isOrdersVisible">
       Orders
     </a>
 
-    <a mat-button routerLink="admin">
+    <a mat-button routerLink="admin" *ngIf="isAdminVisible">
       Admin
     </a>
 

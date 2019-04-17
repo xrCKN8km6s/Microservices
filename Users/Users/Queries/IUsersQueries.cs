@@ -44,7 +44,7 @@ namespace Users.Queries
             return new RolesViewModel
             {
                 Roles = roles.Select(MapRoleToDto).ToArray(),
-                AllPermissions = Permission.GetAll().Select(MapPermissionToDto).ToArray()
+                AllPermissions = Enumeration.GetAll<Permission>().Select(MapPermissionToDto).ToArray()
             };
         }
 
@@ -57,11 +57,12 @@ namespace Users.Queries
                 Sub = user.Sub,
                 HasGlobalRole = hasGlobalRole,
                 Permissions = hasGlobalRole
-                    ? Permission.GetAll().Select(MapPermissionToDto).ToArray()
+                    ? Enumeration.GetAll<Permission>().Select(MapPermissionToDto).ToArray()
                     : user.UserRoles.Select(s => s.Role)
                         .SelectMany(s => s.PermissionRoles)
-                        .Select(s => MapPermissionToDto(s.Permission))
+                        .Select(s => s.Permission)
                         .Distinct()
+                        .Select(MapPermissionToDto)
                         .ToArray()
             };
         }

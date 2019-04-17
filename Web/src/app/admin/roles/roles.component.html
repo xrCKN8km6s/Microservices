@@ -1,6 +1,6 @@
 <div class="roles-container">
 
-  <button mat-raised-button (click)="onCreate()">
+  <button mat-raised-button (click)="onCreate()" *ngIf="canEdit">
     <mat-icon>add</mat-icon>
     Create role
   </button>
@@ -30,11 +30,11 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="onEdit(role)">
+          <button mat-menu-item (click)="onEdit(role)" *ngIf="canEdit">
             <mat-icon>edit</mat-icon>
             <span>Edit</span>
           </button>
-          <button mat-menu-item (click)="onDelete(role)">
+          <button mat-menu-item (click)="onDelete(role)" *ngIf="canDelete">
             <mat-icon>delete</mat-icon>
             <span>Delete</span>
           </button>

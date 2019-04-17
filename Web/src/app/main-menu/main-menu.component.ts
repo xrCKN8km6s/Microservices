@@ -10,6 +10,9 @@ export class MainMenuComponent {
   @Input() isLoggedIn: boolean;
   @Input() userName: string;
 
+  @Input() isOrdersVisible: boolean;
+  @Input() isAdminVisible: boolean;
+
   @Output() logOutClicked = new EventEmitter<void>();
 
   logOut(): void {

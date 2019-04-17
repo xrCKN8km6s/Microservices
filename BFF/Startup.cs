@@ -5,7 +5,6 @@ using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -74,10 +73,23 @@ namespace BFF
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ViewOrders",
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.ViewOrders.Name));
-                options.AddPolicy("EditOrders",
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.EditOrders.Name));
+                options.AddPolicy(AuthorizePolicies.OrdersView,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.OrdersView));
+                options.AddPolicy(AuthorizePolicies.OrdersEdit,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.OrdersEdit));
+
+                options.AddPolicy(AuthorizePolicies.AdminView,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminView));
+                options.AddPolicy(AuthorizePolicies.AdminRolesView,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminRolesView));
+                options.AddPolicy(AuthorizePolicies.AdminRolesEdit,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminRolesEdit));
+                options.AddPolicy(AuthorizePolicies.AdminRolesDelete,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminRolesDelete));
+                options.AddPolicy(AuthorizePolicies.AdminUsersView,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminUsersView));
+                options.AddPolicy(AuthorizePolicies.AdminUsersEdit,
+                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminUsersEdit));
             });
 
             services.AddSwaggerDocument(document =>
@@ -101,10 +113,15 @@ namespace BFF
                 document.OperationProcessors.Add(
                     new OperationSecurityScopeProcessor("oauth2"));
             });
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 

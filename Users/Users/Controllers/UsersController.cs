@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using NSwag.Annotations;
 using Users.DTO;
 using Users.Infrastructure;
-using Users.Queries;
 
 namespace Users.Controllers
 {
@@ -15,26 +14,11 @@ namespace Users.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersQueries _queries;
         private readonly UsersContext _context;
 
-        public UsersController(IUsersQueries queries, [NotNull] UsersContext context)
+        public UsersController([NotNull] UsersContext context)
         {
-            _queries = queries ?? throw new ArgumentNullException(nameof(queries));
             _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
-
-        [HttpGet("profile/{sub}")]
-        public async Task<ActionResult<UserProfileDto>> GetUser(string sub)
-        {
-            var res = await _queries.GetUserProfileAsync(sub);
-
-            if (res == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(res);
         }
 
         [HttpGet("viewmodel")]

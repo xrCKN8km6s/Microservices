@@ -1,4 +1,9 @@
-export class Permission {
-  public static ViewOrders = 'ViewOrders';
-  public static EditOrders = 'EditOrders';
-}
+export type Permission =
+  'OrdersView' |
+  'OrdersEdit' |
+  'AdminView' |
+  'AdminRolesView' |
+  'AdminRolesEdit' |
+  'AdminRolesDelete' |
+  'AdminUsersView' |
+  'AdminUsersEdit';

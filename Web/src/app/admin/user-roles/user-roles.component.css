@@ -3,7 +3,7 @@ table {
 }
 
 .mat-column-actions {
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .checkbox-margin {

@@ -23,7 +23,7 @@ import { AppComponent } from './app.component';
 
 import { OrdersComponent } from './orders/orders.component';
 import { OrdersService } from './orders/orders.service';
-import { OrdersGuard } from './auth/orders.guard';
+import { OrdersGuard, AdminGuard, AdminUsersGuard, AdminRolesGuard } from './auth/orders.guard';
 
 import { MainMenuComponent } from './main-menu/main-menu.component';
 
@@ -68,7 +68,12 @@ import { UserRolesComponent } from './admin/user-roles/user-roles.component';
           path: '', canActivate: [AuthGuard], children: [
             { path: 'landing', component: LandingComponent },
             { path: 'orders', component: OrdersComponent, canActivate: [OrdersGuard] },
-            { path: 'admin', component: AdminComponent },
+            {
+              path: 'admin', component: AdminComponent, canActivate: [AdminGuard], children: [
+                { path: 'roles', component: RolesComponent, canActivate: [AdminRolesGuard] },
+                { path: 'users', component: UserRolesComponent, canActivate: [AdminUsersGuard] }
+              ]
+            },
             { path: '', pathMatch: 'full', redirectTo: '/landing' },
           ]
         },
@@ -103,6 +108,9 @@ import { UserRolesComponent } from './admin/user-roles/user-roles.component';
     UserRolesService,
     AuthGuard,
     OrdersGuard,
+    AdminGuard,
+    AdminUsersGuard,
+    AdminRolesGuard,
     { provide: HTTP_INTERCEPTORS, useClass: ContentTypeInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],

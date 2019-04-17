@@ -13,6 +13,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private sub: Subscription;
   public isLoggedIn: boolean;
   public userName: string;
+  public isOrdersVisible: boolean;
+  public isAdminVisible: boolean;
 
   constructor(private auth: AuthService) { }
 
@@ -25,6 +27,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this.isLoggedIn = true;
       this.userName = user.profile.name;
+
+      this.isOrdersVisible = this.auth.hasPermission('OrdersView');
+      this.isAdminVisible = this.auth.hasPermission('AdminView');
+
     });
   }
 

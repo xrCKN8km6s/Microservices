@@ -1,23 +1,15 @@
-<mat-tab-group>
+<nav mat-tab-nav-bar animationDuration="0ms">
 
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="tab-icon">thumb_up</mat-icon>
-      Roles
-    </ng-template>
-    <ng-template matTabContent>
-      <app-roles></app-roles>
-    </ng-template>
-  </mat-tab>
+  <a mat-tab-link routerLink="roles" *ngIf="isRolesVisible">
+    <mat-icon class="tab-icon">thumb_up</mat-icon>
+    Roles
+  </a>
 
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="tab-icon">person</mat-icon>
-      Users
-    </ng-template>
-    <ng-template matTabContent>
-      <app-user-roles></app-user-roles>
-    </ng-template>
-  </mat-tab>
+  <a mat-tab-link routerLink="users" *ngIf="isUsersVisible">
+    <mat-icon class="tab-icon">person</mat-icon>
+    Users
+  </a>
 
-</mat-tab-group>
+</nav>
+
+<router-outlet></router-outlet>

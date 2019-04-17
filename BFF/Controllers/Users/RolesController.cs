@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Users.Client.Contracts;
@@ -8,6 +9,7 @@ namespace BFF.Controllers.Users
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = AuthorizePolicies.AdminRolesView)]
     public class RolesController : ControllerBase
     {
         private readonly IUsersClient _client;
@@ -18,6 +20,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpPost]
+        [Authorize(Policy = AuthorizePolicies.AdminRolesEdit)]
         public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
         {
             await _client.Roles_CreateRoleAsync(role, HttpContext.RequestAborted);
@@ -25,6 +28,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = AuthorizePolicies.AdminRolesEdit)]
         public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
         {
             await _client.Roles_UpdateRoleAsync(id, role);
@@ -32,6 +36,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = AuthorizePolicies.AdminRolesDelete)]
         public async Task<ActionResult> DeleteRole(long id)
         {
             await _client.Roles_DeleteRoleAsync(id, HttpContext.RequestAborted);
