@@ -28,7 +28,6 @@ bob | bob |
   * `dotnet ef database update --project Users/Users/Users.csproj`
 * Open solution and set multiple startup projects to:
   * BFF
-  * Identity
   * Orders
   * Users
 * Press Start
