@@ -5,10 +5,13 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+//unfortunately ProblemDetails is a part of Mvc package, copied to local project
+using ProblemDetails = Common.ExceptionHandling.ProblemDetails;
+
 
 namespace BFF
 {
-    //TODO: logging/error handling
+    //TODO: logging/error handling, improve
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
@@ -42,6 +45,10 @@ namespace BFF
                 switch (ex)
                 {
                     case ClientResponseException<string> clientException:
+                        context.Response.StatusCode = clientException.StatusCode;
+                        error.Message = clientException.Result;
+                        break;
+                    case ClientResponseException<ProblemDetails> clientException:
                         context.Response.StatusCode = clientException.StatusCode;
                         error.Message = clientException.Result;
                         break;

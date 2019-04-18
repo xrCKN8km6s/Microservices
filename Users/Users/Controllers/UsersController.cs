@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NSwag.Annotations;
 using Users.DTO;
 using Users.Infrastructure;
 
@@ -35,13 +35,14 @@ namespace Users.Controllers
         }
 
         [HttpPut("{id}/roles")]
-        [SwaggerResponse(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody] UpdateUserRolesDto roles)
         {
             var user = await _context.Users.Include(i => i.UserRoles).FirstOrDefaultAsync(f => f.Id == id);
             if (user == null)
             {
-                return NoContent();
+                return NotFound($"User {id} was not found.");
             }
 
             var dbAllRoles = await _context.Roles.Select(r => r.Id).ToArrayAsync();
@@ -49,13 +50,13 @@ namespace Users.Controllers
             var invalidRoles = roles.Roles.Except(dbAllRoles).ToArray();
             if (invalidRoles.Length > 0)
             {
-                return BadRequest($"Roles {string.Join(',', invalidRoles)} do not exist.");
+                return NotFound($"Roles {string.Join(',', invalidRoles)} do not exist.");
             }
 
             var dbUserRoles = user.UserRoles.Select(s => s.RoleId).ToArray();
 
             var rolesToAdd = roles.Roles.Except(dbUserRoles).ToArray();
-            var rolesToRemove = dbUserRoles.Except(roles.Roles).ToArray();
+            var rolesToRemove = dbUserRoles.Except(roles.Roles).ToHashSet();
 
             user.UserRoles.AddRange(rolesToAdd.Select(s => new UserRole {RoleId = s}));
             user.UserRoles.RemoveAll(ur => rolesToRemove.Contains(ur.RoleId));

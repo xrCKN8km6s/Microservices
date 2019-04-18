@@ -6,7 +6,6 @@ using Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NSwag.Annotations;
 using Users.DTO;
 using Users.Infrastructure;
 using Users.Queries;
@@ -31,11 +30,6 @@ namespace Users.Controllers
         public async Task<ActionResult<RolesViewModel>> GetRolesViewModel()
         {
             var res = await _queries.GetRolesViewModelAsync();
-
-            if (res == null)
-            {
-                return NotFound();
-            }
 
             return Ok(res);
         }
@@ -64,13 +58,14 @@ namespace Users.Controllers
         }
 
         [HttpDelete("{id}")]
-        [SwaggerResponse(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult> DeleteRole(long id)
         {
             var role = await _context.Roles.FindAsync(id);
             if (role == null)
             {
-                return NotFound();
+                return NotFound($"Role {id} was not found.");
             }
 
             role.IsActive = false;
@@ -80,7 +75,8 @@ namespace Users.Controllers
         }
 
         [HttpPost]
-        [SwaggerResponse(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
         {
             var newRole = MapCreateDtoToRole(role);
@@ -91,25 +87,23 @@ namespace Users.Controllers
         }
 
         [HttpPut("{id}")]
-        [SwaggerResponse(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
         {
             var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (dbRole == null)
             {
-                return NotFound();
+                return NotFound($"Role {id} was not found.");
             }
 
-            if (role.IsGlobal && role.Permissions.Length > 0)
-            {
-                return BadRequest("Global role can't have permissions");
-            }
+            var allExistingPermissionIds = Enumeration.GetAll<Permission>().Select(s => s.Id);
 
-            dbRole.IsGlobal = role.IsGlobal;
-
-            if (!string.IsNullOrWhiteSpace(role.Name))
+            var notFoundPermissions = role.Permissions.Except(allExistingPermissionIds).ToArray();
+            if (notFoundPermissions.Length > 0)
             {
-                dbRole.Name = role.Name;
+                return NotFound($"Permissions {{{string.Join(',', notFoundPermissions)}}} were not found");
             }
 
             if (!dbRole.IsGlobal && role.IsGlobal)
@@ -117,15 +111,18 @@ namespace Users.Controllers
                 dbRole.PermissionRoles.Clear();
             }
 
-            var dbPermissions = dbRole.PermissionRoles.Select(s => s.Permission).ToArray();
+            dbRole.Name = role.Name;
+            dbRole.IsGlobal = role.IsGlobal;
+
+            var dbRolePermissions = dbRole.PermissionRoles.Select(s => s.Permission).ToArray();
 
             var permissions = role.Permissions
                 .Select(s => Enumeration.TryParse<Permission>(s, out var permission) ? permission : null)
                 .Where(w => w != null)
                 .ToArray();
 
-            var permissionsToAdd = permissions.Except(dbPermissions);
-            var permissionsToRemove = dbPermissions.Except(permissions);
+            var permissionsToAdd = permissions.Except(dbRolePermissions);
+            var permissionsToRemove = dbRolePermissions.Except(permissions).ToHashSet();
 
             dbRole.PermissionRoles.AddRange(permissionsToAdd.Select(p => new PermissionRole {Permission = p}));
             dbRole.PermissionRoles.RemoveAll(pr => permissionsToRemove.Contains(pr.Permission));

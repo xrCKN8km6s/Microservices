@@ -27,7 +27,7 @@ namespace Users.Controllers
 
             if (res == null)
             {
-                return NotFound($"User profile ${sub} was not found.");
+                return NotFound($"User profile {sub} was not found.");
             }
 
             return Ok(res);

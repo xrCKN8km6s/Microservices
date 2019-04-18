@@ -21,6 +21,8 @@ namespace BFF.Controllers.Users
 
         [HttpPost]
         [Authorize(Policy = AuthorizePolicies.AdminRolesEdit)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
         {
             await _client.Roles_CreateRoleAsync(role, HttpContext.RequestAborted);
@@ -29,6 +31,9 @@ namespace BFF.Controllers.Users
 
         [HttpPut("{id}")]
         [Authorize(Policy = AuthorizePolicies.AdminRolesEdit)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
         {
             await _client.Roles_UpdateRoleAsync(id, role);
@@ -37,6 +42,8 @@ namespace BFF.Controllers.Users
 
         [HttpDelete("{id}")]
         [Authorize(Policy = AuthorizePolicies.AdminRolesDelete)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         public async Task<ActionResult> DeleteRole(long id)
         {
             await _client.Roles_DeleteRoleAsync(id, HttpContext.RequestAborted);

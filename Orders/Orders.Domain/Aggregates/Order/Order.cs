@@ -6,7 +6,12 @@ namespace Orders.Domain.Aggregates.Order
 {
     public class Order : Entity, IAggregateRoot
     {
+        // Implicitly used by EF Core
+#pragma warning disable 414
+#pragma warning disable IDE0052
         private DateTime _creationDateTime;
+#pragma warning restore IDE0052
+#pragma warning restore 414
 
         private int _orderStatus;
 
