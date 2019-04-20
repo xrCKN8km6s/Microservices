@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using EventBus;
 using EventBus.Abstractions;
 using EventBus.RabbitMQ;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +47,25 @@ namespace Orders
                 {
                     var policy = ScopePolicy.Create("orders");
                     options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = context.ModelState
+                            .Where(w => w.Value.ValidationState == ModelValidationState.Invalid)
+                            .ToDictionary(k => k.Key, v => v.Value.Errors.Select(s => s.ErrorMessage));
+
+                        var problemDetails = new ValidationErrorDetails(
+                            context.HttpContext.TraceIdentifier,
+                            errors
+                        );
+
+                        return new BadRequestObjectResult(problemDetails)
+                        {
+                            ContentTypes = { "application/problem+json" }
+                        };
+                    };
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -142,11 +163,6 @@ namespace Orders
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseAuthentication();
 
             app.UseSwagger();

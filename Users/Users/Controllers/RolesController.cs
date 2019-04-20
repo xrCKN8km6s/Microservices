@@ -44,8 +44,9 @@ namespace Users.Controllers
         }
 
         [HttpGet("{id}")]
+        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
         public async Task<ActionResult<RoleDto>> GetRoleById(long id)
         {
             var role = await _context.Roles.AsNoTracking().Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
@@ -58,8 +59,9 @@ namespace Users.Controllers
         }
 
         [HttpDelete("{id}")]
+        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
         public async Task<ActionResult> DeleteRole(long id)
         {
             var role = await _context.Roles.FindAsync(id);
@@ -76,7 +78,7 @@ namespace Users.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationErrorDetails))]
         public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
         {
             var newRole = MapCreateDtoToRole(role);
@@ -87,9 +89,10 @@ namespace Users.Controllers
         }
 
         [HttpPut("{id}")]
+        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
         public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
         {
             var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);

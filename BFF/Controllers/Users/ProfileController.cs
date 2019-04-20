@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Clients.Common;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace BFF.Controllers.Users
 
         [HttpGet("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
         public async Task<ActionResult<UserProfileDto>> Get()
         {
             var sub = User.FindFirst(JwtClaimTypes.Subject).Value;

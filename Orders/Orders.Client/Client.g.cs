@@ -34,13 +34,13 @@ namespace Orders.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
-        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <exception cref="Clients.Common.ClientResponseException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> Orders_GetAsync()
         {
             return Orders_GetAsync(System.Threading.CancellationToken.None);
         }
     
-        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <exception cref="Clients.Common.ClientResponseException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> Orders_GetAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -84,14 +84,14 @@ namespace Orders.Client
                             } 
                             catch (System.Exception exception_) 
                             {
-                                throw new Common.ExceptionHandling.ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                                throw new Clients.Common.ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new Common.ExceptionHandling.ClientResponseException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new Clients.Common.ClientResponseException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.IEnumerable<OrderModel>);
@@ -108,13 +108,13 @@ namespace Orders.Client
             }
         }
     
-        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <exception cref="Clients.Common.ClientResponseException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name)
         {
             return Orders_CreateOrderAsync(name, System.Threading.CancellationToken.None);
         }
     
-        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <exception cref="Clients.Common.ClientResponseException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
@@ -160,7 +160,7 @@ namespace Orders.Client
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new Common.ExceptionHandling.ClientResponseException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new Clients.Common.ClientResponseException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(FileResponse);
@@ -177,13 +177,13 @@ namespace Orders.Client
             }
         }
     
-        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <exception cref="Clients.Common.ClientResponseException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status)
         {
             return Orders_UpdateOrderStatusAsync(orderId, status, System.Threading.CancellationToken.None);
         }
     
-        /// <exception cref="Common.ExceptionHandling.ClientResponseException">A server side error occurred.</exception>
+        /// <exception cref="Clients.Common.ClientResponseException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken)
         {
@@ -236,7 +236,7 @@ namespace Orders.Client
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new Common.ExceptionHandling.ClientResponseException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new Clients.Common.ClientResponseException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(FileResponse);

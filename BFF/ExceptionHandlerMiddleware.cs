@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Common.ExceptionHandling;
+using Clients.Common;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-//unfortunately ProblemDetails is a part of Mvc package, copied to local project
-using ProblemDetails = Common.ExceptionHandling.ProblemDetails;
 
 
 namespace BFF
@@ -15,12 +12,10 @@ namespace BFF
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IHostingEnvironment _env;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next, IHostingEnvironment env)
+        public ExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
-            _env = env;
         }
 
         [UsedImplicitly]
@@ -32,33 +27,35 @@ namespace BFF
             }
             catch (Exception ex)
             {
-                var error = new ErrorDetails
-                {
-                    TraceId = context.TraceIdentifier
-                };
-
-                if (_env.IsDevelopment())
-                {
-                    error.Exception = ex;
-                }
+                ErrorDetails error;
 
                 switch (ex)
                 {
-                    case ClientResponseException<string> clientException:
+                    case ClientResponseException<ValidationErrorDetails> clientException:
                         context.Response.StatusCode = clientException.StatusCode;
-                        error.Message = clientException.Result;
+                        error = clientException.Result;
                         break;
-                    case ClientResponseException<ProblemDetails> clientException:
+                    case ClientResponseException<ErrorDetails> clientException:
                         context.Response.StatusCode = clientException.StatusCode;
-                        error.Message = clientException.Result;
+                        error = clientException.Result;
                         break;
                     case ClientResponseException clientException:
                         context.Response.StatusCode = clientException.StatusCode;
-                        error.Message = clientException.Response;
+                        error = new ErrorDetails
+                        {
+                            StatusCode = clientException.StatusCode,
+                            TraceId = context.TraceIdentifier,
+                            Message = clientException.Response
+                        };
                         break;
                     default:
-                        context.Response.StatusCode = 500;
-                        error.Message = ex.Message;
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        error = new ErrorDetails
+                        {
+                            StatusCode = StatusCodes.Status500InternalServerError,
+                            TraceId = context.TraceIdentifier,
+                            Message = ex.Message
+                        };
                         break;
                 }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Common.ExceptionHandling
+namespace Clients.Common
 {
     public class ClientResponseException : Exception
     {
@@ -18,11 +18,6 @@ namespace Common.ExceptionHandling
             StatusCode = statusCode;
             Response = response;
             Headers = headers;
-        }
-
-        public override string ToString()
-        {
-            return $"HTTP Response: \n\n{Response}\n\n{base.ToString()}";
         }
     }
 

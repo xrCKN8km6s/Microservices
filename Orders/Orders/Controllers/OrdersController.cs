@@ -21,7 +21,6 @@ namespace Orders.Controllers
         }
 
         [HttpGet("")]
-        //[Authorize(Policy = "ViewOrders")]
         public async Task<ActionResult<IEnumerable<OrderModel>>> Get()
         {
             return Ok(await _query.GetOrdersAsync());

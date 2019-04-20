@@ -35,8 +35,9 @@ namespace Users.Controllers
         }
 
         [HttpPut("{id}/roles")]
+        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
         public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody] UpdateUserRolesDto roles)
         {
             var user = await _context.Users.Include(i => i.UserRoles).FirstOrDefaultAsync(f => f.Id == id);

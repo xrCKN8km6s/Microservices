@@ -55,6 +55,8 @@ namespace Users.Queries
             {
                 Id = user.Id,
                 Sub = user.Sub,
+                Name = user.Name,
+                Email = user.Email,
                 HasGlobalRole = hasGlobalRole,
                 Permissions = hasGlobalRole
                     ? Enumeration.GetAll<Permission>().Select(MapPermissionToDto).ToArray()

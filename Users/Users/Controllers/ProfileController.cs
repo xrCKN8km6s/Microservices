@@ -19,8 +19,9 @@ namespace Users.Controllers
         }
 
         [HttpGet("{sub}")]
+        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
         public async Task<ActionResult<UserProfileDto>> GetUserProfile(string sub)
         {
             var res = await _queries.GetUserProfileAsync(sub);

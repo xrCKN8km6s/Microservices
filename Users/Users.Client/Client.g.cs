@@ -4,7 +4,7 @@
 // </auto-generated>
 //----------------------
 
-using Common.ExceptionHandling;
+using Clients.Common;
 using Users.Client.Contracts;
 
 namespace Users.Client
@@ -93,16 +93,16 @@ namespace Users.Client
                         if (status_ == "404") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(string); 
+                            var result_ = default(ErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<string>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -322,16 +322,16 @@ namespace Users.Client
                         if (status_ == "400") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(ProblemDetails); 
+                            var result_ = default(ValidationErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ValidationErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ValidationErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -413,16 +413,16 @@ namespace Users.Client
                         if (status_ == "404") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(string); 
+                            var result_ = default(ErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<string>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -495,16 +495,16 @@ namespace Users.Client
                         if (status_ == "404") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(string); 
+                            var result_ = default(ErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<string>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -578,31 +578,31 @@ namespace Users.Client
                         if (status_ == "400") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(ProblemDetails); 
+                            var result_ = default(ValidationErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ValidationErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ValidationErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ == "404") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(string); 
+                            var result_ = default(ErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<string>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -750,16 +750,16 @@ namespace Users.Client
                         if (status_ == "404") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(string); 
+                            var result_ = default(ErrorDetails); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorDetails>(responseData_, _settings.Value);
                             } 
                             catch (System.Exception exception_) 
                             {
                                 throw new ClientResponseException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
-                            throw new ClientResponseException<string>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                            throw new ClientResponseException<ErrorDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")

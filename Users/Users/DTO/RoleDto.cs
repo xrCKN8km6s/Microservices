@@ -16,6 +16,9 @@ namespace Users.DTO
         public string Name { get; set; }
         public long[] Permissions { get; set; }
         public bool IsGlobal { get; set; }
+
+        //after ASP.Core 3 is released it will be possible to apply camel case to dictionary keys (use nameof(IsGlobal) instead of "isGlobal")
+        //https://github.com/aspnet/AspNetCore/issues/7439#issuecomment-462399829
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(Name))
