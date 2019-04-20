@@ -32,8 +32,7 @@ namespace Users
         {
             services.AddMvc(options =>
                 {
-                    var policy = ScopePolicy.Create("users");
-                    options.Filters.Add(new AuthorizeFilter(policy));
+                    options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("users")));
                 })
                 .ConfigureApiBehaviorOptions(options =>
                 {
@@ -56,6 +55,36 @@ namespace Users
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            AddAuthentication(services);
+            AddSwagger(services);
+
+            var connectionString = Configuration.GetValue<string>("ConnectionString");
+
+            services.AddDbContext<UsersContext>(options =>
+                options
+                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
+
+            services.AddScoped<IUsersQueries, UsersQueries>();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            app.UseAuthentication();
+
+            app.UseSwagger();
+            app.UseSwaggerUi3(options =>
+            {
+                options.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "usersswaggerui"
+                };
+            });
+
+            app.UseMvc();
+        }
+        private static void AddAuthentication(IServiceCollection services)
+        {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -65,15 +94,10 @@ namespace Users
                     options.ApiSecret = "users.secret";
                     options.RequireHttpsMetadata = false; //dev
                 });
+        }
 
-            services.AddScoped<IUsersQueries, UsersQueries>();
-
-            var connectionString = Configuration.GetValue<string>("ConnectionString");
-
-            services.AddDbContext<UsersContext>(options =>
-                options
-                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
-
+        private static void AddSwagger(IServiceCollection services)
+        {
             services.AddSwaggerDocument(document =>
             {
                 document.PostProcess = d => d.Info.Title = "Users API";
@@ -95,23 +119,6 @@ namespace Users
                 document.OperationProcessors.Add(
                     new OperationSecurityScopeProcessor("oauth2"));
             });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            app.UseAuthentication();
-
-            app.UseSwagger();
-            app.UseSwaggerUi3(options =>
-            {
-                options.OAuth2Client = new OAuth2ClientSettings
-                {
-                    ClientId = "usersswaggerui"
-                };
-            });
-
-            app.UseMvc();
         }
     }
 }

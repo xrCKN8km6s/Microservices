@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.SwaggerGeneration.Processors.Security;
@@ -45,8 +46,7 @@ namespace Orders
         {
             services.AddMvc(options =>
                 {
-                    var policy = ScopePolicy.Create("orders");
-                    options.Filters.Add(new AuthorizeFilter(policy));
+                    options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("orders")));
                 })
                 .ConfigureApiBehaviorOptions(options =>
                 {
@@ -63,21 +63,27 @@ namespace Orders
 
                         return new BadRequestObjectResult(problemDetails)
                         {
-                            ContentTypes = { "application/problem+json" }
+                            ContentTypes = {"application/problem+json"}
                         };
                     };
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddMediatR(typeof(Startup));
+            AddAuthentication(services);
+            AddEventBus(services);
+            AddSwagger(services);
 
-            services.AddEntityFrameworkNpgsql();
+            services.AddMediatR(typeof(Startup));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviour<,>));
 
             var connectionString = _config.GetValue<string>("ConnectionString");
 
+            void ConfigureNpgsqlOptions(NpgsqlDbContextOptionsBuilder npgsqlOptions) => npgsqlOptions.EnableRetryOnFailure();
+
             services.AddDbContext<OrdersContext>(options =>
             {
-                options.UseNpgsql(connectionString, npgsqlOptions => { npgsqlOptions.EnableRetryOnFailure(); });
+                options.UseNpgsql(connectionString, ConfigureNpgsqlOptions);
             });
 
             services.AddDbContext<IntegrationEventLogContext>((sp, options) =>
@@ -85,46 +91,38 @@ namespace Orders
                 var context = sp.GetRequiredService<OrdersContext>();
                 var dbConnection = context.Database.GetDbConnection();
 
-                options.UseNpgsql(dbConnection, npgsqlOptions => { npgsqlOptions.EnableRetryOnFailure(); });
+                options.UseNpgsql(dbConnection, ConfigureNpgsqlOptions);
             });
 
             services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
 
             services.AddScoped<IOrderRepository, OrderRepository>();
-
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviour<,>));
-
             services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
-
-            services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
-            {
-                var connection = sp.GetRequiredService<IRabbitMQConnection>();
-
-                var logger = sp.GetRequiredService<ILogger<RabbitMQEventBus>>();
-
-                var subManager = sp.GetRequiredService<IEventBusSubscriptionManager>();
-
-                var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-
-                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "Orders", 3);
-            });
-
-            services.AddSingleton<IRabbitMQConnection>(sp =>
-            {
-                var logger = sp.GetRequiredService<ILogger<RabbitMQConnection>>();
-
-                var factory = new ConnectionFactory();
-
-                return new RabbitMQConnection(factory, logger, 3);
-            });
-
-            services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
-
-            services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
 
             services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
 
+            services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            app.UseAuthentication();
+
+            app.UseSwagger();
+            app.UseSwaggerUi3(options =>
+            {
+                options.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "ordersswaggerui"
+                };
+            });
+
+            app.UseMvc();
+        }
+
+        private static void AddAuthentication(IServiceCollection services)
+        {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -134,9 +132,32 @@ namespace Orders
                     options.ApiSecret = "orders.secret";
                     options.RequireHttpsMetadata = false; //dev
                 });
+        }
 
-            services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
+        private static void AddEventBus(IServiceCollection services)
+        {
+            services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
+            {
+                var connection = sp.GetRequiredService<IRabbitMQConnection>();
+                var logger = sp.GetRequiredService<ILogger<RabbitMQEventBus>>();
+                var subManager = sp.GetRequiredService<IEventBusSubscriptionManager>();
+                var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
 
+                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "Orders", 3);
+            });
+
+            services.AddSingleton<IRabbitMQConnection>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<RabbitMQConnection>>();
+                var factory = new ConnectionFactory();
+                return new RabbitMQConnection(factory, logger, 3);
+            });
+
+            services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
+        }
+
+        private static void AddSwagger(IServiceCollection services)
+        {
             services.AddSwaggerDocument(document =>
             {
                 document.PostProcess = d => d.Info.Title = "Orders API";
@@ -158,23 +179,6 @@ namespace Orders
                 document.OperationProcessors.Add(
                     new OperationSecurityScopeProcessor("oauth2"));
             });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            app.UseAuthentication();
-
-            app.UseSwagger();
-            app.UseSwaggerUi3(options =>
-            {
-                options.OAuth2Client = new OAuth2ClientSettings
-                {
-                    ClientId = "ordersswaggerui"
-                };
-            });
-
-            app.UseMvc();
         }
     }
 }

@@ -26,7 +26,12 @@ namespace Users.DTO
                 yield return new ValidationResult("Name is required.", new[] {"name"});
             }
 
-            if (IsGlobal && Permissions.Length > 0)
+            if (!IsGlobal && (Permissions == null || Permissions.Length == 0))
+            {
+                yield return new ValidationResult("Non-global role requires permissions.", new[] { "permissions" });
+            }
+
+            if (IsGlobal && Permissions?.Length > 0)
             {
                 yield return new ValidationResult("Global role can't have permissions.", new[] { "isGlobal", "permissions" });
             }
