@@ -5,6 +5,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import * as Oidc from 'oidc-client';
 import { Permission } from './permission.model';
+import { environment } from 'src/environments/environment';
 
 export { User };
 
@@ -13,7 +14,7 @@ export { User };
 })
 export class AuthService {
 
-  private readonly backendUrl = 'http://localhost:4200';
+  private readonly profilePath = 'api/profile';
 
   private userManager: UserManager;
   private userProfile: UserProfile;
@@ -26,13 +27,13 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) {
     this.userManager = new UserManager({
-      authority: 'http://localhost:3000',
-      client_id: 'spa',
-      redirect_uri: `${this.backendUrl}/signin-callback`,
-      silent_redirect_uri: `${this.backendUrl}/assets/silent-callback.html`,
-      post_logout_redirect_uri: `${this.backendUrl}`,
+      authority: environment.authorityUrl,
+      client_id: environment.clientId,
+      redirect_uri: `${environment.webUrl}/signin-callback`,
+      silent_redirect_uri: `${environment.webUrl}/assets/silent-callback.html`,
+      post_logout_redirect_uri: environment.webUrl,
       response_type: 'code',
-      scope: 'openid profile email bff',
+      scope: environment.scope,
       automaticSilentRenew: true
     });
 
@@ -44,7 +45,7 @@ export class AuthService {
   }
 
   private loadProfile(): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`http://localhost:5000/api/profile`);
+    return this.httpClient.get<UserProfile>(`${environment.bffUrl}/${this.profilePath}`);
   }
 
   private formatHeader(user: User): string {

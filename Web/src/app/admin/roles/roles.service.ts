@@ -1,36 +1,37 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class RolesService {
 
-  private basePath = 'http://localhost:5000/api/roles';
+  private rolesPath = 'api/roles';
 
   constructor(private client: HttpClient) { }
 
   public create(role: CreateEditRoleDto): Observable<void> {
-    return this.client.post<void>(this.basePath, role);
+    return this.client.post<void>(`${environment.bffUrl}/${this.rolesPath}`, role);
   }
 
   public update(roleId: number, role: CreateEditRoleDto): Observable<void> {
-    return this.client.put<void>(`${this.basePath}/${roleId}`, role);
+    return this.client.put<void>(`${environment.bffUrl}/${this.rolesPath}/${roleId}`, role);
   }
 
   public delete(roleId: number): Observable<void> {
-    return this.client.delete<void>(`${this.basePath}/${roleId}`);
+    return this.client.delete<void>(`${environment.bffUrl}/${this.rolesPath}/${roleId}`);
   }
 
   public getRoles(): Observable<RoleDto[]> {
-    return this.client.get<RoleDto[]>(this.basePath);
+    return this.client.get<RoleDto[]>(`${environment.bffUrl}/${this.rolesPath}`);
   }
 
   public getRolesViewModel(): Observable<RolesViewModel> {
-    return this.client.get<RolesViewModel>(`${this.basePath}/viewmodel`);
+    return this.client.get<RolesViewModel>(`${environment.bffUrl}/${this.rolesPath}/viewmodel`);
   }
 
   public getRole(roleId: number): Observable<RoleDto> {
-    return this.client.get<RoleDto>(`${this.basePath}/${roleId}`);
+    return this.client.get<RoleDto>(`${environment.bffUrl}/${this.rolesPath}/${roleId}`);
   }
 }
 

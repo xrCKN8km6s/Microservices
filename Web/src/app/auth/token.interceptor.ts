@@ -10,7 +10,7 @@ export class TokenInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService) { }
 
   private setToken(req: HttpRequest<any>, token: string): HttpRequest<any> {
-    return req.clone({setHeaders: {Authorization: token}});
+    return req.clone({ setHeaders: { Authorization: token } });
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -23,9 +23,9 @@ export class TokenInterceptor implements HttpInterceptor {
 
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          return this.auth.renewToken().pipe(mergeMap(newToken => {
-            return next.handle(this.setToken(req, newToken));
-          }));
+          return this.auth.renewToken().pipe(
+            mergeMap(newToken => next.handle(this.setToken(req, newToken)))
+          );
         } else {
           return throwError(error);
         }
