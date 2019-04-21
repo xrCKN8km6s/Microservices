@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;

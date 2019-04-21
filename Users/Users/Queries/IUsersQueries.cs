@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Common;
 using Microsoft.EntityFrameworkCore;
 using Users.DTO;
 using Users.Infrastructure;
