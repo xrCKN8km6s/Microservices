@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Users
 {
-    public abstract class Enumeration : EqualityComparer<Enumeration>, IEquatable<Enumeration>
+    public abstract class Enumeration : EqualityComparer<Enumeration>, IEquatable<Enumeration>, IComparable<Enumeration>, IComparable
     {
         public long Id { get; }
         public string Name { get; }
@@ -74,6 +74,20 @@ namespace Users
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public int CompareTo(Enumeration other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (other is null) return 1;
+            return Id.CompareTo(other.Id);
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return 1;
+            if (ReferenceEquals(this, obj)) return 0;
+            return obj is Enumeration other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(Enumeration)}");
         }
     }
 }
