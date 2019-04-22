@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-
 import { AuthService } from './auth/auth.service';
 import { Subscription } from 'rxjs';
 import { MainMenuItem } from './main-menu-item';
+import { UserProfileService } from './auth/user-profile.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public userName: string;
   public mainMenuItems: MainMenuItem[];
 
-  constructor(private auth: AuthService) { }
+  constructor(private auth: AuthService, private userProfileService: UserProfileService) { }
 
   ngOnInit(): void {
     this.sub = this.auth.userSignedIn.subscribe(user => {
@@ -39,11 +39,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private prepareMainMenu(): void {
     this.mainMenuItems = [];
 
-    if (this.auth.hasPermission('OrdersView')) {
+    if (this.userProfileService.hasPermission('OrdersView')) {
       this.mainMenuItems.push({ title: 'Orders', routerLink: '/orders' });
     }
 
-    if (this.auth.hasPermission('AdminView')) {
+    if (this.userProfileService.hasPermission('AdminView')) {
       this.mainMenuItems.push({ title: 'Admin', routerLink: '/admin' });
     }
   }

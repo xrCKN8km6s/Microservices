@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
+import { UserProfileService } from '../auth/user-profile.service';
 
 @Component({
   selector: 'app-admin',
@@ -11,11 +11,10 @@ export class AdminComponent implements OnInit {
   public isRolesVisible: boolean;
   public isUsersVisible: boolean;
 
-  constructor(private auth: AuthService) { }
+  constructor(private userProfileService: UserProfileService) { }
 
   ngOnInit() {
-    this.isRolesVisible = this.auth.hasPermission('AdminRolesView');
-    this.isUsersVisible = this.auth.hasPermission('AdminUsersView');
+    this.isRolesVisible = this.userProfileService.hasPermission('AdminRolesView');
+    this.isUsersVisible = this.userProfileService.hasPermission('AdminUsersView');
   }
-
 }

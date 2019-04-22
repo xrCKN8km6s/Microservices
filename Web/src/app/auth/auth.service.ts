@@ -4,8 +4,9 @@ import { Observable, from, Subject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import * as Oidc from 'oidc-client';
-import { Permission } from './permission.model';
 import { environment } from 'src/environments/environment';
+import { UserProfile } from './user-profile';
+import { UserProfileService } from './user-profile.service';
 
 export { User };
 
@@ -17,7 +18,6 @@ export class AuthService {
   private readonly profilePath = 'api/profile';
 
   private userManager: UserManager;
-  private userProfile: UserProfile;
 
   private userSignedInSubject = new Subject<User>();
   public readonly userSignedIn = this.userSignedInSubject.asObservable();
@@ -25,7 +25,7 @@ export class AuthService {
   private userSignedOutSubject = new Subject();
   public readonly userSignedOut = this.userSignedOutSubject.asObservable();
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private userProfileService: UserProfileService) {
     this.userManager = new UserManager({
       authority: environment.authorityUrl,
       client_id: environment.clientId,
@@ -70,7 +70,7 @@ export class AuthService {
   public isLoggedIn(): Observable<boolean> {
     return this.getUser().pipe(
       map(user => {
-        return !!user && !!user.access_token && !!this.userProfile;
+        return !!user && !!user.access_token && !!this.userProfileService.hasProfile;
       })
     );
   }
@@ -85,7 +85,7 @@ export class AuthService {
     return from(this.userManager.signinRedirectCallback()).pipe(
       mergeMap(user => {
         return this.loadProfile().pipe(map(profile => {
-          this.userProfile = profile;
+          this.userProfileService.setProfile(profile);
           this.userSignedInSubject.next(user);
           return user.state.returnUrl;
         }));
@@ -96,21 +96,4 @@ export class AuthService {
     this.userSignedOutSubject.next();
     return this.userManager.signoutRedirect();
   }
-
-  public hasPermission(permissionName: Permission): boolean {
-    return this.userProfile.permissions.some(el => el.name === permissionName);
-  }
-}
-
-class UserProfile {
-  public sub: string;
-  public id: number;
-  public hasGlobalRole: boolean;
-  public permissions: PermissionDto[];
-}
-
-class PermissionDto {
-  public id: number;
-  public name: string;
-  public description: string;
 }

@@ -1,43 +1,43 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from './auth.service';
+import { UserProfileService } from './user-profile.service';
 
 @Injectable()
 export class OrdersGuard implements CanActivate {
 
-  constructor(private auth: AuthService) { }
+  constructor(private userProfileService: UserProfileService) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.auth.hasPermission('OrdersView');
+    return this.userProfileService.hasPermission('OrdersView');
   }
 }
 
 @Injectable()
 export class AdminGuard implements CanActivate {
 
-  constructor(private auth: AuthService) { }
+  constructor(private userProfileService: UserProfileService) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.auth.hasPermission('AdminView');
+    return this.userProfileService.hasPermission('AdminView');
   }
 }
 
 @Injectable()
 export class AdminUsersGuard implements CanActivate {
 
-  constructor(private auth: AuthService) { }
+  constructor(private userProfileService: UserProfileService) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.auth.hasPermission('AdminUsersView');
+    return this.userProfileService.hasPermission('AdminUsersView');
   }
 }
 
 @Injectable()
 export class AdminRolesGuard implements CanActivate {
 
-  constructor(private auth: AuthService) { }
+  constructor(private userProfileService: UserProfileService) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.auth.hasPermission('AdminRolesView');
+    return this.userProfileService.hasPermission('AdminRolesView');
   }
 }
