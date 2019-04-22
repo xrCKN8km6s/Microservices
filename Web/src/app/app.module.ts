@@ -33,7 +33,7 @@ import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { LandingComponent } from './landing/landing.component';
-import { ContentTypeInterceptor } from './auth/content-type.interceptor';
+import { ContentTypeInterceptor } from './content-type.interceptor';
 import { AdminComponent } from './admin/admin.component';
 import { RolesComponent } from './admin/roles/roles.component';
 import { RolesService } from './admin/roles/roles.service';

@@ -6,16 +6,8 @@
       <mat-icon class="icon">view_agenda</mat-icon> Microservices front-end
     </a>
 
-    <a mat-button routerLink="orders" *ngIf="isOrdersVisible">
-      Orders
-    </a>
-
-    <a mat-button routerLink="admin" *ngIf="isAdminVisible">
-      Admin
-    </a>
-
-    <a mat-button routerLink="unauthorized">
-      Unauthorized
+    <a mat-button *ngFor="let item of menuItems" [routerLink]="item.routerLink">
+      {{item.title}}
     </a>
 
     <span class="example-spacer"></span>
@@ -25,7 +17,7 @@
       <button mat-menu-item (click)="logOut()">Log Out</button>
     </mat-menu>
 
-    <button mat-icon-button>
+    <button mat-icon-button *ngIf="isLoggedIn">
       <mat-icon aria-hidden="false" aria-label="User notifications" matBadge="22" matBadgeColor="warn">notifications
       </mat-icon>
     </button>

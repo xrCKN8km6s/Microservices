@@ -1,23 +1,23 @@
 <table mat-table [dataSource]="orders">
 
   <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-    <mat-cell *matCellDef="let order"> {{order.id}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{order.id}}</mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-    <mat-cell *matCellDef="let order"> {{order.name}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{order.name}}</mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="creationDateTime">
-    <mat-header-cell *matHeaderCellDef> Created </mat-header-cell>
-    <mat-cell *matCellDef="let order"> {{order.creationDateTime | date}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef>Created</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{order.creationDateTime | date}}</mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="orderStatus">
-    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-    <mat-cell *matCellDef="let order"> {{order.orderStatus}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+    <mat-cell *matCellDef="let order">{{order.orderStatus}}</mat-cell>
   </ng-container>
 
 

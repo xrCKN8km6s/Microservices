@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MainMenuItem } from '../main-menu-item';
 
 @Component({
   selector: 'app-main-menu',
@@ -10,8 +11,7 @@ export class MainMenuComponent {
   @Input() isLoggedIn: boolean;
   @Input() userName: string;
 
-  @Input() isOrdersVisible: boolean;
-  @Input() isAdminVisible: boolean;
+  @Input() menuItems: MainMenuItem[];
 
   @Output() logOutClicked = new EventEmitter<void>();
 
