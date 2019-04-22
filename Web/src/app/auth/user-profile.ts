@@ -1,12 +1,12 @@
-export class UserProfile {
-  public sub: string;
-  public id: number;
-  public hasGlobalRole: boolean;
-  public permissions: PermissionDto[];
+export interface UserProfile {
+  readonly sub: string;
+  readonly id: number;
+  readonly hasGlobalRole: boolean;
+  readonly permissions: ReadonlyArray<PermissionDto>;
 }
 
-export class PermissionDto {
-  public id: number;
-  public name: string;
-  public description: string;
+export interface PermissionDto {
+  readonly id: number;
+  readonly name: string;
+  readonly description: string;
 }

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { MainMenuItem } from '../main-menu-item';
+import { MainMenuItem } from './main-menu-item';
 
 @Component({
   selector: 'app-main-menu',

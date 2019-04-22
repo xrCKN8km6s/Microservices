@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { UserProfile } from './user-profile';
-import { Permission } from './permission.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,3 +20,13 @@ export class UserProfileService {
     return this.profile.permissions.some(el => el.name === permissionName);
   }
 }
+
+export type Permission =
+  'OrdersView' |
+  'OrdersEdit' |
+  'AdminView' |
+  'AdminRolesView' |
+  'AdminRolesEdit' |
+  'AdminRolesDelete' |
+  'AdminUsersView' |
+  'AdminUsersEdit';
