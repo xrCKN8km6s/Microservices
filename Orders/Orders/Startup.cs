@@ -44,10 +44,7 @@ namespace Orders
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
-                {
-                    options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("orders")));
-                })
+            services.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("orders"))); })
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
@@ -79,7 +76,8 @@ namespace Orders
 
             var connectionString = _config.GetValue<string>("ConnectionString");
 
-            void ConfigureNpgsqlOptions(NpgsqlDbContextOptionsBuilder npgsqlOptions) => npgsqlOptions.EnableRetryOnFailure();
+            void ConfigureNpgsqlOptions(NpgsqlDbContextOptionsBuilder npgsqlOptions) =>
+                npgsqlOptions.EnableRetryOnFailure();
 
             services.AddDbContext<OrdersContext>(options =>
             {
@@ -163,7 +161,7 @@ namespace Orders
                 document.PostProcess = d => d.Info.Title = "Orders API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new SwaggerSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] {"orders"}, new SwaggerSecurityScheme
                     {
                         Type = SwaggerSecuritySchemeType.OAuth2,
                         Flow = SwaggerOAuth2Flow.Implicit,

@@ -31,15 +31,15 @@ namespace BFF
 
                 switch (ex)
                 {
-                    case ClientResponseException<ValidationErrorDetails> clientException:
+                    case ClientException<ValidationErrorDetails> clientException:
                         context.Response.StatusCode = clientException.StatusCode;
                         error = clientException.Result;
                         break;
-                    case ClientResponseException<ErrorDetails> clientException:
+                    case ClientException<ErrorDetails> clientException:
                         context.Response.StatusCode = clientException.StatusCode;
                         error = clientException.Result;
                         break;
-                    case ClientResponseException clientException:
+                    case ClientException clientException:
                         context.Response.StatusCode = clientException.StatusCode;
                         error = new ErrorDetails
                         {

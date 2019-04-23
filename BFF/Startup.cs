@@ -31,10 +31,7 @@ namespace BFF
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
-                {
-                    options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("bff")));
-                })
+            services.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("bff"))); })
                 .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -83,7 +80,7 @@ namespace BFF
                 document.PostProcess = d => d.Info.Title = "BFF API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new SwaggerSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] {"bff"}, new SwaggerSecurityScheme
                     {
                         Type = SwaggerSecuritySchemeType.OAuth2,
                         Flow = SwaggerOAuth2Flow.Implicit,

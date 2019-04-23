@@ -30,10 +30,7 @@ namespace Users
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
-                {
-                    options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("users")));
-                })
+            services.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("users"))); })
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
@@ -83,6 +80,7 @@ namespace Users
 
             app.UseMvc();
         }
+
         private static void AddAuthentication(IServiceCollection services)
         {
             services
@@ -103,7 +101,7 @@ namespace Users
                 document.PostProcess = d => d.Info.Title = "Users API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new SwaggerSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] {"users"}, new SwaggerSecurityScheme
                     {
                         Type = SwaggerSecuritySchemeType.OAuth2,
                         Flow = SwaggerOAuth2Flow.Implicit,

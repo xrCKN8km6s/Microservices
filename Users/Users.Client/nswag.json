@@ -61,7 +61,7 @@
       "disposeHttpClient": false,
       "protectedMethods": [],
       "generateExceptionClasses": false,
-      "exceptionClass": "ClientResponseException",
+      "exceptionClass": "ClientException",
       "wrapDtoExceptions": false,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
