@@ -1,18 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { UserProfileService } from './user-profile.service';
+import { UserProfileService } from '../auth/user-profile.service';
 
-@Injectable()
-export class OrdersGuard implements CanActivate {
-
-  constructor(private userProfileService: UserProfileService) { }
-
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.userProfileService.hasPermission('OrdersView');
-  }
-}
-
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminGuard implements CanActivate {
 
   constructor(private userProfileService: UserProfileService) { }
@@ -22,7 +14,9 @@ export class AdminGuard implements CanActivate {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminUsersGuard implements CanActivate {
 
   constructor(private userProfileService: UserProfileService) { }
@@ -32,7 +26,9 @@ export class AdminUsersGuard implements CanActivate {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminRolesGuard implements CanActivate {
 
   constructor(private userProfileService: UserProfileService) { }

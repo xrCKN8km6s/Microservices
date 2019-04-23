@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { RolesService, RoleDto, PermissionDto } from './roles.service';
+import { RolesService } from './roles.service';
+import { Permission } from './models/permission';
 import { MatDialog } from '@angular/material/dialog';
-import { EditRoleDialogComponent, EditRoleDialogData, DialogMode } from './edit-role-dialog/edit-role-dialog.component';
+import { EditRoleDialogComponent } from './edit-role-dialog/edit-role-dialog.component';
+import { DialogMode } from './edit-role-dialog/dialog-mode';
+import { EditRoleDialogData } from './edit-role-dialog/edit-role-dialog-data';
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
 import { UserProfileService } from 'src/app/auth/user-profile.service';
+import { Role } from '../role';
 
 @Component({
   selector: 'app-roles',
@@ -13,8 +17,8 @@ import { UserProfileService } from 'src/app/auth/user-profile.service';
 export class RolesComponent implements OnInit {
 
   public displayedColumns: string[] = ['name', 'isGlobal', 'actions'];
-  public roles: RoleDto[];
-  private allPermissions: PermissionDto[];
+  public roles: ReadonlyArray<Role>;
+  private allPermissions: ReadonlyArray<Permission>;
   public canEdit: boolean;
   public canDelete: boolean;
 
@@ -27,7 +31,7 @@ export class RolesComponent implements OnInit {
     this.loadRoles();
   }
 
-  public onEdit(role: RoleDto): void {
+  public onEdit(role: Role): void {
     this.openDialog(DialogMode.Edit, this.allPermissions, role.id);
   }
 
@@ -35,7 +39,7 @@ export class RolesComponent implements OnInit {
     this.openDialog(DialogMode.Create, this.allPermissions);
   }
 
-  public onDelete(role: RoleDto): void {
+  public onDelete(role: Role): void {
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
       data: `Are you sure you want to delete role ${role.name}?`,
       autoFocus: false
@@ -48,12 +52,17 @@ export class RolesComponent implements OnInit {
     });
   }
 
-  private openDialog(mode: DialogMode, allPermissions: PermissionDto[], roleId: number = null): void {
+  private openDialog(mode: DialogMode, allPermissions: ReadonlyArray<Permission>, roleId: number = null): void {
+
+    const dialogData: EditRoleDialogData = {
+      mode, allPermissions, roleId
+    };
+
     const dialogRef = this.dialog.open(EditRoleDialogComponent, {
       autoFocus: false,
       width: '400px',
       height: '600px',
-      data: new EditRoleDialogData(mode, allPermissions, roleId)
+      data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(_ => this.loadRoles());

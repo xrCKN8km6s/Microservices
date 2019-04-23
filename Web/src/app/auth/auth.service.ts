@@ -70,7 +70,7 @@ export class AuthService {
   public isLoggedIn(): Observable<boolean> {
     return this.getUser().pipe(
       map(user => {
-        return !!user && !!user.access_token && !!this.userProfileService.hasProfile;
+        return !!user && !!user.access_token && this.userProfileService.hasProfile();
       })
     );
   }

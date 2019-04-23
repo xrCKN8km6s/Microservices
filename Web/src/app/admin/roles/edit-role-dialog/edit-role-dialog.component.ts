@@ -1,7 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { RolesService, PermissionDto, CreateEditRoleDto } from '../roles.service';
+import { RolesService } from '../roles.service';
+import { CreateEditRole } from '../models/create-edit-role';
 import { Observable } from 'rxjs';
+import { EditRoleDialogData } from './edit-role-dialog-data';
+import { DialogMode } from './dialog-mode';
 
 @Component({
   selector: 'app-edit-role-dialog',
@@ -10,7 +13,7 @@ import { Observable } from 'rxjs';
 })
 export class EditRoleDialogComponent implements OnInit {
 
-  public role: CreateEditRoleDto;
+  public role: CreateEditRole;
   public title: string;
 
   constructor(
@@ -23,10 +26,10 @@ export class EditRoleDialogComponent implements OnInit {
   public ngOnInit() {
     if (this.data.mode === DialogMode.Edit) {
       this.svc.getRole(this.data.roleId).subscribe(res => {
-        this.role = { name: res.name, isGlobal: res.isGlobal, permissions: res.permissions };
+        this.role = { name: res.name, isGlobal: res.isGlobal, permissions: res.permissions as [] };
       });
     } else {
-      this.role = new CreateEditRoleDto();
+      this.role = { name: '', isGlobal: false, permissions: [] };
     }
   }
 
@@ -52,17 +55,4 @@ export class EditRoleDialogComponent implements OnInit {
   public onCancel(): void {
     this.dialogRef.close();
   }
-}
-
-export class EditRoleDialogData {
-  constructor(
-    public mode: DialogMode,
-    public allPermissions: PermissionDto[],
-    public roleId: number
-  ) { }
-}
-
-export enum DialogMode {
-  Create,
-  Edit
 }
