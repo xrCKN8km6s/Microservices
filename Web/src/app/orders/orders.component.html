@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="orders">
+<table mat-table [dataSource]="orders | async">
 
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>

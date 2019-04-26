@@ -5,9 +5,7 @@ import { environment } from 'src/environments/environment';
 import { UserRolesViewModel } from './models/user-roles-view-model';
 import { UserRoles } from './models/user-roles';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class UserRolesService {
 
   private usersPath = 'api/users';

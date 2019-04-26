@@ -81,20 +81,20 @@ namespace Users
             app.UseMvc();
         }
 
-        private static void AddAuthentication(IServiceCollection services)
+        private void AddAuthentication(IServiceCollection services)
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = "http://localhost:3000";
+                    options.Authority = Configuration["identityUrlInternal"];
                     options.ApiName = "users";
                     options.ApiSecret = "users.secret";
                     options.RequireHttpsMetadata = false; //dev
                 });
         }
 
-        private static void AddSwagger(IServiceCollection services)
+        private void AddSwagger(IServiceCollection services)
         {
             services.AddSwaggerDocument(document =>
             {
@@ -105,8 +105,8 @@ namespace Users
                     {
                         Type = SwaggerSecuritySchemeType.OAuth2,
                         Flow = SwaggerOAuth2Flow.Implicit,
-                        AuthorizationUrl = "http://localhost:3000/connect/authorize",
-                        TokenUrl = "http://localhost:3000/connect/token",
+                        AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
+                        TokenUrl = $"{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
                         {
                             {"users", "Users"}

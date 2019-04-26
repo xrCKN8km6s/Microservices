@@ -4,6 +4,7 @@ import { OrdersRoutingModule } from './orders-routing.module';
 import { OrdersComponent } from './orders.component';
 import { MaterialModule } from '../material.module';
 import { FormsModule } from '@angular/forms';
+import { OrdersService } from './orders.service';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,8 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
     MaterialModule
   ],
-  providers: []
+  providers: [
+    OrdersService
+  ]
 })
 export class OrdersModule { }

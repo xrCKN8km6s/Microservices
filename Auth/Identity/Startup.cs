@@ -2,11 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Logging;
 
 namespace Identity
 {
@@ -23,15 +23,18 @@ namespace Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 
             var builder = services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
-            })
+                {
+                    options.IssuerUri = "null";
+                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseFailureEvents = true;
+                    options.Events.RaiseSuccessEvents = true;
+                })
                 .AddTestUsers(TestUsers.Users);
 
             // in-memory, code config
@@ -42,7 +45,7 @@ namespace Identity
             //NOTE: There won't be Prod so this is fine
             //if (Environment.IsDevelopment())
             //{
-                builder.AddDeveloperSigningCredential();
+            builder.AddDeveloperSigningCredential();
             //}
             //else
             //{

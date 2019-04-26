@@ -6,9 +6,7 @@ import { Role } from '../role';
 import { RolesViewModel } from './models/roles-view-model';
 import { CreateEditRole } from './models/create-edit-role';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class RolesService {
 
   private rolesPath = 'api/roles';

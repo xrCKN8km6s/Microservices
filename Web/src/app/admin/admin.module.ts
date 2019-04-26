@@ -10,6 +10,9 @@ import { RolesComponent } from './roles/roles.component';
 import { UserRolesComponent } from './user-roles/user-roles.component';
 import { MaterialModule } from '../material.module';
 import { FormsModule } from '@angular/forms';
+import { RolesService } from './roles/roles.service';
+import { UserRolesService } from './user-roles/user-roles.service';
+import { AdminGuard, AdminRolesGuard, AdminUsersGuard } from './admin.guard';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,13 @@ import { FormsModule } from '@angular/forms';
     EditRoleDialogComponent,
     EditUserRoleDialogComponent,
     ConfirmDeleteDialogComponent
+  ],
+  providers: [
+    RolesService,
+    UserRolesService,
+    AdminGuard,
+    AdminRolesGuard,
+    AdminUsersGuard
   ]
 })
 export class AdminModule { }
