@@ -8,6 +8,5 @@
 .vs
 .vscode
 *.yml
-Web
 **/bin
 **/obj

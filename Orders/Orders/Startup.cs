@@ -119,13 +119,13 @@ namespace Orders
             app.UseMvc();
         }
 
-        private static void AddAuthentication(IServiceCollection services)
+        private void AddAuthentication(IServiceCollection services)
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = "http://localhost:3000";
+                    options.Authority = _config["identityUrlInternal"];
                     options.ApiName = "orders";
                     options.ApiSecret = "orders.secret";
                     options.RequireHttpsMetadata = false; //dev
@@ -154,7 +154,7 @@ namespace Orders
             services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
         }
 
-        private static void AddSwagger(IServiceCollection services)
+        private void AddSwagger(IServiceCollection services)
         {
             services.AddSwaggerDocument(document =>
             {
@@ -165,8 +165,8 @@ namespace Orders
                     {
                         Type = SwaggerSecuritySchemeType.OAuth2,
                         Flow = SwaggerOAuth2Flow.Implicit,
-                        AuthorizationUrl = "http://localhost:3000/connect/authorize",
-                        TokenUrl = "http://localhost:3000/connect/token",
+                        AuthorizationUrl = $"{_config["identityUrl"]}/connect/authorize",
+                        TokenUrl = $"{_config["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
                         {
                             {"orders", "Orders"}

@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+
+  identity:
+    container_name: identity
+    build:
+      context: ./auth/identity
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 3000:80
+
+  users:
+    container_name: users
+    build:
+      context: ./Users/Users
+      dockerfile: Dockerfile
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
+    ports:
+      - 5100:80
+
+  orders:
+    container_name: orders
+    build:
+      context: ./
+      dockerfile: Orders/Orders/Dockerfile
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionString: Host=postgreSql;Database=Orders;Username=db_user;Password=db_pass
+    ports:
+      - 5200:80
+  

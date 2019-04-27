@@ -8,10 +8,10 @@ COPY Identity.csproj ./
 RUN dotnet restore Identity.csproj
 COPY . .
 WORKDIR /src
-RUN dotnet build Identity.csproj -c Release -o /app
+RUN dotnet build Identity.csproj -c Release -o /app --no-restore
 
 FROM build AS publish
-RUN dotnet publish Identity.csproj -c Release -o /app
+RUN dotnet publish Identity.csproj -c Release -o /app --no-restore
 
 FROM base AS final
 WORKDIR /app
