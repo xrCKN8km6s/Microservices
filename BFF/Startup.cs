@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -42,19 +43,19 @@ namespace BFF
 
             services.AddCors();
             services.AddHttpContextAccessor();
-            services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
+            services.AddStackExchangeRedisCache(options => { options.Configuration = Configuration["redisConfig"]; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
-
             app.UseCors(builder => builder
                 .WithOrigins(Configuration.GetValue<string>("WebUrl"))
                 .AllowAnyMethod()
                 .AllowAnyHeader()
             );
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseSwagger();
             app.UseSwaggerUi3(options =>
@@ -73,7 +74,7 @@ namespace BFF
             app.UseMvc();
         }
 
-        private static void AddSwagger(IServiceCollection services)
+        private void AddSwagger(IServiceCollection services)
         {
             services.AddSwaggerDocument(document =>
             {
@@ -84,8 +85,8 @@ namespace BFF
                     {
                         Type = SwaggerSecuritySchemeType.OAuth2,
                         Flow = SwaggerOAuth2Flow.Implicit,
-                        AuthorizationUrl = "http://localhost:3000/connect/authorize",
-                        TokenUrl = "http://localhost:3000/connect/token",
+                        AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
+                        TokenUrl = $"h{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
                         {
                             {"bff", "BFF"}
@@ -122,32 +123,38 @@ namespace BFF
             });
         }
 
-        private static void AddAuthentication(IServiceCollection services)
+        private void AddAuthentication(IServiceCollection services)
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = "http://localhost:3000/";
-                    options.ApiName = "bff";
-                    options.ApiSecret = "bff.api.secret";
-                    options.RequireHttpsMetadata = false; //dev
-                });
+                    {
+                        options.Authority = Configuration["identityUrlInternal"];
+                        options.RequireHttpsMetadata = false; //dev
+
+                        options.ApiName = "bff";
+                        options.ApiSecret = "bff.api.secret";
+                    });
+
+            services.PostConfigure<JwtBearerOptions>(options =>
+            {
+                options.TokenValidationParameters.ValidIssuers = Configuration.GetValue<string[]>("validIssuers");
+            });
         }
 
-        private static void AddClients(IServiceCollection services)
+        private void AddClients(IServiceCollection services)
         {
             services.AddHttpClient<ITokenAccessor, TokenAccessor>(c =>
-                c.BaseAddress = new Uri("http://localhost:3000/connect/token"));
+                c.BaseAddress = new Uri($"{Configuration["identityUrlInternal"]}/connect/token"));
 
-            services.AddClient<IUsersClient, UsersClient>("http://localhost:5100/", new ClientConfiguration
+            services.AddClient<IUsersClient, UsersClient>(Configuration["usersUrl"], new ClientConfiguration
             {
                 ClientId = "bff",
                 ClientSecret = "bff.client.secret",
                 Scope = "users"
             });
 
-            services.AddClient<IOrdersClient, OrdersClient>("http://localhost:5200/", new ClientConfiguration
+            services.AddClient<IOrdersClient, OrdersClient>(Configuration["ordersUrl"], new ClientConfiguration
             {
                 ClientId = "bff",
                 ClientSecret = "bff.client.secret",

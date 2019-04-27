@@ -29,7 +29,6 @@ namespace Identity
 
             var builder = services.AddIdentityServer(options =>
                 {
-                    options.IssuerUri = "null";
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;

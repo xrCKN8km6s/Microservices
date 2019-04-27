@@ -17,7 +17,7 @@
     <ProjectReference Include="..\..\Clients.Common\Clients.Common.csproj" />
   </ItemGroup>
 
-  <Target Name="NSwag" AfterTargets="Build">
+  <Target Name="NSwag" AfterTargets="Build" Condition="'$(GenerateCode)'=='True'">
     <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
     <Exec Command="$(NSwagExe_Core22) run nswag.json /variables:Configuration=$(Configuration),OutDir=$(OutDir)" />
     <RemoveDir Directories="$(OutDir)References" />
