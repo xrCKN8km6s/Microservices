@@ -19,18 +19,25 @@ Username | Password | Comment
 alice | alice | global role
 bob | bob | 
 
-# Startup
+# Initial setup
 * Open Solution directory
 * Run:
   * `docker-compose up -d`
   * `dotnet ef database update --project IntegrationEventLog/IntegrationEventLog.csproj --startup-project Orders/Orders/Orders.csproj --context IntegrationEventLogContext`
   * `dotnet ef database update --project Orders/Orders.Infrastructure/Orders.Infrastructure.csproj --startup-project Orders/Orders/Orders.csproj --context OrdersContext`
   * `dotnet ef database update --project Users/Users/Users.csproj`
+
+# Back-end development setup
 * Open solution and set multiple startup projects to:
   * BFF
   * Orders
   * Users
-* Press Start
+  * Identity
+* Start
+
+# Front-end development setup
+* Open Solution directory
+* Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d`
 * Go to `/Web` and run `ng serve --open`
 * Navigate to web url
 * Login using username/password provided above
