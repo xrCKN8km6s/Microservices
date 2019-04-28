@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserManager, User } from 'oidc-client';
-import { Observable, from, Subject } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { Observable, from, Subject, of } from 'rxjs';
+import { map, mergeMap, catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import * as Oidc from 'oidc-client';
 import { environment } from 'src/environments/environment';
@@ -44,8 +44,12 @@ export class AuthService {
     return from(this.userManager.getUser());
   }
 
-  private loadProfile(): Observable<UserProfile> {
-    return this.httpClient.get<UserProfile>(`${environment.bffUrl}/${this.profilePath}`);
+  private loadProfile(user: User): Observable<UserProfile> {
+    return this.httpClient.get<UserProfile>(`${environment.bffUrl}/${this.profilePath}`).pipe(map(profile => {
+      this.userProfileService.setProfile(profile);
+      this.userSignedInSubject.next(user);
+      return profile;
+    }));
   }
 
   private formatHeader(user: User): string {
@@ -69,9 +73,12 @@ export class AuthService {
 
   public isLoggedIn(): Observable<boolean> {
     return this.getUser().pipe(
-      map(user => {
-        return !!user && !!user.access_token && this.userProfileService.hasProfile();
-      })
+      mergeMap(user => {
+        return this.loadProfile(user).pipe(map(_ => {
+          return !!user && !!user.access_token && this.userProfileService.hasProfile();
+        }));
+      }),
+      catchError(err => of(false))
     );
   }
 
@@ -84,9 +91,7 @@ export class AuthService {
   public competeSignIn(): Observable<string> {
     return from(this.userManager.signinRedirectCallback()).pipe(
       mergeMap(user => {
-        return this.loadProfile().pipe(map(profile => {
-          this.userProfileService.setProfile(profile);
-          this.userSignedInSubject.next(user);
+        return this.loadProfile(user).pipe(map(_ => {
           return user.state.returnUrl;
         }));
       }));
