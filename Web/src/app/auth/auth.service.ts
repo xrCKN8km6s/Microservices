@@ -62,11 +62,6 @@ export class AuthService {
     );
   }
 
-  public async getAccessTokenValue(): Promise<string> {
-    const u = await this.userManager.getUser();
-    return u.access_token;
-  }
-
   public renewToken(): Observable<string> {
     return from(this.userManager.signinSilent()).pipe(map(this.formatHeader));
   }
@@ -82,8 +77,8 @@ export class AuthService {
     );
   }
 
-  public startAuthentication(url: string): Promise<void> {
-    return this.userManager.signinRedirect({
+  public startAuthentication(url: string): void {
+    this.userManager.signinRedirect({
       data: { returnUrl: url }
     });
   }

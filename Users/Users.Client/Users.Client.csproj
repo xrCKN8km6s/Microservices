@@ -4,9 +4,13 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateCode>true</GenerateCode>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="NSwag.MSBuild" Version="12.2.3">
+    <PackageReference Include="NSwag.MSBuild" Version="12.2.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -16,7 +20,7 @@
     <ProjectReference Include="..\..\Clients.Common\Clients.Common.csproj" />
   </ItemGroup>
 
-  <Target Name="NSwag" AfterTargets="Build" Condition="'$(GenerateCode)'=='True'">
+  <Target Name="NSwag" AfterTargets="Build" Condition="'$(GenerateCode)'=='true'">
     <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
     <Exec Command="$(NSwagExe_Core22) run nswag.json /variables:Configuration=$(Configuration),OutDir=$(OutDir)" />
     <RemoveDir Directories="$(OutDir)References" />
