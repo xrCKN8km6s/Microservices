@@ -18,7 +18,7 @@ COPY . .
 RUN dotnet build BFF/BFF.csproj -c Release -o /app /p:GenerateCode=false --no-restore
 
 FROM build AS publish
-RUN dotnet publish BFF/BFF.csproj -c Release -o /app --no-restore
+RUN dotnet publish BFF/BFF.csproj -c Release -o /app /p:GenerateCode=false --no-restore
 
 FROM base AS final
 WORKDIR /app

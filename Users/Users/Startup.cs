@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.SwaggerGeneration.Processors.Security;
@@ -20,8 +22,11 @@ namespace Users
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> _logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
+            _logger = logger;
             Configuration = configuration;
         }
 
@@ -30,7 +35,14 @@ namespace Users
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("users"))); })
+            services
+                .AddMvcCore(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("users"))); })
+                .AddJsonFormatters()
+                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
+                .AddApiExplorer()
+                .AddFormatterMappings()
+                .AddDataAnnotations()
+                .AddAuthorization()
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
@@ -85,12 +97,14 @@ namespace Users
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+                .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = Configuration["identityUrlInternal"];
-                    options.ApiName = "users";
-                    options.ApiSecret = "users.secret";
-                    options.RequireHttpsMetadata = false; //dev
+                    options.Audience = "users";
+                    options.TokenValidationParameters.ValidIssuers = Configuration.GetSection("validIssuers")
+                        .GetChildren().Select(s => s.Value).ToArray();
+
+                    options.RequireHttpsMetadata = false;
                 });
         }
 

@@ -1,26 +1,32 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace BFF
 {
-    //TODO: logging/error handling
     public class BearerTokenDelegatingHandler : DelegatingHandler
     {
         private readonly ITokenAccessor _tokenAccessor;
-        private readonly ClientConfiguration _config;
 
-        public BearerTokenDelegatingHandler(ITokenAccessor tokenAccessor, ClientConfiguration config)
+        public BearerTokenDelegatingHandler(ITokenAccessor tokenAccessor)
         {
             _tokenAccessor = tokenAccessor;
-            _config = config;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var token = await _tokenAccessor.GetAccessToken(_config, cancellationToken);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var token = await _tokenAccessor.GetAccessToken(cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Error while retrieving access token.")
+                };
+            }
+
+            request.SetBearerToken(token);
             return await base.SendAsync(request, cancellationToken);
         }
     }

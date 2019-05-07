@@ -73,7 +73,7 @@ export class AuthService {
           return !!user && !!user.access_token && this.userProfileService.hasProfile();
         }));
       }),
-      catchError(err => of(false))
+      catchError(_ => of(false))
     );
   }
 

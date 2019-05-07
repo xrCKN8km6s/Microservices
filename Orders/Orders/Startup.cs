@@ -17,6 +17,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
+using Newtonsoft.Json;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using NSwag;
 using NSwag.AspNetCore;
@@ -44,7 +46,16 @@ namespace Orders
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("orders"))); })
+            IdentityModelEventSource.ShowPII = true;
+
+            services
+                .AddMvcCore(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("orders"))); })
+                .AddJsonFormatters()
+                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
+                .AddApiExplorer()
+                .AddFormatterMappings()
+                .AddDataAnnotations()
+                .AddAuthorization()
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
@@ -123,12 +134,14 @@ namespace Orders
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+                .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = _config["identityUrlInternal"];
-                    options.ApiName = "orders";
-                    options.ApiSecret = "orders.secret";
-                    options.RequireHttpsMetadata = false; //dev
+                    options.Audience = "orders";
+                    options.TokenValidationParameters.ValidIssuers = _config.GetSection("validIssuers")
+                        .GetChildren().Select(s => s.Value).ToArray();
+
+                    options.RequireHttpsMetadata = false;
                 });
         }
 

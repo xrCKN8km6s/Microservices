@@ -24,6 +24,8 @@ services:
       identityUrlInternal: http://identity
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
     ports:
       - 5100:80
 
@@ -38,6 +40,8 @@ services:
       identityUrlInternal: http://identity
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionString: Host=postgreSql;Database=Orders;Username=db_user;Password=db_pass
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
     ports:
       - 5200:80
 
@@ -52,10 +56,9 @@ services:
       identityUrlInternal: http://identity
       ASPNETCORE_ENVIRONMENT: Development
       redisConfig: redis
-      usersUrl: http://users
-      ordersUrl: http://orders
-      validIssuers__0: http://identity
-      validIssuers__1: http://localhost:3000
+      clients__scopes: users orders
+      clients__users__baseUrl: http://users
+      clients__orders__baseUrl: http://orders
     ports:
       - 5000:80
   

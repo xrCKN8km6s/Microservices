@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
@@ -32,8 +33,14 @@ namespace BFF
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("bff"))); })
+            services
+                .AddMvcCore(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("bff"))); })
+                .AddJsonFormatters()
                 .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
+                .AddApiExplorer()
+                .AddFormatterMappings()
+                .AddDataAnnotations()
+                .AddAuthorization()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             AddAuthentication(services);
@@ -127,39 +134,40 @@ namespace BFF
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                     {
                         options.Authority = Configuration["identityUrlInternal"];
-                        options.RequireHttpsMetadata = false; //dev
 
                         options.ApiName = "bff";
                         options.ApiSecret = "bff.api.secret";
-                    });
 
-            services.PostConfigure<JwtBearerOptions>(options =>
-            {
-                options.TokenValidationParameters.ValidIssuers = Configuration.GetValue<string[]>("validIssuers");
-            });
+                        options.EnableCaching = true;
+
+                        options.RequireHttpsMetadata = false;
+                    });
         }
 
         private void AddClients(IServiceCollection services)
         {
-            services.AddHttpClient<ITokenAccessor, TokenAccessor>(c =>
-                c.BaseAddress = new Uri($"{Configuration["identityUrlInternal"]}/connect/token"));
-
-            services.AddClient<IUsersClient, UsersClient>(Configuration["usersUrl"], new ClientConfiguration
+            var tokenConfig = new TokenAccessorConfiguration
             {
                 ClientId = "bff",
                 ClientSecret = "bff.client.secret",
-                Scope = "users"
-            });
+                Scopes = Configuration["clients:scopes"]
+            };
 
-            services.AddClient<IOrdersClient, OrdersClient>(Configuration["ordersUrl"], new ClientConfiguration
-            {
-                ClientId = "bff",
-                ClientSecret = "bff.client.secret",
-                Scope = "orders"
-            });
+            services.AddHttpClient<ITokenAccessor>(c =>
+                    c.BaseAddress = new Uri($"{Configuration["identityUrlInternal"]}/connect/token"))
+                .AddTypedClient<ITokenAccessor>((httpClient, sp) =>
+                {
+                    var cache = sp.GetRequiredService<IDistributedCache>();
+                    var logger = sp.GetRequiredService<ILogger<TokenAccessor>>();
+
+                    return new TokenAccessor(httpClient, tokenConfig, cache, logger);
+                });
+
+            services.AddClient<IUsersClient, UsersClient>(Configuration["clients:users:baseUrl"]);
+            services.AddClient<IOrdersClient, OrdersClient>(Configuration["clients:orders:baseUrl"]);
         }
     }
 }

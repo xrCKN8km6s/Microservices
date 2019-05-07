@@ -5,15 +5,14 @@ namespace BFF
 {
     public static class ClientExtensions
     {
-        public static IHttpClientBuilder AddClient<TI, TC>(this IServiceCollection services, string baseAddress,
-            ClientConfiguration config)
+        public static void AddClient<TI, TC>(this IServiceCollection services, string baseAddress)
             where TI : class where TC : class, TI
         {
-            return services.AddHttpClient<TI, TC>(c => { c.BaseAddress = new Uri(baseAddress); })
+            services.AddHttpClient<TI, TC>(c => { c.BaseAddress = new Uri(baseAddress); })
                 .AddHttpMessageHandler(sp =>
                 {
                     var tokenAccessor = sp.GetRequiredService<ITokenAccessor>();
-                    return new BearerTokenDelegatingHandler(tokenAccessor, config);
+                    return new BearerTokenDelegatingHandler(tokenAccessor);
                 });
         }
     }
