@@ -8,8 +8,8 @@ import { SignInCallbackComponent } from './auth/sign-in-callback.component';
 const routes: Routes = [{
   path: '', canActivate: [AuthGuard], children: [
     { path: 'landing', component: LandingComponent },
-    { path: 'orders', loadChildren: './orders/orders.module#OrdersModule' },
-    { path: 'admin', loadChildren: './admin/admin.module#AdminModule' },
+    { path: 'orders', loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
+    { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
     { path: '', pathMatch: 'full', redirectTo: '/landing' },
   ]
 },
