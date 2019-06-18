@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
-using NSwag.SwaggerGeneration.Processors.Security;
+using NSwag.Generation.Processors.Security;
 using Users.Infrastructure;
 using Users.Queries;
 
@@ -81,7 +81,7 @@ namespace Users
         {
             app.UseAuthentication();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3(options =>
             {
                 options.OAuth2Client = new OAuth2ClientSettings
@@ -115,10 +115,10 @@ namespace Users
                 document.PostProcess = d => d.Info.Title = "Users API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new[] {"users"}, new SwaggerSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] {"users"}, new OpenApiSecurityScheme
                     {
-                        Type = SwaggerSecuritySchemeType.OAuth2,
-                        Flow = SwaggerOAuth2Flow.Implicit,
+                        Type = OpenApiSecuritySchemeType.OAuth2,
+                        Flow = OpenApiOAuth2Flow.Implicit,
                         AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
                         TokenUrl = $"{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>

@@ -9,10 +9,10 @@ namespace Clients.Common
 
         public string Response { get; }
 
-        public Dictionary<string, IEnumerable<string>> Headers { get; }
+        public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; }
 
         public ClientException(string message, int statusCode, string response,
-            Dictionary<string, IEnumerable<string>> headers, Exception innerException)
+            IReadOnlyDictionary<string, IEnumerable<string>> headers, Exception innerException)
             : base(message, innerException)
         {
             StatusCode = statusCode;
@@ -26,7 +26,7 @@ namespace Clients.Common
         public TResult Result { get; }
 
         public ClientException(string message, int statusCode, string response,
-            Dictionary<string, IEnumerable<string>> headers, TResult result, Exception innerException)
+            IReadOnlyDictionary<string, IEnumerable<string>> headers, TResult result, Exception innerException)
             : base(message, statusCode, response, headers, innerException)
         {
             Result = result;

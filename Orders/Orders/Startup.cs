@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using NSwag;
 using NSwag.AspNetCore;
-using NSwag.SwaggerGeneration.Processors.Security;
+using NSwag.Generation.Processors.Security;
 using Orders.Application.Behaviors;
 using Orders.Application.IntegrationEvents;
 using Orders.Application.IntegrationEvents.EventHandlers;
@@ -118,7 +118,7 @@ namespace Orders
         {
             app.UseAuthentication();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3(options =>
             {
                 options.OAuth2Client = new OAuth2ClientSettings
@@ -174,10 +174,10 @@ namespace Orders
                 document.PostProcess = d => d.Info.Title = "Orders API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new[] {"orders"}, new SwaggerSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] {"orders"}, new OpenApiSecurityScheme
                     {
-                        Type = SwaggerSecuritySchemeType.OAuth2,
-                        Flow = SwaggerOAuth2Flow.Implicit,
+                        Type = OpenApiSecuritySchemeType.OAuth2,
+                        Flow = OpenApiOAuth2Flow.Implicit,
                         AuthorizationUrl = $"{_config["identityUrl"]}/connect/authorize",
                         TokenUrl = $"{_config["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>

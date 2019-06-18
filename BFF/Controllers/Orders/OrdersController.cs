@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Orders.Client;
 using Orders.Client.Contracts;
 
 namespace BFF.Controllers.Orders

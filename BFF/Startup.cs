@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
-using NSwag.SwaggerGeneration.Processors.Security;
+using NSwag.Generation.Processors.Security;
 using Orders.Client;
 using Orders.Client.Contracts;
 using Users.Client;
@@ -64,7 +64,7 @@ namespace BFF
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3(options =>
             {
                 options.OAuth2Client = new OAuth2ClientSettings
@@ -88,10 +88,10 @@ namespace BFF
                 document.PostProcess = d => d.Info.Title = "BFF API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new[] {"bff"}, new SwaggerSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] {"bff"}, new OpenApiSecurityScheme
                     {
-                        Type = SwaggerSecuritySchemeType.OAuth2,
-                        Flow = SwaggerOAuth2Flow.Implicit,
+                        Type = OpenApiSecuritySchemeType.OAuth2,
+                        Flow = OpenApiOAuth2Flow.Implicit,
                         AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
                         TokenUrl = $"h{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
