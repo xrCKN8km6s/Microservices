@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public userName: string;
   public mainMenuItems: MainMenuItem[];
 
-  constructor(private auth: AuthService, private userProfileService: UserProfileService) { }
+  constructor(private auth: AuthService, private profileService: UserProfileService) { }
 
   ngOnInit(): void {
     this.sub = this.auth.userSignedIn.subscribe(user => {
@@ -39,11 +39,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private prepareMainMenu(): void {
     this.mainMenuItems = [];
 
-    if (this.userProfileService.hasPermission('OrdersView')) {
+    if (this.profileService.hasPermission('OrdersView')) {
       this.mainMenuItems.push({ title: 'Orders', routerLink: '/orders' });
     }
 
-    if (this.userProfileService.hasPermission('AdminView')) {
+    if (this.profileService.hasPermission('AdminView')) {
       this.mainMenuItems.push({ title: 'Admin', routerLink: '/admin' });
     }
   }

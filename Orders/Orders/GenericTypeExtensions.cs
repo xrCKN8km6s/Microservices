@@ -5,7 +5,7 @@ namespace Orders
 {
     public static class GenericTypeExtensions
     {
-        public static string GetGenericTypeName(this Type type)
+        private static string GetGenericTypeName(this Type type)
         {
             string typeName;
 
