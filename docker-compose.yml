@@ -50,4 +50,3 @@ volumes:
   rabbit-mnesia:
   postgres-data:
   pgAdmin-data:
-  
