@@ -19,13 +19,11 @@ Username | Password | Comment
 alice | alice | global role
 bob | bob | 
 
-# Initial setup
+# Initial dev setup
 * Open Solution directory
 * Run:
   * `docker-compose up -d`
-  * `dotnet ef database update --project IntegrationEventLog/IntegrationEventLog.csproj --startup-project Orders/Orders/Orders.csproj --context IntegrationEventLogContext`
-  * `dotnet ef database update --project Orders/Orders.Infrastructure/Orders.Infrastructure.csproj --startup-project Orders/Orders/Orders.csproj --context OrdersContext`
-  * `dotnet ef database update --project Users/Users/Users.csproj`
+  * `seed_db.bat` (Windows) or `./seed_db.sh` (Linux)
 
 # Back-end development setup
 * Open solution and set multiple startup projects to:
@@ -39,5 +37,5 @@ bob | bob |
 * Open Solution directory
 * Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d`
 * Go to `/Web` and run `ng serve --open`
-* Navigate to web url
+* Navigate to Web url
 * Login using username/password provided above
