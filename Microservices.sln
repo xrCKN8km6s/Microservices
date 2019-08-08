@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		docker-compose.local.yml = docker-compose.local.yml
 		docker-compose.yml = docker-compose.yml
 		README.md = README.md
+		seed_db.bat = seed_db.bat
+		seed_db.sh = seed_db.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{4586149F-0E38-4388-AE90-217198364636}"
