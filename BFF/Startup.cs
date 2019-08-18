@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -132,19 +134,26 @@ namespace BFF
 
         private void AddAuthentication(IServiceCollection services)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                     {
                         options.Authority = Configuration["identityUrlInternal"];
-
-                        options.ApiName = "bff";
-                        options.ApiSecret = "bff.api.secret";
-
-                        options.EnableCaching = true;
-
+                        options.Audience = "bff";
                         options.RequireHttpsMetadata = false;
-                    });
+                        options.TokenValidationParameters.ValidIssuers = Configuration.GetSection("validIssuers")
+                            .GetChildren().Select(s => s.Value).ToArray();
+
+                    }, introspectionOptions =>
+                    {
+                        introspectionOptions.ClientId = "bff";
+                        introspectionOptions.ClientSecret = "bff.api.secret";
+                        introspectionOptions.EnableCaching = true;
+                        introspectionOptions.Authority = Configuration["identityUrlInternal"];
+                    }
+                );
         }
 
         private void AddClients(IServiceCollection services)
