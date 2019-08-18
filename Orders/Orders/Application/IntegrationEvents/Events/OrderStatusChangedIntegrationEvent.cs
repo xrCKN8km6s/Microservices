@@ -1,4 +1,4 @@
-﻿using EventBus.Events;
+using EventBus.Events;
 
 namespace Orders.Application.IntegrationEvents.Events
 {

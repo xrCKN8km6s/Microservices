@@ -1,4 +1,4 @@
-﻿using EventBus.Events;
+using EventBus.Events;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;

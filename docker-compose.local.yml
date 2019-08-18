@@ -59,6 +59,8 @@ services:
       clients__scopes: users orders
       clients__users__baseUrl: http://users
       clients__orders__baseUrl: http://orders
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
     ports:
       - 5000:80
   

@@ -1,4 +1,4 @@
-﻿namespace BFF
+namespace BFF
 {
     public class TokenAccessorConfiguration
     {

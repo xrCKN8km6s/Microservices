@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EventBus.Events;
 
 namespace EventBus.Abstractions

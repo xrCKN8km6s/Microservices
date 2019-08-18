@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Clients.Common;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;

@@ -1,4 +1,4 @@
-﻿namespace Users.DTO
+namespace Users.DTO
 {
     public class RolesViewModel
     {

@@ -1,4 +1,4 @@
-﻿using EventBus.Events;
+using EventBus.Events;
 using System.Threading.Tasks;
 
 namespace EventBus.Abstractions

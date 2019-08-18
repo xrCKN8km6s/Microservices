@@ -1,4 +1,4 @@
-﻿namespace BFF
+namespace BFF
 {
     // DO NOT modify existing Ids
     public class Permission : Enumeration
