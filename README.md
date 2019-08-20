@@ -23,7 +23,7 @@ bob | bob |
 * Open Solution directory
 * Run:
   * `docker-compose up -d`
-  * `seed_db.bat` (Windows) or `./seed_db.sh` (Linux)
+  * `seed_db.bat` (Windows) or `./seed_db_sql.sh` (Linux)
 
 # Back-end development setup
 * Open solution and set multiple startup projects to:
