@@ -2,7 +2,27 @@
 * Docker
 * NET Core 2.2 SDK
 * Node
-* Angular `npm install -g @angular/cli`
+
+# Initial dev setup
+* Open Solution directory
+* Run:
+  * `docker-compose up -d`
+  * `.\seed_db_sql.ps1` (Windows) or `./seed_db_sql.sh` (Linux)
+
+# Back-end development setup
+* Open solution and set multiple startup projects to:
+  * BFF
+  * Orders
+  * Users
+  * Identity
+* Start
+
+# Front-end development setup
+* Open Solution directory
+* Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d`
+* Go to `/Web` and run `npm run ng serve --open`
+* Navigate to Web url
+* Login using username/password provided above
 
 # Microservices information:
 Microservice | Url | Swagger
@@ -18,24 +38,3 @@ Username | Password | Comment
 --- | --- | ---
 alice | alice | global role
 bob | bob | 
-
-# Initial dev setup
-* Open Solution directory
-* Run:
-  * `docker-compose up -d`
-  * `seed_db.bat` (Windows) or `./seed_db_sql.sh` (Linux)
-
-# Back-end development setup
-* Open solution and set multiple startup projects to:
-  * BFF
-  * Orders
-  * Users
-  * Identity
-* Start
-
-# Front-end development setup
-* Open Solution directory
-* Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d`
-* Go to `/Web` and run `ng serve --open`
-* Navigate to Web url
-* Login using username/password provided above
