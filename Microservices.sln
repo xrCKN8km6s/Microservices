@@ -4,7 +4,7 @@ VisualStudioVersion = 16.0.28714.193
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orders", "Orders", "{2CB135ED-CE36-43EC-9299-D389B6FB3EB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orders", "Orders\Orders\Orders.csproj", "{73F36AAE-0C45-42FF-812B-785848CF1488}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orders.API", "Orders\Orders.API\Orders.API.csproj", "{73F36AAE-0C45-42FF-812B-785848CF1488}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orders.Domain", "Orders\Orders.Domain\Orders.Domain.csproj", "{4457ADDC-1606-4BE3-816F-FBCFD31F2EAB}"
 EndProject
@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{4586149F-0E38-4388-AE90-217198364636}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users", "Users\Users\Users.csproj", "{AD2DEF79-F9D8-48FB-BB29-A34D48A4311A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.API", "Users\Users.API\Users.API.csproj", "{AD2DEF79-F9D8-48FB-BB29-A34D48A4311A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Auth\Identity\Identity.csproj", "{65C2CDE7-F5F1-474B-A365-8B8C9EEA53D3}"
 EndProject

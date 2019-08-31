@@ -15,8 +15,6 @@ COPY Orders/Orders.Client/Orders.Client.csproj Orders/Orders.Client/
 RUN dotnet restore BFF/BFF.csproj
 COPY . .
 
-RUN dotnet build BFF/BFF.csproj -c Release -o /app /p:GenerateCode=false --no-restore
-
 FROM build AS publish
 RUN dotnet publish BFF/BFF.csproj -c Release -o /app /p:GenerateCode=false --no-restore
 

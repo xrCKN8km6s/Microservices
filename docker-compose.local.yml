@@ -17,7 +17,7 @@ services:
     container_name: users
     hostname: users
     build:
-      context: ./Users/Users
+      context: ./Users/Users.API
       dockerfile: Dockerfile
     environment:
       identityUrl: http://localhost:3000
@@ -34,7 +34,7 @@ services:
     hostname: orders
     build:
       context: ./
-      dockerfile: Orders/Orders/Dockerfile
+      dockerfile: Orders/Orders.API/Dockerfile
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity
