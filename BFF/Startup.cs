@@ -95,7 +95,7 @@ namespace BFF
                         Type = OpenApiSecuritySchemeType.OAuth2,
                         Flow = OpenApiOAuth2Flow.Implicit,
                         AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
-                        TokenUrl = $"h{Configuration["identityUrl"]}/connect/token",
+                        TokenUrl = $"{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
                         {
                             {"bff", "BFF"}
@@ -151,7 +151,7 @@ namespace BFF
                         introspectionOptions.ClientId = "bff";
                         introspectionOptions.ClientSecret = "bff.api.secret";
                         introspectionOptions.EnableCaching = true;
-                        introspectionOptions.Authority = Configuration["identityUrlInternal"];
+                        introspectionOptions.IntrospectionEndpoint = $"{Configuration["identityUrlInternal"]}/connect/introspect";
                     }
                 );
         }
