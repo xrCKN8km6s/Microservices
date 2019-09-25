@@ -26,7 +26,7 @@ namespace Identity
         {
             IdentityModelEventSource.ShowPII = true;
 
-            services.AddControllers();
+            services.AddControllersWithViews();
 
             var builder = services.AddIdentityServer(options =>
                 {
@@ -70,7 +70,7 @@ namespace Identity
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
