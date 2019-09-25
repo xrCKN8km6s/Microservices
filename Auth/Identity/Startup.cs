@@ -7,15 +7,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace Identity
 {
     public class Startup
     {
-        public IHostingEnvironment Environment { get; }
+        public IWebHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
 
-        public Startup(IHostingEnvironment environment, IConfiguration configuration)
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
             Configuration = configuration;
@@ -25,7 +26,7 @@ namespace Identity
         {
             IdentityModelEventSource.ShowPII = true;
 
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+            services.AddControllers();
 
             var builder = services.AddIdentityServer(options =>
                 {
@@ -61,9 +62,16 @@ namespace Identity
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseIdentityServer();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+
+            app.UseRouting();
+
+            app.UseIdentityServer();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
