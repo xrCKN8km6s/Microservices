@@ -66,7 +66,7 @@ namespace BFF
 
             claims.AddRange(profile.Permissions.Select(s => new Claim(JwtClaimTypes.Role, s.Name)));
 
-            var customIdentity = new ClaimsIdentity(claims);
+            var customIdentity = new ClaimsIdentity(claims, "CustomAuthentication", JwtClaimTypes.Name, JwtClaimTypes.Role);
 
             context.User.AddIdentity(customIdentity);
         }

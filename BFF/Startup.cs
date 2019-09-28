@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using IdentityModel;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
@@ -36,18 +33,15 @@ namespace BFF
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddMvcCore(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("bff"))); })
-                .AddJsonFormatters()
-                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
-                .AddApiExplorer()
-                .AddFormatterMappings()
-                .AddDataAnnotations()
-                .AddAuthorization()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .AddControllers()
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             AddAuthentication(services);
             AddAuthorization(services);
+
             AddClients(services);
+
             AddSwagger(services);
 
             services.AddCors();
@@ -58,13 +52,15 @@ namespace BFF
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+            app.UseRouting();
+
             app.UseCors(builder => builder
                 .WithOrigins(Configuration.GetValue<string>("WebUrl"))
                 .AllowAnyMethod()
                 .AllowAnyHeader()
             );
-
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseOpenApi();
             app.UseSwaggerUi3(options =>
@@ -80,7 +76,14 @@ namespace BFF
             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
                 builder => { builder.UseMiddleware<UserProfileMiddleware>(); });
 
-            app.UseMvc();
+            app.UseAuthorization();
+
+            app.UseEndpoints(builder =>
+            {
+                builder
+                    .MapDefaultControllerRoute()
+                    .RequireAuthorization();
+            });
         }
 
         private void AddSwagger(IServiceCollection services)
@@ -112,23 +115,20 @@ namespace BFF
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(AuthorizePolicies.OrdersView,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.OrdersView));
-                options.AddPolicy(AuthorizePolicies.OrdersEdit,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.OrdersEdit));
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireScope("bff")
+                    .Build();
 
-                options.AddPolicy(AuthorizePolicies.AdminView,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminView));
-                options.AddPolicy(AuthorizePolicies.AdminRolesView,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminRolesView));
-                options.AddPolicy(AuthorizePolicies.AdminRolesEdit,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminRolesEdit));
-                options.AddPolicy(AuthorizePolicies.AdminRolesDelete,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminRolesDelete));
-                options.AddPolicy(AuthorizePolicies.AdminUsersView,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminUsersView));
-                options.AddPolicy(AuthorizePolicies.AdminUsersEdit,
-                    policy => policy.RequireClaim(JwtClaimTypes.Role, Permission.AdminUsersEdit));
+                options.AddPolicy(AuthorizePolicies.OrdersView, policy => policy.RequireRole(Permission.OrdersView));
+                options.AddPolicy(AuthorizePolicies.OrdersEdit, policy => policy.RequireRole(Permission.OrdersEdit));
+
+                options.AddPolicy(AuthorizePolicies.AdminView, policy => policy.RequireRole(Permission.AdminView));
+                options.AddPolicy(AuthorizePolicies.AdminRolesView, policy => policy.RequireRole(Permission.AdminRolesView));
+                options.AddPolicy(AuthorizePolicies.AdminRolesEdit, policy => policy.RequireRole(Permission.AdminRolesEdit));
+                options.AddPolicy(AuthorizePolicies.AdminRolesDelete, policy => policy.RequireRole(Permission.AdminRolesDelete));
+                options.AddPolicy(AuthorizePolicies.AdminUsersView, policy => policy.RequireRole(Permission.AdminUsersView));
+                options.AddPolicy(AuthorizePolicies.AdminUsersEdit, policy => policy.RequireRole(Permission.AdminUsersEdit));
             });
         }
 
@@ -165,7 +165,7 @@ namespace BFF
                 Scopes = Configuration["clients:scopes"]
             };
 
-            services.AddHttpClient<ITokenAccessor>(c =>
+            services.AddHttpClient("tokenClient", c =>
                     c.BaseAddress = new Uri($"{Configuration["identityUrlInternal"]}/connect/token"))
                 .AddTypedClient<ITokenAccessor>((httpClient, sp) =>
                 {
