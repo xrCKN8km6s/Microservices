@@ -1,3 +1,2 @@
-CREATE DATABASE "IntegrationEventLog";
 CREATE DATABASE "Orders";
 CREATE DATABASE "Users";
