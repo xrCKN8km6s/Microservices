@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventBus;
-using EventBus.Abstractions;
 using EventBus.RabbitMQ;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog;
@@ -23,16 +22,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
-using Orders.Application.Behaviors;
-using Orders.Application.IntegrationEvents;
-using Orders.Application.IntegrationEvents.EventHandlers;
-using Orders.Application.Queries;
+using Orders.API.Application.Behaviors;
+using Orders.API.Application.IntegrationEvents;
+using Orders.API.Application.IntegrationEvents.EventHandlers;
+using Orders.API.Application.Queries;
 using Orders.Domain.Aggregates.Order;
 using Orders.Infrastructure;
 using Orders.Infrastructure.Repositories;
 using RabbitMQ.Client;
 
-namespace Orders
+namespace Orders.API
 {
     public class Startup
     {

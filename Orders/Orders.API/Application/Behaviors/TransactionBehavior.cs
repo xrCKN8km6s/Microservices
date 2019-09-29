@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Orders.Application.IntegrationEvents;
+using Orders.API.Application.IntegrationEvents;
 using Orders.Infrastructure;
 using Serilog.Context;
 
-namespace Orders.Application.Behaviors
+namespace Orders.API.Application.Behaviors
 {
     public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {

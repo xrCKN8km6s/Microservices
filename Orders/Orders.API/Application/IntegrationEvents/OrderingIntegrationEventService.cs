@@ -1,14 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using EventBus.Abstractions;
-using EventBus.Events;
+using EventBus;
 using IntegrationEventLog.Services;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Orders.Infrastructure;
 
-namespace Orders.Application.IntegrationEvents
+namespace Orders.API.Application.IntegrationEvents
 {
     public class OrderingIntegrationEventService : IOrderingIntegrationEventService
     {

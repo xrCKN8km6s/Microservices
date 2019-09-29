@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using EventBus.Abstractions;
-using Orders.Application.IntegrationEvents.Events;
+using EventBus;
+using Orders.API.Application.IntegrationEvents.Events;
 
-namespace Orders.Application.IntegrationEvents.EventHandlers
+namespace Orders.API.Application.IntegrationEvents.EventHandlers
 {
     public class OrderStatusChangedIntegrationEventHandler : IIntegrationEventHandler<OrderStatusChangedIntegrationEvent>
     {

@@ -1,4 +1,4 @@
-namespace Users
+namespace Users.API
 {
     // DO NOT modify existing Ids
     public class Permission : Enumeration

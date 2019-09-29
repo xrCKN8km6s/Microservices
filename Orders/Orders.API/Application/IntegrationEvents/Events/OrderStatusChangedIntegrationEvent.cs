@@ -1,6 +1,6 @@
-using EventBus.Events;
+using EventBus;
 
-namespace Orders.Application.IntegrationEvents.Events
+namespace Orders.API.Application.IntegrationEvents.Events
 {
     public class OrderStatusChangedIntegrationEvent : IntegrationEvent
     {

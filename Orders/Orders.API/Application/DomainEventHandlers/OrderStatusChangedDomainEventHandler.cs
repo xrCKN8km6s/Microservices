@@ -2,11 +2,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MediatR;
-using Orders.Application.IntegrationEvents;
-using Orders.Application.IntegrationEvents.Events;
+using Orders.API.Application.IntegrationEvents;
+using Orders.API.Application.IntegrationEvents.Events;
 using Orders.Domain.Events;
 
-namespace Orders.Application.DomainEventHandlers
+namespace Orders.API.Application.DomainEventHandlers
 {
     [UsedImplicitly]
     public class OrderStatusChangedDomainEventHandler : INotificationHandler<OrderStatusChangedDomainEvent>

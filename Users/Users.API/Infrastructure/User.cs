@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Users.Infrastructure
+namespace Users.API.Infrastructure
 {
     public class User
     {

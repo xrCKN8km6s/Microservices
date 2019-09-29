@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
-namespace Users
+namespace Users.API
 {
     public class ErrorDetails
     {

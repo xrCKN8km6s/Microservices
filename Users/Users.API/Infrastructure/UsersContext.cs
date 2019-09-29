@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Users.Infrastructure
+namespace Users.API.Infrastructure
 {
     public class UsersContext : DbContext
     {

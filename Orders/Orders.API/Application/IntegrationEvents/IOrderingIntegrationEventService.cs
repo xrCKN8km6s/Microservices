@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using EventBus.Events;
+using EventBus;
 
-namespace Orders.Application.IntegrationEvents
+namespace Orders.API.Application.IntegrationEvents
 {
     public interface IOrderingIntegrationEventService
     {

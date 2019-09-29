@@ -44,7 +44,6 @@ namespace BFF
 
             AddSwagger(services);
 
-            services.AddCors();
             services.AddHttpContextAccessor();
             services.AddStackExchangeRedisCache(options => { options.Configuration = Configuration["redisConfig"]; });
         }

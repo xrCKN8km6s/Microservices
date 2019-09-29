@@ -1,5 +1,5 @@
 using System;
-using EventBus.Events;
+using EventBus;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Users.DTO;
-using Users.Infrastructure;
+using Users.API.DTO;
+using Users.API.Infrastructure;
 
-namespace Users.Queries
+namespace Users.API.Queries
 {
     //TODO: remove mappings, convert to repository
     public interface IUsersQueries

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Users.DTO;
-using Users.Infrastructure;
-using Users.Queries;
+using Users.API.DTO;
+using Users.API.Infrastructure;
+using Users.API.Queries;
 
-namespace Users.Controllers
+namespace Users.API.Controllers
 {
     //TODO: refactor context
     [Route("api/[controller]")]

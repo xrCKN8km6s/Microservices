@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using MediatR;
 using Orders.Domain.Aggregates.Order;
 
-namespace Orders.Application.Commands
+namespace Orders.API.Application.Commands
 {
     public class ChangeOrderStatusCommand : IRequest<bool>
     {

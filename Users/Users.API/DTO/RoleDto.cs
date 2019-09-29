@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Users.DTO
+namespace Users.API.DTO
 {
     public class RoleDto
     {

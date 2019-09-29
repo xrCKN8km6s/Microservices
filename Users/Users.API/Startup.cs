@@ -15,10 +15,10 @@ using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
-using Users.Infrastructure;
-using Users.Queries;
+using Users.API.Infrastructure;
+using Users.API.Queries;
 
-namespace Users
+namespace Users.API
 {
     public class Startup
     {

@@ -1,5 +1,3 @@
-using EventBus.Abstractions;
-using EventBus.Events;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

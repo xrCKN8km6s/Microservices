@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Orders.Application.Commands;
-using Orders.Application.Queries;
+using Orders.API.Application.Commands;
+using Orders.API.Application.Queries;
 
-namespace Orders.Controllers
+namespace Orders.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

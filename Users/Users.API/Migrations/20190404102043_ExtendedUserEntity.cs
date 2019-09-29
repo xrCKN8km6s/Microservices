@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Users.Migrations
+namespace Users.API.Migrations
 {
     public partial class ExtendedUserEntity : Migration
     {

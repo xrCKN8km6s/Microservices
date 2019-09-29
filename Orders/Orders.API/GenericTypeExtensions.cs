@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Orders
+namespace Orders.API
 {
     public static class GenericTypeExtensions
     {

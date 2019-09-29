@@ -1,7 +1,6 @@
-using EventBus.Events;
 using System.Threading.Tasks;
 
-namespace EventBus.Abstractions
+namespace EventBus
 {
     public interface IIntegrationEventHandler<in TIntegrationEvent> where TIntegrationEvent : IntegrationEvent
     {

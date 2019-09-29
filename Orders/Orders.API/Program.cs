@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace Orders
+namespace Orders.API
 {
     [UsedImplicitly]
     public class Program

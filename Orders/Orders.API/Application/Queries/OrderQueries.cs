@@ -5,7 +5,7 @@ using Dapper;
 using JetBrains.Annotations;
 using Npgsql;
 
-namespace Orders.Application.Queries
+namespace Orders.API.Application.Queries
 {
     public interface IOrderQueries
     {

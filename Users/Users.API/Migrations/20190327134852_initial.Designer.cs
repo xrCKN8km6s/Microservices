@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Users.Infrastructure;
+using Users.API.Infrastructure;
 
-namespace Users.Migrations
+namespace Users.API.Migrations
 {
     [DbContext(typeof(UsersContext))]
     [Migration("20190327134852_initial")]

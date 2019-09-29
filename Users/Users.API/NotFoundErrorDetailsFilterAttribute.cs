@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Users
+namespace Users.API
 {
     public class NotFoundErrorDetailsFilterAttribute : ResultFilterAttribute
     {

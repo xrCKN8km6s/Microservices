@@ -5,10 +5,10 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Users.DTO;
-using Users.Infrastructure;
+using Users.API.DTO;
+using Users.API.Infrastructure;
 
-namespace Users.Controllers
+namespace Users.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

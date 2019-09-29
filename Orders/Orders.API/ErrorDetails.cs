@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Orders
+namespace Orders.API
 {
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     public class ErrorDetails

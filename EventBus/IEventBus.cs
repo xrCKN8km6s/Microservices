@@ -1,7 +1,6 @@
 using System;
-using EventBus.Events;
 
-namespace EventBus.Abstractions
+namespace EventBus
 {
     public interface IEventBus
     {
