@@ -28,8 +28,8 @@ namespace BFF
 
             try
             {
-                var webHost = CreateHostBuilder(args).Build();
-                webHost.Run();
+                var host = CreateHostBuilder(args).Build();
+                host.Run();
 
                 return 0;
             }
@@ -45,8 +45,7 @@ namespace BFF
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host
-                .CreateDefaultBuilder(args)
+            Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webHostBuilder => { webHostBuilder.UseStartup<Startup>(); })
                 .UseSerilog();
     }
