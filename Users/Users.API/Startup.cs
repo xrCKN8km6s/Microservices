@@ -3,15 +3,11 @@ using System.Linq;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
@@ -22,11 +18,8 @@ namespace Users.API
 {
     public class Startup
     {
-        private readonly ILogger<Startup> _logger;
-
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
-            _logger = logger;
             Configuration = configuration;
         }
 
@@ -36,13 +29,8 @@ namespace Users.API
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddMvcCore(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("users"))); })
-                .AddJsonFormatters()
-                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
-                .AddApiExplorer()
-                .AddFormatterMappings()
-                .AddDataAnnotations()
-                .AddAuthorization()
+                .AddControllers()
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
@@ -62,9 +50,10 @@ namespace Users.API
                         };
                     };
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             AddAuthentication(services);
+            AddAuthorization(services);
             AddSwagger(services);
 
             var connectionString = Configuration.GetValue<string>("ConnectionString");
@@ -74,23 +63,6 @@ namespace Users.API
                     .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
             services.AddScoped<IUsersQueries, UsersQueries>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            app.UseAuthentication();
-
-            app.UseOpenApi();
-            app.UseSwaggerUi3(options =>
-            {
-                options.OAuth2Client = new OAuth2ClientSettings
-                {
-                    ClientId = "usersswaggerui"
-                };
-            });
-
-            app.UseMvc();
         }
 
         private void AddAuthentication(IServiceCollection services)
@@ -106,6 +78,17 @@ namespace Users.API
 
                     options.RequireHttpsMetadata = false;
                 });
+        }
+
+        private void AddAuthorization(IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireScope("users")
+                    .Build();
+            });
         }
 
         private void AddSwagger(IServiceCollection services)
@@ -130,6 +113,31 @@ namespace Users.API
 
                 document.OperationProcessors.Add(
                     new OperationSecurityScopeProcessor("oauth2"));
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app)
+        {
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3(options =>
+            {
+                options.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "usersswaggerui"
+                };
+            });
+
+            app.UseEndpoints(builder =>
+            {
+                builder
+                    .MapDefaultControllerRoute()
+                    .RequireAuthorization();
             });
         }
     }

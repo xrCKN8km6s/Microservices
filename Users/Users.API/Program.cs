@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Users.API
@@ -11,14 +11,27 @@ namespace Users.API
     {
         public static int Main(string[] args)
         {
+            static IConfiguration BuildConfiguration(string[] a)
+            {
+                return new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", true, true)
+                    .AddJsonFile(
+                        $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
+                        true, true)
+                    .AddEnvironmentVariables()
+                    .AddCommandLine(a)
+                    .Build();
+            }
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(BuildConfiguration(args))
                 .CreateLogger();
 
             try
             {
-                var webHost = CreateWebHostBuilder(args).Build();
-                webHost.Run();
+                var host = CreateHostBuilder(args).Build();
+                host.Run();
 
                 return 0;
             }
@@ -33,22 +46,9 @@ namespace Users.API
             }
         }
 
-        private static IConfiguration BuildConfiguration(string[] args)
-        {
-            return new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile(
-                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
-                    true, true)
-                .AddEnvironmentVariables()
-                .AddCommandLine(args)
-                .Build();
-        }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(builder => { builder.UseStartup<Startup>(); })
                 .UseSerilog();
     }
 }
