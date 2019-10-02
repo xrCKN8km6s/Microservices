@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EventBus;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace IntegrationEventLog.Services
@@ -20,13 +21,14 @@ namespace IntegrationEventLog.Services
             _context = context;
         }
 
-        public async Task<IReadOnlyCollection<IntegrationEventLogItem>> GetPendingAsync()
+        public async Task<IReadOnlyCollection<IntegrationEventLogItem>> GetPendingAsync(Guid transactionId)
         {
             using var trans = _context.Database.BeginTransaction();
 
             var res = await _context.IntegrationEventLogItems
                                     .FromSqlInterpolated(
-                                        $@"SELECT * FROM integration_event_logs WHERE ""State""={IntegrationEventState.NotPublished}
+                                        $@"SELECT * FROM integration_event_logs WHERE ""State""={IntegrationEventState.NotPublished} AND
+                                        ""TransactionId""={transactionId}
                                         ORDER BY ""CreatedDate"" FOR UPDATE SKIP LOCKED")
                                     .ToListAsync().ConfigureAwait(false);
 
@@ -39,7 +41,7 @@ namespace IntegrationEventLog.Services
             return res;
         }
 
-        public async Task AddAsync(IntegrationEvent e, [NotNull] DbTransaction transaction)
+        public async Task AddAsync(IntegrationEvent e, IDbContextTransaction transaction)
         {
             if (transaction == null)
             {
@@ -47,9 +49,9 @@ namespace IntegrationEventLog.Services
                     "Transaction instance is required to ensure atomicity.");
             }
 
-            var entry = IntegrationEventLogItem.Create(e);
+            var entry = IntegrationEventLogItem.Create(e, transaction.TransactionId);
 
-            _context.Database.UseTransaction(transaction);
+            _context.Database.UseTransaction(transaction.GetDbTransaction());
 
             await _context.IntegrationEventLogItems.AddAsync(entry);
 

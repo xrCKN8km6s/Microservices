@@ -42,6 +42,8 @@ namespace IntegrationEventLog
             builder.Property(p => p.Content).HasColumnType("json").IsRequired();
 
             builder.Property(p => p.State).IsRequired();
+
+            builder.Property(p => p.TransactionId);
         }
     }
 }

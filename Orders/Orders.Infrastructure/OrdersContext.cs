@@ -41,6 +41,7 @@ namespace Orders.Infrastructure
 
     public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     {
+        //https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#field-only-property-names-should-match-the-field-name
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.ToTable("orders");
@@ -51,11 +52,11 @@ namespace Orders.Infrastructure
 
             builder.Property(p => p.Id).IsRequired();
 
-            builder.Property<DateTime>("CreationDateTime").IsRequired();
+            builder.Property<DateTime>("_creationDateTime").HasColumnName("CreationDateTime").IsRequired();
 
-            builder.Property<int>("OrderStatus").IsRequired();
+            builder.Property<int>("_orderStatus").HasColumnName("OrderStatus").IsRequired();
 
-            builder.Property<string>("Name").IsRequired();
+            builder.Property<string>("_name").HasColumnName("Name").IsRequired();
 
             builder.Ignore(p => p.DomainEvents);
         }

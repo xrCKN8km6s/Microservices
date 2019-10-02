@@ -44,6 +44,8 @@ namespace Orders.API.Application.Behaviors
 
                 await strategy.ExecuteAsync(async () =>
                 {
+                    Guid transactionId;
+
                     using (var transaction =
                         await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken)
                     )
@@ -57,10 +59,12 @@ namespace Orders.API.Application.Behaviors
                         _logger.LogInformation("Commit transaction {TransactionId} for {CommandName}",
                             transaction.TransactionId, typeName);
 
+                        transactionId = transaction.TransactionId;
+
                         transaction.Commit();
                     }
 
-                    await _orderingIntegrationEventService.PublishEventsAsync();
+                    await _orderingIntegrationEventService.PublishEventsAsync(transactionId);
                 });
 
                 return response;

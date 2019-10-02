@@ -1,9 +1,9 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using EventBus;
 using IntegrationEventLog.Services;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Orders.Infrastructure;
 
@@ -28,15 +28,15 @@ namespace Orders.API.Application.IntegrationEvents
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task PublishEventsAsync()
+        public async Task PublishEventsAsync(Guid transactionId)
         {
-            var pendingIntegrationEvents = await _integrationEventLogService.GetPendingAsync();
+            var pendingIntegrationEvents = await _integrationEventLogService.GetPendingAsync(transactionId);
 
             foreach (var integrationEvent in pendingIntegrationEvents)
             {
                 try
                 {
-                    _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
+                    _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, JsonSerializer.Serialize(integrationEvent.Content));
                     await _integrationEventLogService.MarkAsPublishedAsync(integrationEvent.EventId);
                 }
                 catch (Exception ex)
@@ -49,7 +49,7 @@ namespace Orders.API.Application.IntegrationEvents
 
         public async Task SaveEventAsync(IntegrationEvent e)
         {
-            await _integrationEventLogService.AddAsync(e, _context.Database.CurrentTransaction.GetDbTransaction());
+            await _integrationEventLogService.AddAsync(e, _context.Database.CurrentTransaction);
         }
     }
 }

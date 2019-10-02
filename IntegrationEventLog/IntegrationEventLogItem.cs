@@ -19,13 +19,15 @@ namespace IntegrationEventLog
 
         public IntegrationEventState State { get; set; }
 
+        public Guid TransactionId { get; private set; }
+
         //Used by EF
         [UsedImplicitly]
         private IntegrationEventLogItem()
         {
         }
 
-        public static IntegrationEventLogItem Create(IntegrationEvent e)
+        public static IntegrationEventLogItem Create(IntegrationEvent e, Guid transactionId)
         {
             if (e is null)
             {
@@ -39,7 +41,8 @@ namespace IntegrationEventLog
                 EventName = e.GetType().Name,
                 State = IntegrationEventState.NotPublished,
                 TimesSent = 0,
-                Content = JsonConvert.SerializeObject(e)
+                Content = JsonConvert.SerializeObject(e),
+                TransactionId = transactionId
             };
         }
     }
