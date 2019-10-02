@@ -68,6 +68,7 @@ namespace BFF
                         introspectionOptions.ClientId = "bff";
                         introspectionOptions.ClientSecret = "bff.api.secret";
                         introspectionOptions.EnableCaching = true;
+                        introspectionOptions.CacheKeyPrefix = "introspection_";
                         introspectionOptions.IntrospectionEndpoint =
                             $"{Configuration["identityUrlInternal"]}/connect/introspect";
                     }
@@ -113,6 +114,8 @@ namespace BFF
 
                     return new TokenAccessor(httpClient, tokenConfig, cache, logger);
                 });
+
+            services.AddTransient<BearerTokenDelegatingHandler>();
 
             services.AddClient<IUsersClient, UsersClient>(Configuration["clients:users:baseUrl"]);
             services.AddClient<IOrdersClient, OrdersClient>(Configuration["clients:orders:baseUrl"]);

@@ -9,11 +9,7 @@ namespace BFF
             where TI : class where TC : class, TI
         {
             services.AddHttpClient<TI, TC>(c => { c.BaseAddress = new Uri(baseAddress); })
-                .AddHttpMessageHandler(sp =>
-                {
-                    var tokenAccessor = sp.GetRequiredService<ITokenAccessor>();
-                    return new BearerTokenDelegatingHandler(tokenAccessor);
-                });
+                .AddHttpMessageHandler<BearerTokenDelegatingHandler>();
         }
     }
 }
