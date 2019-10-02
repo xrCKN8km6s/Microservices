@@ -1,6 +1,5 @@
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-// ReSharper disable All
 
 namespace IntegrationEventLog.Migrations
 {

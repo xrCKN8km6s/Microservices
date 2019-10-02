@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IntegrationEventLog.Services
 {
-    public class IntegrationEventLogService : IIntegrationEventLogService, IDisposable
+    public class IntegrationEventLogService : IIntegrationEventLogService
     {
         private readonly ILogger<IntegrationEventLogService> _logger;
         private readonly IntegrationEventLogContext _context;
@@ -53,53 +53,48 @@ namespace IntegrationEventLog.Services
 
             await _context.IntegrationEventLogItems.AddAsync(entry);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task MarkAsInProgressAsync(Guid eventId)
         {
-            await SetState(eventId, IntegrationEventState.InProgress);
+            await SetStateAsync(eventId, IntegrationEventState.InProgress).ConfigureAwait(false);
         }
 
         public async Task MarkAsPublishedAsync(Guid eventId)
         {
-            await SetState(eventId, IntegrationEventState.Published);
+            await SetStateAsync(eventId, IntegrationEventState.Published).ConfigureAwait(false);
         }
 
         public async Task MarkAsFailedAsync(Guid eventId)
         {
-            await SetState(eventId, IntegrationEventState.Failed);
+            await SetStateAsync(eventId, IntegrationEventState.Failed).ConfigureAwait(false);
         }
 
-        private async Task SetState(Guid eventId, IntegrationEventState state)
+        private async Task SetStateAsync(Guid eventId, IntegrationEventState state)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
             {
-                try
-                {
-                    var item = await _context.IntegrationEventLogItems
-                        .FromSqlInterpolated($"SELECT * FROM integration_event_logs WHERE \"EventId\"={eventId} FOR UPDATE")
-                        .SingleAsync();
+                var item = await _context.IntegrationEventLogItems
+                    .FromSqlInterpolated($"SELECT * FROM integration_event_logs WHERE \"EventId\"={eventId} FOR UPDATE")
+                    .SingleAsync()
+                    .ConfigureAwait(false);
 
-                    item.State = state;
-                    item.TimesSent++;
+                item.State = state;
+                item.TimesSent++;
 
-                    _context.IntegrationEventLogItems.Update(item);
+                _context.IntegrationEventLogItems.Update(item);
 
-                    await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync().ConfigureAwait(false);
 
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Exception during integration event state update.");
-                }
+                transaction.Commit();
             }
-        }
-
-        public void Dispose()
-        {
-            _context?.Dispose();
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception during integration event state update.");
+            }
         }
     }
 }

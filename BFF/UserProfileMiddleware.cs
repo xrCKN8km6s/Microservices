@@ -32,6 +32,11 @@ namespace BFF
         [UsedImplicitly]
         public async Task InvokeAsync(HttpContext context)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var sub = context.User.FindFirstValue(JwtClaimTypes.Subject);
 
             if (sub == null)

@@ -27,6 +27,11 @@ namespace IntegrationEventLog
 
         public static IntegrationEventLogItem Create(IntegrationEvent e)
         {
+            if (e is null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+
             return new IntegrationEventLogItem
             {
                 EventId = e.Id,
