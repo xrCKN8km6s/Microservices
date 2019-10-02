@@ -24,9 +24,9 @@ namespace Orders.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            await _mediator.DispatchDomainEventsAsync(this);
+            await _mediator.DispatchDomainEventsAsync(this).ConfigureAwait(false);
 
-            await SaveChangesAsync(cancellationToken);
+            await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return true;
         }

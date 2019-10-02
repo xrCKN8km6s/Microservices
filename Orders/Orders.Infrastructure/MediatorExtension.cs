@@ -9,6 +9,11 @@ namespace Orders.Infrastructure
     {
         public static async Task DispatchDomainEventsAsync(this IMediator mediator, OrdersContext ctx)
         {
+            if (ctx is null)
+            {
+                throw new System.ArgumentNullException(nameof(ctx));
+            }
+
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
@@ -23,10 +28,10 @@ namespace Orders.Infrastructure
 
             var tasks = domainEvents
                 .Select(async (domainEvent) => {
-                    await mediator.Publish(domainEvent);
+                    await mediator.Publish(domainEvent).ConfigureAwait(false);
                 });
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
     }
 }

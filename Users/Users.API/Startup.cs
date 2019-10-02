@@ -80,7 +80,7 @@ namespace Users.API
                 });
         }
 
-        private void AddAuthorization(IServiceCollection services)
+        private static void AddAuthorization(IServiceCollection services)
         {
             services.AddAuthorization(options =>
             {

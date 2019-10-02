@@ -8,16 +8,12 @@ using IntegrationEventLog.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
-using Newtonsoft.Json;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using NSwag;
 using NSwag.AspNetCore;
@@ -45,16 +41,9 @@ namespace Orders.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            IdentityModelEventSource.ShowPII = true;
-
             services
-                .AddMvcCore(options => { options.Filters.Add(new AuthorizeFilter(ScopePolicy.Create("orders"))); })
-                .AddJsonFormatters()
-                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
-                .AddApiExplorer()
-                .AddFormatterMappings()
-                .AddDataAnnotations()
-                .AddAuthorization()
+                .AddControllers()
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>
@@ -74,9 +63,10 @@ namespace Orders.API
                         };
                     };
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             AddAuthentication(services);
+            AddAuthorization(services);
             AddEventBus(services);
             AddSwagger(services);
 
@@ -86,12 +76,12 @@ namespace Orders.API
 
             var connectionString = _config.GetValue<string>("ConnectionString");
 
-            void ConfigureNpgsqlOptions(NpgsqlDbContextOptionsBuilder npgsqlOptions) =>
+            static void ConfigureNpgsql(NpgsqlDbContextOptionsBuilder npgsqlOptions) =>
                 npgsqlOptions.EnableRetryOnFailure();
 
             services.AddDbContext<OrdersContext>(options =>
             {
-                options.UseNpgsql(connectionString, ConfigureNpgsqlOptions);
+                options.UseNpgsql(connectionString, ConfigureNpgsql);
             });
 
             services.AddDbContext<IntegrationEventLogContext>((sp, options) =>
@@ -99,7 +89,7 @@ namespace Orders.API
                 var context = sp.GetRequiredService<OrdersContext>();
                 var dbConnection = context.Database.GetDbConnection();
 
-                options.UseNpgsql(dbConnection, ConfigureNpgsqlOptions);
+                options.UseNpgsql(dbConnection, ConfigureNpgsql);
             });
 
             services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
@@ -110,23 +100,6 @@ namespace Orders.API
             services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
 
             services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            app.UseAuthentication();
-
-            app.UseOpenApi();
-            app.UseSwaggerUi3(options =>
-            {
-                options.OAuth2Client = new OAuth2ClientSettings
-                {
-                    ClientId = "ordersswaggerui"
-                };
-            });
-
-            app.UseMvc();
         }
 
         private void AddAuthentication(IServiceCollection services)
@@ -142,6 +115,17 @@ namespace Orders.API
 
                     options.RequireHttpsMetadata = false;
                 });
+        }
+
+        private static void AddAuthorization(IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireScope("orders")
+                    .Build();
+            });
         }
 
         private static void AddEventBus(IServiceCollection services)
@@ -173,7 +157,7 @@ namespace Orders.API
                 document.PostProcess = d => d.Info.Title = "Orders API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new[] {"orders"}, new OpenApiSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] { "orders" }, new OpenApiSecurityScheme
                     {
                         Type = OpenApiSecuritySchemeType.OAuth2,
                         Flow = OpenApiOAuth2Flow.Implicit,
@@ -188,6 +172,31 @@ namespace Orders.API
 
                 document.OperationProcessors.Add(
                     new OperationSecurityScopeProcessor("oauth2"));
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app)
+        {
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3(options =>
+            {
+                options.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "ordersswaggerui"
+                };
+            });
+
+            app.UseEndpoints(builder =>
+            {
+                builder
+                    .MapDefaultControllerRoute()
+                    .RequireAuthorization();
             });
         }
     }

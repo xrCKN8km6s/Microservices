@@ -39,6 +39,11 @@ namespace EventBus.RabbitMQ
 
         public void Publish(IntegrationEvent e)
         {
+            if (e is null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+
             var eventName = e.GetType().Name;
             var content = JsonConvert.SerializeObject(e);
 
@@ -162,7 +167,7 @@ namespace EventBus.RabbitMQ
                 var eventName = ea.RoutingKey;
                 var message = Encoding.UTF8.GetString(ea.Body);
 
-                await ProcessEvent(eventName, message);
+                await ProcessEvent(eventName, message).ConfigureAwait(false);
 
                 channel.BasicAck(ea.DeliveryTag, false);
             };
@@ -196,7 +201,8 @@ namespace EventBus.RabbitMQ
                         var eventType = _subManager.GetEventTypeByName(eventName);
                         var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
-                        await (Task) concreteType.GetMethod("Handle").Invoke(handler, new[] {integrationEvent});
+                        await ((Task) concreteType.GetMethod("Handle").Invoke(handler, new[] {integrationEvent}))
+                            .ConfigureAwait(false);
                     }
                 }
             }

@@ -8,6 +8,11 @@ namespace Users.API
     {
         public override void OnResultExecuting(ResultExecutingContext context)
         {
+            if (context is null)
+            {
+                throw new System.ArgumentNullException(nameof(context));
+            }
+
             if (context.Result is NotFoundObjectResult result && result.Value is string message)
             {
                 context.Result = new NotFoundObjectResult(

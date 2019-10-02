@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -38,7 +39,7 @@ namespace Users.API.Controllers
         [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
-        public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody] UpdateUserRolesDto roles)
+        public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody, Required] UpdateUserRolesDto roles)
         {
             var user = await _context.Users.Include(i => i.UserRoles).FirstOrDefaultAsync(f => f.Id == id);
             if (user == null)
@@ -59,7 +60,7 @@ namespace Users.API.Controllers
             var rolesToAdd = roles.Roles.Except(dbUserRoles).ToArray();
             var rolesToRemove = dbUserRoles.Except(roles.Roles).ToHashSet();
 
-            user.UserRoles.AddRange(rolesToAdd.Select(s => new UserRole {RoleId = s}));
+            user.UserRoles.AddRange(rolesToAdd.Select(s => new UserRole { RoleId = s }));
             user.UserRoles.RemoveAll(ur => rolesToRemove.Contains(ur.RoleId));
 
             await _context.SaveChangesAsync();
@@ -67,33 +68,11 @@ namespace Users.API.Controllers
             return NoContent();
         }
 
-        public class UserDto
+        private static UserDto MapUserToDto(User user) => new UserDto
         {
-            public long Id { get; set; }
-            public string Name { get; set; }
-            public long[] Roles { get; set; }
-        }
-
-
-        public class UpdateUserRolesDto
-        {
-            public long[] Roles { get; set; }
-        }
-
-        public class UsersViewModel
-        {
-            public UserDto[] Users { get; set; }
-            public RoleDto[] Roles { get; set; }
-        }
-
-        public static UserDto MapUserToDto(User user)
-        {
-            return new UserDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Roles = user.UserRoles.Select(s => s.RoleId).ToArray()
-            };
-        }
+            Id = user.Id,
+            Name = user.Name,
+            Roles = user.UserRoles.Select(s => s.RoleId).ToArray()
+        };
     }
 }

@@ -8,7 +8,7 @@ using System.Net.Sockets;
 
 namespace EventBus.RabbitMQ
 {
-    public class RabbitMQConnection : IRabbitMQConnection
+    public sealed class RabbitMQConnection : IRabbitMQConnection
     {
         private readonly IConnectionFactory _connectionFactory;
         private readonly ILogger<RabbitMQConnection> _logger;

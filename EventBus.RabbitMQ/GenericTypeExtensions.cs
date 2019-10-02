@@ -7,6 +7,11 @@ namespace EventBus.RabbitMQ
     {
         public static string GetGenericTypeName(this Type type)
         {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             string typeName;
 
             if (type.IsGenericType)
@@ -22,9 +27,14 @@ namespace EventBus.RabbitMQ
             return typeName;
         }
 
-        public static string GetGenericTypeName(this object @object)
+        public static string GetGenericTypeName(this object o)
         {
-            return @object.GetType().GetGenericTypeName();
+            if (o is null)
+            {
+                throw new ArgumentNullException(nameof(o));
+            }
+
+            return o.GetType().GetGenericTypeName();
         }
     }
 }

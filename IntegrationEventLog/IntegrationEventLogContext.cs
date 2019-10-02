@@ -11,6 +11,11 @@ namespace IntegrationEventLog
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            if (modelBuilder is null)
+            {
+                throw new System.ArgumentNullException(nameof(modelBuilder));
+            }
+
             modelBuilder.ApplyConfiguration(new IntegrationEventLogItemTypeConfiguration());
         }
     }
@@ -19,6 +24,11 @@ namespace IntegrationEventLog
     {
         public void Configure(EntityTypeBuilder<IntegrationEventLogItem> builder)
         {
+            if (builder is null)
+            {
+                throw new System.ArgumentNullException(nameof(builder));
+            }
+
             builder.ToTable("integration_event_logs");
 
             builder.HasKey(p => p.EventId);

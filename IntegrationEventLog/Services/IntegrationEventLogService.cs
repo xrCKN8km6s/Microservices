@@ -22,22 +22,21 @@ namespace IntegrationEventLog.Services
 
         public async Task<IReadOnlyCollection<IntegrationEventLogItem>> GetPendingAsync()
         {
-            using (var trans = _context.Database.BeginTransaction())
-            {
-                var res = await _context.IntegrationEventLogItems
-                    .FromSql(
-                        "SELECT * FROM integration_event_logs WHERE \"State\"={0} ORDER BY \"CreatedDate\" FOR UPDATE SKIP LOCKED",
-                        IntegrationEventState.NotPublished)
-                    .ToListAsync();
+            using var trans = _context.Database.BeginTransaction();
 
-                res.ForEach(item => item.State = IntegrationEventState.InProgress);
+            var res = await _context.IntegrationEventLogItems
+                                    .FromSqlInterpolated(
+                                        $@"SELECT * FROM integration_event_logs WHERE ""State""={IntegrationEventState.NotPublished}
+                                        ORDER BY ""CreatedDate"" FOR UPDATE SKIP LOCKED")
+                                    .ToListAsync().ConfigureAwait(false);
 
-                await _context.SaveChangesAsync();
+            res.ForEach(item => item.State = IntegrationEventState.InProgress);
 
-                trans.Commit();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
-                return res;
-            }
+            trans.Commit();
+
+            return res;
         }
 
         public async Task AddAsync(IntegrationEvent e, [NotNull] DbTransaction transaction)
@@ -79,7 +78,8 @@ namespace IntegrationEventLog.Services
                 try
                 {
                     var item = await _context.IntegrationEventLogItems
-                        .FromSql("SELECT * FROM integration_event_logs WHERE \"EventId\"={0} FOR UPDATE", eventId).SingleAsync();
+                        .FromSqlInterpolated($"SELECT * FROM integration_event_logs WHERE \"EventId\"={eventId} FOR UPDATE")
+                        .SingleAsync();
 
                     item.State = state;
                     item.TimesSent++;

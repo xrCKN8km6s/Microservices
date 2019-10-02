@@ -21,10 +21,10 @@ namespace Orders.API.Application.Behaviors
             IOrderingIntegrationEventService orderingIntegrationEventService,
             ILogger<TransactionBehaviour<TRequest, TResponse>> logger)
         {
-            _dbContext = dbContext ?? throw new ArgumentException(nameof(OrdersContext));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _orderingIntegrationEventService = orderingIntegrationEventService ??
-                                               throw new ArgumentException(nameof(orderingIntegrationEventService));
-            _logger = logger ?? throw new ArgumentException(nameof(ILogger));
+                                               throw new ArgumentNullException(nameof(orderingIntegrationEventService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,

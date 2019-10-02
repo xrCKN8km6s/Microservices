@@ -24,8 +24,8 @@ namespace Orders.Infrastructure.Repositories
 
         public async Task<Order> GetAsync(long orderId)
         {
-            var order = await _context.Orders.FromSql("SELECT * FROM public.orders WHERE \"Id\"={0} FOR UPDATE", orderId)
-                .SingleAsync();
+            var order = await _context.Orders.FromSqlInterpolated($"SELECT * FROM public.orders WHERE \"Id\"={orderId} FOR UPDATE")
+                .SingleAsync().ConfigureAwait(false);
             return order;
         }
 

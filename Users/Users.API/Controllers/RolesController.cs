@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -78,7 +79,7 @@ namespace Users.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationErrorDetails))]
-        public async Task<ActionResult> CreateRole([FromBody] CreateEditRoleDto role)
+        public async Task<ActionResult> CreateRole([FromBody, Required] CreateEditRoleDto role)
         {
             var newRole = MapCreateDtoToRole(role);
             _context.Roles.Add(newRole);
@@ -92,7 +93,7 @@ namespace Users.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationErrorDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
-        public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody] CreateEditRoleDto role)
+        public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody, Required] CreateEditRoleDto role)
         {
             var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (dbRole == null)
@@ -150,6 +151,11 @@ namespace Users.API.Controllers
 
         public static RoleDto MapRoleToDto(Role role)
         {
+            if (role is null)
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+
             var dto = new RoleDto
             {
                 Id = role.Id,
