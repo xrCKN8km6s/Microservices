@@ -1,13 +1,13 @@
 # Prerequisites
 * Docker
-* NET Core 2.2 SDK
+* NET Core SDK 3.0.100
 * Node
 
 # Initial dev setup
-* Open Solution directory
+* Open repository directory
 * Run:
   * `docker-compose up -d`
-  * `.\seed_db_sql.ps1` (Windows) or `./seed_db_sql.sh` (Linux)
+  * `.\seed_db_sql.ps1` (Windows PowerShell) or `./seed_db_sql.sh` (Linux)
 
 # Back-end development setup
 * Open solution and set multiple startup projects to:
@@ -17,10 +17,13 @@
   * Identity
 * Start
 
+To use EF Core CLI (e.g. `dotnet ef migrations add <migration name>`) run `dotnet tool install --global dotnet-ef` (https://docs.microsoft.com/en-us/ef/core/miscellaneous/cli/dotnet#ef-core-3x)
+
 # Front-end development setup
-* Open Solution directory
+* Open repository directory
 * Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d`
-* Go to `/Web` and run `npm run ng serve --open`
+* Go to `/Web` and run `npm install` 
+* Run `npm run ng serve`
 * Navigate to Web url
 * Login using username/password provided above
 
