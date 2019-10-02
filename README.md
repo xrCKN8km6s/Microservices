@@ -25,7 +25,7 @@ To use EF Core CLI (e.g. `dotnet ef migrations add <migration name>`) run `dotne
 * Go to `/Web` and run `npm install` 
 * Run `npm run ng serve`
 * Navigate to Web url
-* Login using username/password provided above
+* Login using username/password provided below
 
 # Microservices information:
 Microservice | Url | Swagger
