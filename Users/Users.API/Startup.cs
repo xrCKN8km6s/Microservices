@@ -46,7 +46,7 @@ namespace Users.API
 
                         return new BadRequestObjectResult(problemDetails)
                         {
-                            ContentTypes = {"application/problem+json"}
+                            ContentTypes = { "application/problem+json" }
                         };
                     };
                 })
@@ -98,7 +98,7 @@ namespace Users.API
                 document.PostProcess = d => d.Info.Title = "Users API";
 
                 document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("oauth2", new[] {"users"}, new OpenApiSecurityScheme
+                    new SecurityDefinitionAppender("oauth2", new[] { "users" }, new OpenApiSecurityScheme
                     {
                         Type = OpenApiSecuritySchemeType.OAuth2,
                         Flow = OpenApiOAuth2Flow.Implicit,

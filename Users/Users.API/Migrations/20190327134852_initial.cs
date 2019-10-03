@@ -107,7 +107,7 @@ namespace Users.API.Migrations
 
             migrationBuilder.InsertData(
                 "users",
-                new[] {"sub", "is_active"},
+                new[] { "sub", "is_active" },
                 new object[,]
                 {
                     {"affc1ed6-e923-461f-8199-e95c07dc373b", true},
