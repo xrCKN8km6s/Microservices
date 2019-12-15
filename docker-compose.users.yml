@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+
+  identity:
+    container_name: identity
+    hostname: identity
+    build:
+      context: ./Auth/Identity
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 3000:80
+
+  users:
+    container_name: users
+    hostname: users
+    build:
+      context: ./Users/Users.API
+      dockerfile: Dockerfile
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:443;http://+:80
+      ASPNETCORE_HTTPS_PORT: 5101
+      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/cert.pfx
+    ports:
+      - 5100:80
+      - 5101:443
+    volumes:
+      - ./certs/cert.pfx:/https/cert.pfx

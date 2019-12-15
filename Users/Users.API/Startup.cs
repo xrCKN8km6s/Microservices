@@ -49,8 +49,7 @@ namespace Users.API
                             ContentTypes = { "application/problem+json" }
                         };
                     };
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
 
             AddAuthentication(services);
             AddAuthorization(services);
