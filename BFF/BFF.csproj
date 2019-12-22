@@ -14,15 +14,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.0" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.1.6" />
+    <PackageReference Include="Orders.Client.Rest" Version="1.0.0-alpha1" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Orders\Orders.Client\Orders.Client.csproj" />
-    <ProjectReference Include="..\Users\Users.Client\Users.Client.csproj" />
+    <PackageReference Include="Users.Client.Rest" Version="1.0.0-alpha1" />
   </ItemGroup>
 
 </Project>

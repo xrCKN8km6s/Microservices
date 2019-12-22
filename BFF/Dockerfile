@@ -1,16 +1,13 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
 COPY BFF/BFF.csproj BFF/
 
-COPY Clients.Common/Clients.Common.csproj Clients.Common/
-
-COPY Users/Users.Client/Users.Client.csproj Users/Users.Client/
-COPY Orders/Orders.Client/Orders.Client.csproj Orders/Orders.Client/
+COPY NuGet.Config BFF/
 
 RUN dotnet restore BFF/BFF.csproj
 COPY . .

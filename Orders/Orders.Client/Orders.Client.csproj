@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PackageId>Orders.Client.Rest</PackageId>
+    <Version>1.0.0-alpha1</Version>
+    <Authors>xrCKN8km6s</Authors>
+    <Company>xrCKN8km6s</Company>
+    <RepositoryUrl>https://github.com/xrckn8km6s/microservices</RepositoryUrl>
   </PropertyGroup>
   
   <PropertyGroup>
