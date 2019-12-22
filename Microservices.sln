@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		docker-compose.local.yml = docker-compose.local.yml
 		docker-compose.users.yml = docker-compose.users.yml
 		docker-compose.yml = docker-compose.yml
+		nuget.config = nuget.config
 		README.md = README.md
 		seed_db_dotnet.bat = seed_db_dotnet.bat
 		seed_db_dotnet.sh = seed_db_dotnet.sh
