@@ -5,15 +5,15 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
-COPY BFF/BFF.csproj BFF/
+COPY BFF.csproj .
 
-COPY NuGet.Config BFF/
+COPY NuGet.Config .
 
-RUN dotnet restore BFF/BFF.csproj
+RUN dotnet restore BFF.csproj
 COPY . .
 
 FROM build AS publish
-RUN dotnet publish BFF/BFF.csproj -c Release -o /app /p:GenerateCode=false --no-restore
+RUN dotnet publish BFF.csproj -c Release -o /app /p:GenerateCode=false --no-restore
 
 FROM base AS final
 WORKDIR /app

@@ -6,8 +6,8 @@ services:
     container_name: bff
     hostname: bff
     build:
-      context: ./
-      dockerfile: BFF/Dockerfile
+      context: ./BFF
+      dockerfile: Dockerfile
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity
