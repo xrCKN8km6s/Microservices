@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+
+  bff:
+    container_name: bff
+    hostname: bff
+    build:
+      context: ./
+      dockerfile: BFF/Dockerfile
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      ASPNETCORE_ENVIRONMENT: Development
+      redisConfig: redis
+      clients__scopes: users orders
+      clients__users__baseUrl: http://users
+      clients__orders__baseUrl: http://orders
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
+    ports:
+      - 5000:80
+  

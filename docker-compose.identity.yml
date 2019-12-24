@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+
+  identity:
+    container_name: identity
+    hostname: identity
+    build:
+      context: ./Auth/Identity
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 3000:80

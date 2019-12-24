@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <PackageId>EventBus</PackageId>
+    <Version>1.0.0-alpha2</Version>
+    <Authors>xrCKN8km6s</Authors>
+    <Company>xrCKN8km6s</Company>
+    <RepositoryUrl>https://github.com/xrckn8km6s/microservices</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

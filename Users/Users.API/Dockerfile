@@ -5,6 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY Users.API.csproj .
+COPY NuGet.Config .
 
 RUN dotnet restore Users.API.csproj
 COPY . .

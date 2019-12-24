@@ -2,25 +2,25 @@ version: "3.7"
 
 services:
 
-  users:
-    container_name: users
-    hostname: users
+  orders:
+    container_name: orders
+    hostname: orders
     build:
-      context: ./Users/Users.API
-      dockerfile: Dockerfile
+      context: ./Orders
+      dockerfile: Orders.API/Dockerfile
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity
-      ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
+      ConnectionString: Host=postgreSql;Database=Orders;Username=db_user;Password=db_pass
       validIssuers__0: http://identity
       validIssuers__1: http://localhost:3000
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: https://+:443;http://+:80
-      ASPNETCORE_HTTPS_PORT: 5101
+      ASPNETCORE_HTTPS_PORT: 5201
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/cert.pfx
     ports:
-      - 5100:80
-      - 5101:443
+      - 5200:80
+      - 5201:443
     volumes:
       - ./certs/cert.pfx:/https/cert.pfx
