@@ -7,7 +7,6 @@
 * Open repository directory
 * Run:
   * `.\update_nuget_token.ps1 -current TOKEN -new <valid token>` (Windows PowerShell) or `./update_nuget_token.sh TOKEN <valid token>`
-  * `.\make_dev_cert.ps1`
   * `docker-compose up -d`
   * `.\seed_db_sql.ps1` (Windows PowerShell) or `./seed_db_sql.sh` (Linux)
 
@@ -23,6 +22,7 @@ To use EF Core CLI (e.g. `dotnet ef migrations add <migration name>`) run `dotne
 
 # Front-end development setup
 * Open repository directory
+* Run `.\make_dev_cert.ps1`
 * Run `docker-compose -f docker-compose.yml -f docker-compose.bff.yml -f docker-compose.identity.yml up -f docker-compose.users.yml -f docker-compose.orders.yml -d`
 * Go to `/Web` and run `npm install` 
 * Run `npm run ng serve`
