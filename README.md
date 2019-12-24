@@ -5,8 +5,9 @@
 
 # Initial dev setup
 * Open repository directory
-* Replace `TOKEN` with valid token in **each** `NuGet.Config` file
 * Run:
+  * `.\update_nuget_token.ps1` -current TOKEN -new `<valid token with at least read packages permissions>`
+  * `.\make_dev_cert.ps1`
   * `docker-compose up -d`
   * `.\seed_db_sql.ps1` (Windows PowerShell) or `./seed_db_sql.sh` (Linux)
 
