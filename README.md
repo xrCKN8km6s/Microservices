@@ -6,7 +6,7 @@
 # Initial dev setup
 * Open repository directory
 * Run:
-  * `.\update_nuget_token.ps1 -current TOKEN -new <valid token>` (Windows PowerShell) or `./update_nuget_token.sh TOKEN <valid token>`
+  * `.\update_nuget_token.ps1 TOKEN <valid token>` (Windows PowerShell) or `./update_nuget_token.sh TOKEN <valid token>`
   * `docker-compose up -d`
   * `.\seed_db_sql.ps1` (Windows PowerShell) or `./seed_db_sql.sh` (Linux)
 
