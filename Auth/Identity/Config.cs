@@ -80,7 +80,11 @@ namespace Identity
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
 
-                    RedirectUris = {"http://localhost:5000/swagger/oauth2-redirect.html"},
+                    RedirectUris =
+                    {
+                        "http://localhost:5000/swagger/oauth2-redirect.html",
+                        "https://localhost:5001/swagger/oauth2-redirect.html"
+                    },
 
                     AllowedScopes = {"bff"}
                 },
