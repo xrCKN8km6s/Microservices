@@ -59,7 +59,7 @@ namespace BFF
                         break;
                 }
 
-                await context.WriteResultAsync(new ObjectResult(error) {ContentTypes = {"application/problem+json"}});
+                await context.WriteResultAsync(new ObjectResult(error));
             }
         }
     }

@@ -44,10 +44,7 @@ namespace Users.API
                             errors
                         );
 
-                        return new BadRequestObjectResult(problemDetails)
-                        {
-                            ContentTypes = { "application/problem+json" }
-                        };
+                        return new BadRequestObjectResult(problemDetails);
                     };
                 });
 

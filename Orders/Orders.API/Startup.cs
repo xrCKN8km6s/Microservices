@@ -57,13 +57,9 @@ namespace Orders.API
                             errors
                         );
 
-                        return new BadRequestObjectResult(problemDetails)
-                        {
-                            ContentTypes = {"application/problem+json"}
-                        };
+                        return new BadRequestObjectResult(problemDetails);
                     };
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
 
             AddAuthentication(services);
             AddAuthorization(services);
