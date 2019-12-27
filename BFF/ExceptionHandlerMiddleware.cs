@@ -4,6 +4,7 @@ using Clients.Common;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 
 namespace BFF
@@ -12,10 +13,12 @@ namespace BFF
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         [UsedImplicitly]
@@ -27,6 +30,8 @@ namespace BFF
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error");
+
                 ErrorDetails error;
 
                 switch (ex)

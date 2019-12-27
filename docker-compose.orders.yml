@@ -15,12 +15,11 @@ services:
       validIssuers__0: http://identity
       validIssuers__1: http://localhost:3000
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: https://+:443;http://+:80
+      ASPNETCORE_URLS: https://+:443
       ASPNETCORE_HTTPS_PORT: 5201
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/cert.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/orders.pfx
     ports:
-      - 5200:80
       - 5201:443
     volumes:
-      - ./certs/cert.pfx:/https/cert.pfx
+      - ./certs/orders.pfx:/https/orders.pfx
