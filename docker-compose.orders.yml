@@ -6,8 +6,8 @@ services:
     container_name: orders
     hostname: orders
     build:
-      context: ./Orders
-      dockerfile: Orders.API/Dockerfile
+      context: ./
+      dockerfile: ./Orders/Orders.API/Dockerfile
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity

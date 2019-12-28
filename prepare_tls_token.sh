@@ -1,16 +1,9 @@
 #!/bin/bash
 
-TARGET_DIR=$1
-CERT_NAME=$2
-COMMON_NAME=$3
-KEY_PASSWORD=$4
-PFX_PASSWORD=$5
-CRT_COPY_TO=$6
+CN=$1
+PASSWD=$2
 
-FULL_PATH="$TARGET_DIR/$CERT_NAME"
+FULL_PATH_NO_EXT="certs/$CN"
 
-
-openssl req -x509 -sha256 -newkey rsa:2048 -keyout $FULL_PATH.key -out $FULL_PATH.crt -days 1095 -subj '/CN='$COMMON_NAME'' -passout pass:$KEY_PASSWORD
-openssl pkcs12 -export -out $FULL_PATH.pfx -inkey $FULL_PATH.key -in $FULL_PATH.crt -passin pass:$KEY_PASSWORD -passout pass:$PFX_PASSWORD
-
-cp $FULL_PATH.crt $CRT_COPY_TO
+openssl req -x509 -sha256 -newkey rsa:2048 -keyout $FULL_PATH_NO_EXT.key -out $FULL_PATH_NO_EXT.crt -days 1095 -subj '/CN='$CN'' -passout pass:$PASSWD
+openssl pkcs12 -export -out $FULL_PATH_NO_EXT.pfx -inkey $FULL_PATH_NO_EXT.key -in $FULL_PATH_NO_EXT.crt -passin pass:$PASSWD -passout pass:$PASSWD

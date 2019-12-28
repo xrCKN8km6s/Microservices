@@ -6,8 +6,8 @@ services:
     container_name: users
     hostname: users
     build:
-      context: ./Users/Users.API
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./Users/Users.API/Dockerfile
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity

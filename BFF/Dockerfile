@@ -5,11 +5,11 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
-COPY BFF.csproj .
+COPY BFF/BFF.csproj .
 COPY NuGet.Config .
 
 RUN dotnet restore BFF.csproj
-COPY . .
+COPY BFF .
 
 FROM build AS publish
 RUN dotnet publish BFF.csproj -c Release -o /app /p:GenerateCode=false
@@ -17,7 +17,7 @@ RUN dotnet publish BFF.csproj -c Release -o /app /p:GenerateCode=false
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-COPY users.crt orders.crt /usr/local/share/ca-certificates/
+COPY certs/users.crt certs/orders.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 
 ENTRYPOINT ["dotnet", "BFF.dll"]
