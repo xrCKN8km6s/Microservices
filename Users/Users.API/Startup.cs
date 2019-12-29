@@ -89,7 +89,7 @@ namespace Users.API
 
         private void AddSwagger(IServiceCollection services)
         {
-            services.AddSwaggerDocument(document =>
+            services.AddOpenApiDocument(document =>
             {
                 document.PostProcess = d => d.Info.Title = "Users API";
 

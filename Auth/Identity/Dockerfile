@@ -1,19 +1,18 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY Identity.csproj ./
-RUN dotnet restore Identity.csproj
+COPY ["Identity.csproj", "."]
+RUN dotnet restore "Identity.csproj"
 COPY . .
-WORKDIR /src
-RUN dotnet build Identity.csproj -c Release -o /app --no-restore
+RUN dotnet build "Identity.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish Identity.csproj -c Release -o /app --no-restore
+RUN dotnet publish "Identity.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Identity.dll"]

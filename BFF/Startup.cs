@@ -123,7 +123,7 @@ namespace BFF
 
         private void AddSwagger(IServiceCollection services)
         {
-            services.AddSwaggerDocument(document =>
+            services.AddOpenApiDocument(document =>
             {
                 document.PostProcess = d => d.Info.Title = "BFF API";
 
