@@ -4,6 +4,7 @@ services:
 
   users:
     container_name: users
+    image: users:${TAG:-latest}
     hostname: users
     build:
       context: ./

@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+
+  users-unit-tests:
+    image: users-unit-tests:${TAG:-latest}
+    build:
+      context: ./
+      dockerfile: ./Users/Users.API/Dockerfile
+      target: unittests
+    volumes:
+      - ./TestResult:/tests
+    entrypoint:
+      - dotnet
+      - test
+      - --logger
+      - trx;LogFileName=/tests/users-unit-tests.trx

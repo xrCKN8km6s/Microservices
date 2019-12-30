@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		docker-compose.bff.yml = docker-compose.bff.yml
 		docker-compose.identity.yml = docker-compose.identity.yml
 		docker-compose.orders.yml = docker-compose.orders.yml
+		docker-compose.users.unittests.yml = docker-compose.users.unittests.yml
 		docker-compose.users.yml = docker-compose.users.yml
 		docker-compose.yml = docker-compose.yml
 		make_dev_cert.ps1 = make_dev_cert.ps1
@@ -45,6 +46,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orders.Client", "Orders\Orders.Client\Orders.Client.csproj", "{79C52F5F-A36A-47CF-BE17-6C0C556B2CF6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BFF", "BFF\BFF.csproj", "{323A30B2-B762-4BAA-A25E-31A7C2E826B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.UnitTests", "Users\Users.UnitTests\Users.UnitTests.csproj", "{87EC3579-E761-4795-BA0B-7115AEADE63E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,6 +155,18 @@ Global
 		{323A30B2-B762-4BAA-A25E-31A7C2E826B0}.Release|x64.Build.0 = Release|Any CPU
 		{323A30B2-B762-4BAA-A25E-31A7C2E826B0}.Release|x86.ActiveCfg = Release|Any CPU
 		{323A30B2-B762-4BAA-A25E-31A7C2E826B0}.Release|x86.Build.0 = Release|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Debug|x64.Build.0 = Debug|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Debug|x86.Build.0 = Debug|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Release|x64.ActiveCfg = Release|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Release|x64.Build.0 = Release|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Release|x86.ActiveCfg = Release|Any CPU
+		{87EC3579-E761-4795-BA0B-7115AEADE63E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +179,7 @@ Global
 		{65C2CDE7-F5F1-474B-A365-8B8C9EEA53D3} = {EA2097BC-1D22-4E71-9602-F19A092D9CF4}
 		{8B4337C4-A7A5-4F46-B4F4-AF68085659C3} = {4586149F-0E38-4388-AE90-217198364636}
 		{79C52F5F-A36A-47CF-BE17-6C0C556B2CF6} = {2CB135ED-CE36-43EC-9299-D389B6FB3EB9}
+		{87EC3579-E761-4795-BA0B-7115AEADE63E} = {4586149F-0E38-4388-AE90-217198364636}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A4663DF-A23D-4894-9AD5-A578CE287DF5}
