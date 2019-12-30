@@ -4,10 +4,13 @@ services:
 
   orders:
     container_name: orders
+    image: orders:${TAG:-latest}
     hostname: orders
     build:
       context: ./
       dockerfile: ./Orders/Orders.API/Dockerfile
+      args:
+        GPR_NuGet_Passwd: ${GPR_NuGet_Passwd}
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity

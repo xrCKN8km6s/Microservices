@@ -1,17 +1,17 @@
 # Prerequisites
 * Docker
 * NET Core SDK 3.0.100
+* PowerShell Core
+* OpenSSL
 * Node
 
 # Initial dev setup
 * Open repository directory
-* Update `NuGet.Config`, replace `TOKEN` with valid token
+* Set `GPR_NuGet_Passwd` environment variable to valid token
 * Run:
-  * `./prepare_tls_token.sh localhost qwerty1234`
-  * `./prepare_tls_token.sh users qwerty1234`
-  * `./prepare_tls_token.sh orders qwerty1234`
+  * `./prepare_tls_tokens.ps1 localhost,orders,users qwerty1234`
   * `docker-compose up -d`
-  * `.\seed_db_sql.ps1` (Windows PowerShell) or `./seed_db_sql.sh` (GNU/Linux)
+  * `./seed_db_sql.ps1`
 
 # Back-end development setup
 * Open solution and set multiple startup projects to:

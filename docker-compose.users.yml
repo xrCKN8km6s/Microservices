@@ -9,6 +9,8 @@ services:
     build:
       context: ./
       dockerfile: ./Users/Users.API/Dockerfile
+      args:
+        GPR_NuGet_Passwd: ${GPR_NuGet_Passwd}
     environment:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity

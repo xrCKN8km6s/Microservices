@@ -1,8 +1,9 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
+ARG GPR_NuGet_Passwd
 WORKDIR /src
 COPY ["Users/Users.API/Users.API.csproj", "./Users.API/"]
 COPY ["Users/Users.UnitTests/Users.UnitTests.csproj", "./Users.UnitTests/"]

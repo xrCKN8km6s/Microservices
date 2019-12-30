@@ -8,6 +8,8 @@ services:
       context: ./
       dockerfile: ./Users/Users.API/Dockerfile
       target: unittests
+      args:
+        GPR_NuGet_Passwd: ${GPR_NuGet_Passwd}
     volumes:
       - ./TestResult:/tests
     entrypoint:
