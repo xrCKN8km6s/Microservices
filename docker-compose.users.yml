@@ -19,7 +19,6 @@ services:
       validIssuers__1: http://localhost:3000
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: https://+:443
-      ASPNETCORE_HTTPS_PORT: 5101
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/users.pfx
     ports:

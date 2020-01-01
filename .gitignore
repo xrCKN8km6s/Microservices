@@ -339,3 +339,4 @@ healthchecksdb
 *.crt
 *.key
 *.pfx
+*.srl

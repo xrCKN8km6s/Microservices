@@ -1,10 +1,10 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
-COPY ["certs/users.crt", "certs/orders.crt", "/usr/local/share/ca-certificates/"]
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+COPY ["certs/rootCA.crt", "/usr/local/share/ca-certificates/"]
 RUN  update-ca-certificates
 WORKDIR /app
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 ARG GPR_NuGet_Passwd
 WORKDIR /src
 COPY ["BFF/BFF.csproj", "."]

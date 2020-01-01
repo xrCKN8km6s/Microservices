@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 WORKDIR /app
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 ARG GPR_NuGet_Passwd
 WORKDIR /src
 COPY ["Orders/Orders.API/Orders.API.csproj", "Orders.API/"]
@@ -13,7 +13,7 @@ RUN dotnet restore "Orders.API/Orders.API.csproj"
 COPY ["Orders/", "."]
 RUN dotnet publish "Orders.API/Orders.API.csproj" -c Release -o /app/publish --no-restore
 
-FROM base AS final
+FROM runtime AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Orders.API.dll"]

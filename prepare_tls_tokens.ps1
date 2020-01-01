@@ -2,19 +2,26 @@
 
 Param (
     [Parameter(Position=0)][string[]] $cns = $(throw "-cn is required"),
-    [Parameter(Position=1)][string] $passwd = $(throw "-passwd is required")
+    [Parameter(Position=1)][string] $passwd = $(throw "-passwd is required"),
+    [Parameter(Position=2)][string] $dir = 'certs'
 )
+
+openssl req -x509 -sha256 -newkey rsa:2048 -days 1095 `
+    -keyout "$dir/rootCA.key" -out "$dir/rootCA.crt" -passout "pass:$passwd"
 
 foreach ($cn in $cns) {
 
-    $FULL_PATH_NO_EXT="certs/$cn"
+    openssl genrsa -out "$dir/$cn.key" 2048
 
-    openssl req -x509 -sha256 -newkey rsa:2048 -days 1095 -subj "/CN=$cn" -passout "pass:$passwd" `
-        -keyout "$FULL_PATH_NO_EXT.key" `
-        -out "$FULL_PATH_NO_EXT.crt";
+    openssl req -new -sha256 -key "$dir/$cn.key" -subj "/CN=$cn" -out "$dir/$cn.csr"
+
+    openssl x509 -req -in "$dir/$cn.csr" -CA "$dir/rootCA.crt" -CAkey "$dir/rootCA.key" `
+        -CAcreateserial -out "$dir/$cn.crt" -days 1095 -sha256 -passin "pass:$passwd"
 
     openssl pkcs12 -export -passin "pass:$passwd" -passout "pass:$passwd" `
-        -out "$FULL_PATH_NO_EXT.pfx" `
-        -inkey "$FULL_PATH_NO_EXT.key" `
-        -in "$FULL_PATH_NO_EXT.crt";
+        -out "$dir/$cn.pfx" `
+        -inkey "$dir/$cn.key" `
+        -in "$dir/$cn.crt";
+
+    Remove-Item "$dir/$cn.csr"
 }

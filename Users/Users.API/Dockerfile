@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 WORKDIR /app
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 ARG GPR_NuGet_Passwd
 WORKDIR /src
 COPY ["Users/Users.API/Users.API.csproj", "./Users.API/"]
@@ -16,9 +16,7 @@ RUN dotnet publish "Users.API/Users.API.csproj" -c Release -o /app/publish --no-
 FROM build as unittests
 WORKDIR /src/Users.UnitTests
 
-FROM build AS publish
-
-FROM base AS final
+FROM runtime AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Users.API.dll"]
