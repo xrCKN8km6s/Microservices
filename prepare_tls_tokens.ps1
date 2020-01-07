@@ -18,9 +18,9 @@ default_bits                = 2048
 distinguished_name          = req_distinguished_name
 req_extensions              = req_ext
 [req_distinguished_name]
-C=UA
-O=MicroservicesDEV
-CN=$cn
+C                           = UA
+O                           = MicroservicesDEV
+CN                          = $cn
 [req_ext]
 subjectAltName              = @alt_names
 [alt_names]
