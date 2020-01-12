@@ -30,9 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		seed_db_dotnet.bat = seed_db_dotnet.bat
 		seed_db_dotnet.sh = seed_db_dotnet.sh
 		seed_db_sql.ps1 = seed_db_sql.ps1
-		seed_db_sql.sh = seed_db_sql.sh
-		update_nuget_token.ps1 = update_nuget_token.ps1
-		update_nuget_token.sh = update_nuget_token.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{4586149F-0E38-4388-AE90-217198364636}"
