@@ -340,3 +340,5 @@ healthchecksdb
 *.key
 *.pfx
 *.srl
+*.pem
+*.csr
