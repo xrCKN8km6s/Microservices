@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -48,7 +50,21 @@ namespace Users.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(builder => { builder.UseStartup<Startup>(); })
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder.UseStartup<Startup>();
+                    builder.UseKestrel((context, options) =>
+                    {
+                        //Windows doesn't yet support TLS1.3
+                        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        {
+                            options.ConfigureHttpsDefaults(httpsOptions =>
+                            {
+                                httpsOptions.SslProtocols = SslProtocols.Tls13;
+                            });
+                        }
+                    });
+                })
                 .UseSerilog();
     }
 }
