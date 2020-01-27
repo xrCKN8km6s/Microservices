@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  bffUrl: 'http://localhost:5000',
+  bffUrl: 'https://localhost:5001',
   webUrl: 'http://localhost:4200',
   authorityUrl: 'http://localhost:3000',
   clientId: 'spa',
