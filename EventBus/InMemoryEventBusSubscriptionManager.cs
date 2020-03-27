@@ -19,7 +19,7 @@ namespace EventBus
             _eventTypes = new List<Type>();
         }
 
-        public void AddSubscription<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
+        public void AddSubscription<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>
         {
             var key = GetEventKey<T>();
             var handlerType = typeof(TH);
@@ -42,7 +42,7 @@ namespace EventBus
             }
         }
 
-        public void RemoveSubscription<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
+        public void RemoveSubscription<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>
         {
             var key = GetEventKey<T>();
 
@@ -75,7 +75,7 @@ namespace EventBus
             }
         }
 
-        public IReadOnlyCollection<SubscriptionInfo> GetHandlersForEvent<T>() where T : IntegrationEvent
+        public IReadOnlyCollection<SubscriptionInfo> GetHandlersForEvent<T>() where T : IIntegrationEvent
         {
             var key = GetEventKey<T>();
 
@@ -86,7 +86,7 @@ namespace EventBus
 
         public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
 
-        public bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent
+        public bool HasSubscriptionsForEvent<T>() where T : IIntegrationEvent
         {
             var key = GetEventKey<T>();
 

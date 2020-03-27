@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Threading.Tasks;
 using EventBus;
 using JetBrains.Annotations;
@@ -23,7 +22,7 @@ namespace IntegrationEventLog.Services
 
         public async Task<IReadOnlyCollection<IntegrationEventLogItem>> GetPendingAsync(Guid transactionId)
         {
-            using var trans = _context.Database.BeginTransaction();
+            await using var trans = _context.Database.BeginTransaction();
 
             var res = await _context.IntegrationEventLogItems
                                     .FromSqlInterpolated(
@@ -41,7 +40,7 @@ namespace IntegrationEventLog.Services
             return res;
         }
 
-        public async Task AddAsync(IntegrationEvent e, IDbContextTransaction transaction)
+        public async Task AddAsync(IIntegrationEvent e, IDbContextTransaction transaction)
         {
             if (transaction == null)
             {
@@ -58,11 +57,6 @@ namespace IntegrationEventLog.Services
             await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task MarkAsInProgressAsync(Guid eventId)
-        {
-            await SetStateAsync(eventId, IntegrationEventState.InProgress).ConfigureAwait(false);
-        }
-
         public async Task MarkAsPublishedAsync(Guid eventId)
         {
             await SetStateAsync(eventId, IntegrationEventState.Published).ConfigureAwait(false);
@@ -75,7 +69,7 @@ namespace IntegrationEventLog.Services
 
         private async Task SetStateAsync(Guid eventId, IntegrationEventState state)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            await using var transaction = _context.Database.BeginTransaction();
 
             try
             {

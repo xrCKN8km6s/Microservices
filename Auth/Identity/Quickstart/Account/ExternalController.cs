@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
+//using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace IdentityServer4.Quickstart.UI
@@ -59,13 +59,13 @@ namespace IdentityServer4.Quickstart.UI
                 throw new Exception("invalid return URL");
             }
 
-            if (AccountOptions.WindowsAuthenticationSchemeName == provider)
+            /*if (AccountOptions.WindowsAuthenticationSchemeName == provider)
             {
                 // windows authentication needs special handling
                 return await ProcessWindowsLoginAsync(returnUrl);
             }
             else
-            {
+            {*/
                 // start challenge and roundtrip the return URL and scheme 
                 var props = new AuthenticationProperties
                 {
@@ -78,7 +78,7 @@ namespace IdentityServer4.Quickstart.UI
                 };
 
                 return Challenge(props, provider);
-            }
+            //}
         }
 
         /// <summary>
@@ -110,8 +110,8 @@ namespace IdentityServer4.Quickstart.UI
                 user = AutoProvisionUser(provider, providerUserId, claims);
             }
 
-            // this allows us to collect any additonal claims or properties
-            // for the specific prtotocols used and store them in the local auth cookie.
+            // this allows us to collect any additional claims or properties
+            // for the specific protocols used and store them in the local auth cookie.
             // this is typically used to store data needed for signout from those protocols.
             var additionalLocalClaims = new List<Claim>();
             var localSignInProps = new AuthenticationProperties();
@@ -151,7 +151,7 @@ namespace IdentityServer4.Quickstart.UI
 
             return Redirect(returnUrl);
         }
-
+        /*
         private async Task<IActionResult> ProcessWindowsLoginAsync(string returnUrl)
         {
             // see if windows auth has already been requested and succeeded
@@ -197,8 +197,8 @@ namespace IdentityServer4.Quickstart.UI
                 // this URL is re-triggered when we call challenge
                 return Challenge(AccountOptions.WindowsAuthenticationSchemeName);
             }
-        }
-
+        }*/
+        
         private (TestUser user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
         {
             var externalUser = result.Principal;

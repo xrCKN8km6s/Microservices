@@ -58,7 +58,7 @@ namespace BFF
                         {
                             options.ConfigureHttpsDefaults(httpsOptions =>
                             {
-                                httpsOptions.SslProtocols = SslProtocols.Tls13;
+                                httpsOptions.SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12;
                             });
                         }
                     });

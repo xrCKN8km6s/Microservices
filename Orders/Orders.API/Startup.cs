@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventBus;
-using EventBus.RabbitMQ;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog;
 using IntegrationEventLog.Services;
@@ -13,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using NSwag;
 using NSwag.AspNetCore;
@@ -21,11 +19,11 @@ using NSwag.Generation.Processors.Security;
 using Orders.API.Application.Behaviors;
 using Orders.API.Application.IntegrationEvents;
 using Orders.API.Application.IntegrationEvents.EventHandlers;
+using Orders.API.Application.IntegrationEvents.Events;
 using Orders.API.Application.Queries;
 using Orders.Domain.Aggregates.Order;
 using Orders.Infrastructure;
 using Orders.Infrastructure.Repositories;
-using RabbitMQ.Client;
 
 namespace Orders.API
 {
@@ -124,26 +122,25 @@ namespace Orders.API
             });
         }
 
-        private static void AddEventBus(IServiceCollection services)
+        private void AddEventBus(IServiceCollection services)
         {
-            services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
+            services.AddServiceBus(builder =>
             {
-                var connection = sp.GetRequiredService<IRabbitMQConnection>();
-                var logger = sp.GetRequiredService<ILogger<RabbitMQEventBus>>();
-                var subManager = sp.GetRequiredService<IEventBusSubscriptionManager>();
-                var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-
-                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, "Orders", 3);
+                builder
+                    .UseInMemorySubscriptionManager()
+                    .UseJsonNetSerializer()
+                    .UseRabbitMQ(options =>
+                    {
+                        options.HostName = _config["rabbitMQHostName"];
+                        options.UserName = _config["rabbitMQUserName"];
+                        options.Password = _config["rabbitMQPassword"];
+                        options.ConnectRetryAttempts = 4;
+                        options.ExchangeName = "microservices";
+                        options.QueueName = "orders";
+                    });
             });
 
-            services.AddSingleton<IRabbitMQConnection>(sp =>
-            {
-                var logger = sp.GetRequiredService<ILogger<RabbitMQConnection>>();
-                var factory = new ConnectionFactory();
-                return new RabbitMQConnection(factory, logger, 3);
-            });
-
-            services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
+            services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
         }
 
         private void AddSwagger(IServiceCollection services)
@@ -174,6 +171,9 @@ namespace Orders.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            var bus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            bus.Subscribe<OrderStatusChangedIntegrationEvent, OrderStatusChangedIntegrationEventHandler>();
+
             app.UseRouting();
 
             app.UseAuthentication();

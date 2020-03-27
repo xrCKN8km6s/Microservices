@@ -7,7 +7,7 @@ Param (
     [Parameter(Position=3)][string] $days = 1095
 )
 
-$rootCAKey = "$dir/rootCA.key"
+$rootCAKey = "$dir/rootCA.pem"
 $rootCACert = "$dir/rootCA.crt"
 
 if (-not(Test-Path $rootCAKey -PathType Leaf) -and
@@ -35,9 +35,9 @@ subjectAltName              = @alt_names
 [alt_names]
 DNS.1                       = $cn" > "$dir/$cn.conf"
 
-    openssl genrsa -out "$dir/$cn.key" 2048
+    openssl genrsa -out "$dir/$cn.pem" 2048
 
-    openssl req -new -sha256 -key "$dir/$cn.key" -out "$dir/$cn.csr" -config "$dir/$cn.conf"
+    openssl req -new -sha256 -key "$dir/$cn.pem" -out "$dir/$cn.csr" -config "$dir/$cn.conf"
 
     openssl x509 -req -in "$dir/$cn.csr" -CA $rootCACert -CAkey $rootCAKey `
         -CAcreateserial -out "$dir/$cn.crt" -days $days -sha256 -passin "pass:$passwd" `
@@ -45,7 +45,7 @@ DNS.1                       = $cn" > "$dir/$cn.conf"
 
     openssl pkcs12 -export -passin "pass:$passwd" -passout "pass:$passwd" `
         -out "$dir/$cn.pfx" `
-        -inkey "$dir/$cn.key" `
+        -inkey "$dir/$cn.pem" `
         -in "$dir/$cn.crt";
 
     Remove-Item "$dir/$cn.csr", "$dir/$cn.conf"

@@ -1,0 +1,123 @@
+version: "3.7"
+
+services:
+
+  rabbitmq:
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: usr
+      RABBITMQ_DEFAULT_PASS: pwd
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - rabbit-mnesia:/var/lib/rabbitmq/mnesia/rabbit@rabbitmq
+
+  postgreSql:
+    environment:
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: db_pass
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_LISTEN_PORT: 15432
+      PGADMIN_DEFAULT_EMAIL: login
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 15432:15432
+    volumes:
+      - pgAdmin-data:/var/lib/pgadmin
+
+  redis:
+    ports:
+      - 6379:6379
+
+  users:
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
+      ASPNETCORE_URLS: https://+:5101
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/users.pfx
+    ports:
+      - 5101:5101
+    volumes:
+      - ./certs/users.pfx:/https/users.pfx
+
+  orders:
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      ConnectionString: Host=postgreSql;Database=Orders;Username=db_user;Password=db_pass
+      rabbitMQHostName: rabbitmq
+      rabbitMQUserName: usr
+      rabbitMQPassword: pwd
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
+      ASPNETCORE_URLS: https://+:5201
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/orders.pfx
+    ports:
+      - 5201:5201
+    volumes:
+      - ./certs/orders.pfx:/https/orders.pfx
+
+  bff:
+    environment:
+      identityUrl: http://localhost:3000
+      identityUrlInternal: http://identity
+      redisConfig: redis
+      clients__scopes: users orders
+      clients__users__baseUrl: https://users:5101
+      clients__orders__baseUrl: https://orders:5201
+      validIssuers__0: http://identity
+      validIssuers__1: http://localhost:3000
+      origins__0: https://localhost:1443
+      origins__1: http://localhost:4201
+      ASPNETCORE_URLS: https://+:5001
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/localhost.pfx
+    ports:
+      - 5001:5001
+    volumes:
+      - ./certs/localhost.pfx:/https/localhost.pfx
+
+  identity:
+    build:
+      context: ./Auth/Identity
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 3000:80
+
+  proxy:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs/localhost.crt:/etc/nginx/localhost.crt
+      - ./certs/localhost.pem:/etc/nginx/localhost.key
+    ports:
+      - 1443:443
+    depends_on:
+      - bff
+
+  web:
+    ports:
+      - 4201:80
+
+volumes:
+  rabbit-mnesia:
+  postgres-data:
+  pgAdmin-data:

@@ -5,6 +5,7 @@ using System.Linq;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,20 @@ namespace BFF
                 .AddControllers()
                 .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            var origins = Configuration.GetSection("origins")
+                .GetChildren().Select(s => s.Value).ToArray();
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder
+                        .WithOrigins(origins)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
 
             services
                 .AddHttpContextAccessor()
@@ -149,15 +164,16 @@ namespace BFF
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+            });
+
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseRouting();
 
-            app.UseCors(builder => builder
-                .WithOrigins(Configuration.GetValue<string>("WebUrl"))
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-            );
+            app.UseCors();
 
             app.UseOpenApi();
             app.UseSwaggerUi3(options =>

@@ -1,0 +1,13 @@
+*.DotSettings
+*.user
+*.md
+.dockerignore
+.env
+.git
+.gitignore
+.vs
+.vscode
+*.yml
+**/bin
+**/obj
+node_modules

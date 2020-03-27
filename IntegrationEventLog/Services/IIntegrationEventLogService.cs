@@ -14,9 +14,7 @@ namespace IntegrationEventLog.Services
         /// <returns></returns>
         Task<IReadOnlyCollection<IntegrationEventLogItem>> GetPendingAsync(Guid transactionId);
 
-        Task AddAsync(IntegrationEvent e, IDbContextTransaction transaction);
-
-        Task MarkAsInProgressAsync(Guid eventId);
+        Task AddAsync(IIntegrationEvent e, IDbContextTransaction transaction);
 
         Task MarkAsPublishedAsync(Guid eventId);
 

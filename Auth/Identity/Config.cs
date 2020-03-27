@@ -61,12 +61,12 @@ namespace Identity
 
                     RedirectUris =
                     {
-                        "http://localhost:4200/signin-callback",
-                        "http://localhost:4200/assets/silent-callback.html"
+                        "http://localhost:4201/signin-callback",
+                        "http://localhost:4201/assets/silent-callback.html"
                     },
 
-                    PostLogoutRedirectUris = {"http://localhost:4200"},
-                    AllowedCorsOrigins = {"http://localhost:4200"},
+                    PostLogoutRedirectUris = {"http://localhost:4201"},
+                    AllowedCorsOrigins = {"http://localhost:4201"},
                     RequireConsent = false,
 
                     AllowedScopes = {"openid", "profile", "email", "bff"}
@@ -83,7 +83,8 @@ namespace Identity
                     RedirectUris =
                     {
                         "http://localhost:5000/swagger/oauth2-redirect.html",
-                        "https://localhost:5001/swagger/oauth2-redirect.html"
+                        "https://localhost:5001/swagger/oauth2-redirect.html",
+                        "https://localhost:1443/swagger/oauth2-redirect.html"
                     },
 
                     AllowedScopes = {"bff"}

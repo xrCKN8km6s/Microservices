@@ -19,6 +19,10 @@ export class UserProfileService {
   public hasPermission(permissionName: Permission): boolean {
     return this.profile.permissions.some(el => el.name === permissionName);
   }
+
+  public getProfileId(): number {
+    return this.profile.id;
+  }
 }
 
 export type Permission =

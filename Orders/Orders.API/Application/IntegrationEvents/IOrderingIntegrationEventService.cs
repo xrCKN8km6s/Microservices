@@ -8,6 +8,6 @@ namespace Orders.API.Application.IntegrationEvents
     {
         Task PublishEventsAsync(Guid transactionId);
 
-        Task SaveEventAsync(IntegrationEvent evt);
+        Task SaveEventAsync(IIntegrationEvent evt);
     }
 }

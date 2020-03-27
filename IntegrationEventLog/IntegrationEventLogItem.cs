@@ -11,7 +11,7 @@ namespace IntegrationEventLog
 
         public string EventName { get; private set; }
 
-        public DateTime CreatedDate { get; private set; }
+        public DateTimeOffset CreatedDate { get; private set; }
 
         public int TimesSent { get; set; }
 
@@ -27,7 +27,7 @@ namespace IntegrationEventLog
         {
         }
 
-        public static IntegrationEventLogItem Create(IntegrationEvent e, Guid transactionId)
+        public static IntegrationEventLogItem Create(IIntegrationEvent e, Guid transactionId)
         {
             if (e is null)
             {

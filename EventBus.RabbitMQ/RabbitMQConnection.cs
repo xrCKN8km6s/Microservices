@@ -4,6 +4,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 using System;
+using System.IO;
 using System.Net.Sockets;
 
 namespace EventBus.RabbitMQ
@@ -14,9 +15,9 @@ namespace EventBus.RabbitMQ
         private readonly ILogger<RabbitMQConnection> _logger;
         private readonly int _retryCount;
         private IConnection _connection;
-        private bool _isDisposed;
+        private bool _disposed;
         private readonly object _syncRoot = new object();
-        public bool IsConnected => _connection != null && _connection.IsOpen && !_isDisposed;
+        public bool IsConnected => _connection != null && _connection.IsOpen && !_disposed;
 
         public RabbitMQConnection(IConnectionFactory connectionFactory, ILogger<RabbitMQConnection> logger, int retryCount = 5)
         {
@@ -71,7 +72,7 @@ namespace EventBus.RabbitMQ
 
         private void OnConnectionShutdown(object sender, ShutdownEventArgs e)
         {
-            if (_isDisposed)
+            if (_disposed)
             {
                 return;
             }
@@ -83,7 +84,7 @@ namespace EventBus.RabbitMQ
 
         private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
         {
-            if (_isDisposed)
+            if (_disposed)
             {
                 return;
             }
@@ -95,7 +96,7 @@ namespace EventBus.RabbitMQ
 
         private void OnCallbackException(object sender, CallbackExceptionEventArgs e)
         {
-            if (_isDisposed)
+            if (_disposed)
             {
                 return;
             }
@@ -108,19 +109,21 @@ namespace EventBus.RabbitMQ
 
         public void Dispose()
         {
-            if (_isDisposed)
+            if (_disposed)
             {
                 return;
             }
 
+            _disposed = true;
+
             try
             {
+                _connection?.Close();
                 _connection?.Dispose();
-                _isDisposed = true;
             }
-            catch (Exception e)
+            catch (IOException ex)
             {
-                _logger.LogCritical(e.ToString());
+                _logger.LogCritical(ex.ToString());
             }
         }
     }

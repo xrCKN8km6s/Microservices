@@ -7,7 +7,7 @@ ARG GPR_NuGet_Passwd
 WORKDIR /src
 COPY ["Users/Users.API/Users.API.csproj", "./Users.API/"]
 COPY ["Users/Users.UnitTests/Users.UnitTests.csproj", "./Users.UnitTests/"]
-COPY ["NuGet.Config", "."]
+#COPY ["NuGet.Config", "."]
 RUN dotnet restore "Users.API/Users.API.csproj"
 RUN dotnet restore "Users.UnitTests/Users.UnitTests.csproj"
 COPY ["Users/", "."]

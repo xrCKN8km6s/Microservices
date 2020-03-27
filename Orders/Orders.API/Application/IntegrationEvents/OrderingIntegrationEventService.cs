@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json;
 using System.Threading.Tasks;
 using EventBus;
 using IntegrationEventLog.Services;
@@ -36,7 +35,7 @@ namespace Orders.API.Application.IntegrationEvents
             {
                 try
                 {
-                    _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, JsonSerializer.Serialize(integrationEvent.Content));
+                    _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
                     await _integrationEventLogService.MarkAsPublishedAsync(integrationEvent.EventId);
                 }
                 catch (Exception ex)
@@ -47,7 +46,7 @@ namespace Orders.API.Application.IntegrationEvents
             }
         }
 
-        public async Task SaveEventAsync(IntegrationEvent e)
+        public async Task SaveEventAsync(IIntegrationEvent e)
         {
             await _integrationEventLogService.AddAsync(e, _context.Database.CurrentTransaction);
         }
