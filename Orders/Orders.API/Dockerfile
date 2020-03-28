@@ -9,20 +9,20 @@ COPY ["Orders/Orders.API/Orders.API.csproj", "Orders/Orders.API/"]
 COPY ["Orders/Orders.Domain/Orders.Domain.csproj", "Orders/Orders.Domain/"]
 COPY ["Orders/Orders.Infrastructure/Orders.Infrastructure.csproj", "Orders/Orders.Infrastructure/"]
 
-COPY ["EventBus/EventBus.csproj", "EventBus/"]
-COPY ["EventBus.AspNetCore/EventBus.AspNetCore.csproj", "EventBus.AspNetCore/"]
-COPY ["EventBus.RabbitMQ/EventBus.RabbitMQ.csproj", "EventBus.RabbitMQ/"]
-COPY ["EventBus.RabbitMQ.AspNetCore/EventBus.RabbitMQ.AspNetCore.csproj", "EventBus.RabbitMQ.AspNetCore/"]
+COPY ["EventBus/EventBus/EventBus.csproj", "EventBus/EventBus/"]
+COPY ["EventBus/EventBus.AspNetCore/EventBus.AspNetCore.csproj", "EventBus/EventBus.AspNetCore/"]
+COPY ["EventBus/EventBus.RabbitMQ/EventBus.RabbitMQ.csproj", "EventBus/EventBus.RabbitMQ/"]
+COPY ["EventBus/EventBus.RabbitMQ.AspNetCore/EventBus.RabbitMQ.AspNetCore.csproj", "EventBus/EventBus.RabbitMQ.AspNetCore/"]
 
 COPY ["IntegrationEventLog/IntegrationEventLog.csproj", "IntegrationEventLog/"]
 #COPY ["NuGet.Config", "Orders.API/"]
 RUN dotnet restore "Orders/Orders.API/Orders.API.csproj"
 COPY ["Orders/", "Orders/"]
 
-COPY ["EventBus/", "EventBus/"]
-COPY ["EventBus.AspNetCore/", "EventBus.AspNetCore/"]
-COPY ["EventBus.RabbitMQ/", "EventBus.RabbitMQ/"]
-COPY ["EventBus.RabbitMQ.AspNetCore/", "EventBus.RabbitMQ.AspNetCore/"]
+COPY ["EventBus/EventBus/", "EventBus/EventBus/"]
+COPY ["EventBus/EventBus.AspNetCore/", "EventBus/EventBus.AspNetCore/"]
+COPY ["EventBus/EventBus.RabbitMQ/", "EventBus/EventBus.RabbitMQ/"]
+COPY ["EventBus/EventBus.RabbitMQ.AspNetCore/", "EventBus/EventBus.RabbitMQ.AspNetCore/"]
 
 COPY ["IntegrationEventLog/", "IntegrationEventLog/"]
 
