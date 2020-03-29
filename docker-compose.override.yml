@@ -102,7 +102,7 @@ services:
     ports:
       - 3000:80
 
-  proxy:
+  bff_proxy:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
@@ -114,8 +114,14 @@ services:
       - bff
 
   web:
+    image: web:${WEB_TAG:-latest}
+    build:
+      context: ./Web
+      dockerfile: Dockerfile
     ports:
       - 4201:80
+    depends_on:
+      - bff
 
 volumes:
   rabbit-mnesia:

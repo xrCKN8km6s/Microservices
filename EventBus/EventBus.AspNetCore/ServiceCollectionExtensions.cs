@@ -3,9 +3,9 @@ using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class EventBusServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddServiceBus(this IServiceCollection services, Action<EventBusBuilder> build)
+        public static IServiceCollection AddEventBus(this IServiceCollection services, Action<EventBusBuilder> build)
         {
             var builder = new EventBusBuilder(services);
             build?.Invoke(builder);

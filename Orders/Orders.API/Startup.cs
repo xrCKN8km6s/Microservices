@@ -124,7 +124,7 @@ namespace Orders.API
 
         private void AddEventBus(IServiceCollection services)
         {
-            services.AddServiceBus(builder =>
+            services.AddEventBus(builder =>
             {
                 builder
                     .UseInMemorySubscriptionManager()
