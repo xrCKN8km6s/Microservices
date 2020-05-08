@@ -83,7 +83,7 @@ services:
       validIssuers__0: http://identity
       validIssuers__1: http://localhost:3000
       origins__0: https://localhost:1443
-      origins__1: http://localhost:4201
+      origins__1: http://localhost:4200
       ASPNETCORE_URLS: https://+:5001
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
@@ -112,6 +112,7 @@ services:
       - 1443:443
     depends_on:
       - bff
+      - identity
 
   web:
     image: web:${WEB_TAG:-latest}
@@ -119,7 +120,7 @@ services:
       context: ./Web
       dockerfile: Dockerfile
     ports:
-      - 4201:80
+      - 4200:80
     depends_on:
       - bff
 

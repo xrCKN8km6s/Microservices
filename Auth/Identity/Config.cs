@@ -61,12 +61,12 @@ namespace Identity
 
                     RedirectUris =
                     {
-                        "http://localhost:4201/signin-callback",
-                        "http://localhost:4201/assets/silent-callback.html"
+                        "http://localhost:4200/signin-callback",
+                        "http://localhost:4200/assets/silent-callback.html"
                     },
 
-                    PostLogoutRedirectUris = {"http://localhost:4201"},
-                    AllowedCorsOrigins = {"http://localhost:4201"},
+                    PostLogoutRedirectUris = {"http://localhost:4200"},
+                    AllowedCorsOrigins = {"http://localhost:4200"},
                     RequireConsent = false,
 
                     AllowedScopes = {"openid", "profile", "email", "bff"}

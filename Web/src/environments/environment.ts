@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   bffUrl: 'https://localhost:1443',
-  webUrl: 'http://localhost:4201',
+  webUrl: 'http://localhost:4200',
   authorityUrl: 'http://localhost:3000',
   clientId: 'spa',
   scope: 'openid profile email bff'
