@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
@@ -13,6 +14,8 @@ namespace Users.API
     {
         public static int Main(string[] args)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+
             static IConfiguration BuildConfiguration(string[] a)
             {
                 return new ConfigurationBuilder()

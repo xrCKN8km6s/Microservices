@@ -1,16 +1,15 @@
 # Prerequisites
 * Docker
 * NET Core SDK 3.1.201
-* PowerShell Core
+* PowerShell 7
 * OpenSSL
 * Node
 
 # Initial dev setup
 * Open repository directory
-* Set `GPR_NuGet_Passwd` environment variable to valid token
 * Run:
-  * `./prepare_tls_tokens.ps1 localhost,orders,users qwerty1234`
-  * `docker-compose up -d`
+  * `./prepare_certs_ec.ps1 localhost,orders,users qwerty1234`
+  * `docker-compose up -d postgreSql`
   * `./seed_db_sql.ps1`
 
 # Back-end development setup
@@ -30,17 +29,24 @@ To use EF Core CLI (e.g. `dotnet ef migrations add <migration name>`) run `dotne
 * Navigate to Web url
 * Login using username/password provided below
 
-# Microservices information:
+# Microservices DEV information
 Microservice | Url | Swagger
 --- | --- | ---
 Identity | http://localhost:3000 | NA
 Web | http://localhost:4200 | NA
 BFF | https://localhost:5001 | https://localhost:5001/swagger
-BFF Reverse Proxy | https://localhost:1443 | https://localhost:1443/swagger
+BFF - NGINX Reverse Proxy | https://localhost:1443 | https://localhost:1443/swagger
 Users | https://localhost:5101 | https://localhost:5101/swagger
 Orders | https://localhost:5201 | https://localhost:5201/swagger
 
-# Test users:
+Name | Url
+--- | ---
+Kibana | http://localhost:5601
+pgAdmin | http://localhost:15432
+RabbitMQ management plugin | http://localhost:15672
+
+
+# Test users
 Username | Password | Comment
 --- | --- | ---
 alice | alice | global role

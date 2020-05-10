@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,8 @@ namespace BFF
     {
         public static int Main(string[] args)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+
             static IConfiguration BuildConfiguration(string[] a)
             {
                 return new ConfigurationBuilder()
