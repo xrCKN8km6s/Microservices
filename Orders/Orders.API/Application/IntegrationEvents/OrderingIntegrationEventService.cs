@@ -1,8 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using EventBus;
 using IntegrationEventLog.Services;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Orders.Infrastructure;
 

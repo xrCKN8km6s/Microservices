@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using MediatR;
 using Orders.Domain.Aggregates.Order;
 
@@ -11,7 +10,6 @@ namespace Orders.API.Application.Commands
         public string Name { get; set; }
     }
 
-    [UsedImplicitly]
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IOrderRepository _repo;

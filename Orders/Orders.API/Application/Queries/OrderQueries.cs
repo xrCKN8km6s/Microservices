@@ -1,8 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using JetBrains.Annotations;
 using Npgsql;
 
 namespace Orders.API.Application.Queries
@@ -31,7 +31,6 @@ namespace Orders.API.Application.Queries
         }
     }
 
-    [UsedImplicitly]
     public class OrderModel
     {
         public long Id { get; set; }

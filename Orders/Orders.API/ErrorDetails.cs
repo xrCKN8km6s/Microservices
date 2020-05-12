@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 
 namespace Orders.API
 {
-    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     public class ErrorDetails
     {
         public string TraceId { get; }

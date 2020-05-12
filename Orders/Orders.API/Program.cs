@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -10,7 +9,6 @@ using Serilog;
 
 namespace Orders.API
 {
-    [UsedImplicitly]
     public static class Program
     {
         public static int Main(string[] args)

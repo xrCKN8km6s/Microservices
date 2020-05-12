@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Clients.Common;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,7 +20,6 @@ namespace BFF
             _logger = logger;
         }
 
-        [UsedImplicitly]
         public async Task InvokeAsync(HttpContext context)
         {
             try

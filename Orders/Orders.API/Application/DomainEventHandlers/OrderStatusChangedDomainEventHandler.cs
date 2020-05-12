@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using MediatR;
 using Orders.API.Application.IntegrationEvents;
 using Orders.API.Application.IntegrationEvents.Events;
@@ -8,7 +7,6 @@ using Orders.Domain.Events;
 
 namespace Orders.API.Application.DomainEventHandlers
 {
-    [UsedImplicitly]
     public class OrderStatusChangedDomainEventHandler : INotificationHandler<OrderStatusChangedDomainEvent>
     {
         private readonly IOrderingIntegrationEventService _eventLogService;

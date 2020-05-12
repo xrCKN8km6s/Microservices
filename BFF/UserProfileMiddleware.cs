@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using IdentityModel;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -29,7 +28,6 @@ namespace BFF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [UsedImplicitly]
         public async Task InvokeAsync(HttpContext context)
         {
             if (context is null)

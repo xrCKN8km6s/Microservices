@@ -1,7 +1,7 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using EventBus;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Orders.API.Application.IntegrationEvents.Events;
 

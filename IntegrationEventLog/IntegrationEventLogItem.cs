@@ -1,6 +1,5 @@
 using System;
 using EventBus;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace IntegrationEventLog
@@ -22,7 +21,6 @@ namespace IntegrationEventLog
         public Guid TransactionId { get; private set; }
 
         //Used by EF
-        [UsedImplicitly]
         private IntegrationEventLogItem()
         {
         }

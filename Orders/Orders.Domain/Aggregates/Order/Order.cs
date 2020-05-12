@@ -1,5 +1,5 @@
 using System;
-using JetBrains.Annotations;
+using System.Diagnostics.CodeAnalysis;
 using Orders.Domain.Events;
 
 namespace Orders.Domain.Aggregates.Order
