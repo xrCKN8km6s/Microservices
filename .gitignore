@@ -342,3 +342,4 @@ healthchecksdb
 *.srl
 *.pem
 *.csr
+/Auth/Identity/tempkey.jwk

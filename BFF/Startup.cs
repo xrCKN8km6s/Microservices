@@ -70,24 +70,18 @@ namespace BFF
 
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
-                    {
-                        options.Authority = Configuration["identityUrlInternal"];
-                        options.Audience = "bff";
-                        options.RequireHttpsMetadata = false;
-                        options.TokenValidationParameters.ValidIssuers = Configuration.GetSection("validIssuers")
-                            .GetChildren().Select(s => s.Value).ToArray();
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = Configuration["identityUrlInternal"];
 
-                    }, introspectionOptions =>
-                    {
-                        introspectionOptions.ClientId = "spa";
-                        introspectionOptions.ClientSecret = "bff.api.secret";
-                        introspectionOptions.EnableCaching = true;
-                        introspectionOptions.CacheKeyPrefix = "introspection_";
-                        introspectionOptions.IntrospectionEndpoint =
-                            $"{Configuration["identityUrlInternal"]}/connect/introspect";
-                    }
-                );
+                    options.ApiName = "bff";
+                    options.ApiSecret = "bff.api.secret";
+
+                    options.EnableCaching = true;
+                    options.CacheKeyPrefix = "introspection_";
+
+                    options.RequireHttpsMetadata = false;
+                });
         }
 
         private static void AddAuthorization(IServiceCollection services)
@@ -180,8 +174,7 @@ namespace BFF
             {
                 options.OAuth2Client = new OAuth2ClientSettings
                 {
-                    ClientId = "bffswaggerui",
-                    ClientSecret = "bff.api.secret"
+                    ClientId = "bffswaggerui"
                 };
             });
 

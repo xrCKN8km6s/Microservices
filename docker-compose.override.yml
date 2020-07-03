@@ -42,8 +42,6 @@ services:
       identityUrl: http://localhost:3000
       identityUrlInternal: http://identity
       ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
-      validIssuers__0: http://identity
-      validIssuers__1: http://localhost:3000
       ASPNETCORE_URLS: https://+:5101
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
@@ -62,8 +60,6 @@ services:
       rabbitMQHostName: rabbitmq
       rabbitMQUserName: usr
       rabbitMQPassword: pwd
-      validIssuers__0: http://identity
-      validIssuers__1: http://localhost:3000
       ASPNETCORE_URLS: https://+:5201
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
@@ -82,8 +78,6 @@ services:
       clients__scopes: users orders
       clients__users__baseUrl: https://users:5101
       clients__orders__baseUrl: https://orders:5201
-      validIssuers__0: http://identity
-      validIssuers__1: http://localhost:3000
       origins__0: https://localhost:1443
       origins__1: http://localhost:4200
       ASPNETCORE_URLS: https://+:5001
@@ -102,6 +96,7 @@ services:
       dockerfile: Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      issuerUri: http://identity
     ports:
       - 3000:80
 

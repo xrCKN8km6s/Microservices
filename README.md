@@ -1,6 +1,6 @@
 # Prerequisites
 * Docker
-* NET Core SDK 3.1.201
+* NET Core SDK 3.1.301
 * PowerShell 7
 * OpenSSL
 * Node

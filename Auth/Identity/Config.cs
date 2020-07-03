@@ -64,7 +64,7 @@ namespace IdentityServer
 
                     AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = true,
-                    //AccessTokenType = AccessTokenType.Reference,
+                    AccessTokenType = AccessTokenType.Reference,
                     RequireClientSecret = false, //using secret in SPA is not secure anyway
 
                     RedirectUris =
@@ -83,7 +83,6 @@ namespace IdentityServer
                 new Client
                 {
                     ClientId = "bffswaggerui",
-                    ClientSecrets = {new Secret("bff.api.secret".Sha256())},
                     ClientName = "BFF Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
@@ -91,7 +90,6 @@ namespace IdentityServer
 
                     RedirectUris =
                     {
-                        "http://localhost:5000/swagger/oauth2-redirect.html",
                         "https://localhost:5001/swagger/oauth2-redirect.html",
                         "https://localhost:1443/swagger/oauth2-redirect.html"
                     },
@@ -102,7 +100,6 @@ namespace IdentityServer
                 new Client
                 {
                     ClientId = "ordersswaggerui",
-                    ClientSecrets = {new Secret("orders.secret".Sha256())},
                     ClientName = "Orders Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
@@ -110,7 +107,6 @@ namespace IdentityServer
 
                     RedirectUris =
                     {
-                        "http://localhost:5200/swagger/oauth2-redirect.html",
                         "https://localhost:5201/swagger/oauth2-redirect.html"
                     },
 
@@ -120,7 +116,6 @@ namespace IdentityServer
                 new Client
                 {
                     ClientId = "usersswaggerui",
-                    ClientSecrets = {new Secret("users.secret".Sha256())},
                     ClientName = "Users Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
@@ -128,7 +123,6 @@ namespace IdentityServer
 
                     RedirectUris =
                     {
-                        "http://localhost:5100/swagger/oauth2-redirect.html",
                         "https://localhost:5101/swagger/oauth2-redirect.html"
                     },
 

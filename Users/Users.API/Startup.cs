@@ -69,8 +69,6 @@ namespace Users.API
                 {
                     options.Authority = Configuration["identityUrlInternal"];
                     options.Audience = "users";
-                    options.TokenValidationParameters.ValidIssuers = Configuration.GetSection("validIssuers")
-                        .GetChildren().Select(s => s.Value).ToArray();
 
                     options.RequireHttpsMetadata = false;
                 });

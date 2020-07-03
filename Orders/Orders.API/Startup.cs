@@ -104,8 +104,6 @@ namespace Orders.API
                 {
                     options.Authority = _config["identityUrlInternal"];
                     options.Audience = "orders";
-                    options.TokenValidationParameters.ValidIssuers = _config.GetSection("validIssuers")
-                        .GetChildren().Select(s => s.Value).ToArray();
 
                     options.RequireHttpsMetadata = false;
                 });

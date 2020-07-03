@@ -31,6 +31,12 @@ namespace IdentityServer
 
             var builder = services.AddIdentityServer(options =>
                 {
+                    //This allows to run auth in either Docker or debug mode
+                    if (Environment.IsDevelopment())
+                    {
+                        options.IssuerUri = Configuration["issuerUri"];
+                    }
+
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;

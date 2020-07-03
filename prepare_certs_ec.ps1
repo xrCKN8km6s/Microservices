@@ -24,17 +24,24 @@ if (-not(Test-Path $rootCAKey -PathType Leaf) -and
 foreach ($cn in $cns) {
 
 "[req]
-prompt                      = no
-distinguished_name          = req_distinguished_name
-req_extensions              = req_ext
+prompt						= no
+distinguished_name			= req_distinguished_name
+req_extensions				= req_ext
 [req_distinguished_name]
-countryName                 = UA
-organizationName            = MicroservicesDEV
-commonName                  = $cn
+countryName					= UA
+organizationName			= MicroservicesDEV
+commonName					= $cn
 [req_ext]
-subjectAltName              = @alt_names
+subjectAltName				= @alt_names
 [alt_names]
-DNS.1                       = $cn" > "$dir/$cn.conf"
+DNS.1						= $cn" > "$dir/$cn.conf"
+
+#allows to reuse certificates either locally or inside Docker
+if ($cn -ne "localhost")
+{
+	Add-Content "$dir/$cn.conf" `
+"DNS.2						= localhost"
+}
 
     openssl ecparam -name $curve -genkey -out "$dir/$cn.pem"
         
