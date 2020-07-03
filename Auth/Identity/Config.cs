@@ -2,51 +2,60 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using IdentityModel;
 using IdentityServer4.Models;
 using System.Collections.Generic;
-using IdentityModel;
 
-namespace Identity
+namespace IdentityServer
 {
     public static class Config
     {
-        public static IEnumerable<IdentityResource> GetIdentityResources()
-        {
-            return new IdentityResource[]
+        public static IEnumerable<IdentityResource> IdentityResources =>
+            new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email()
             };
-        }
 
-        public static IEnumerable<ApiResource> GetApis()
-        {
-            return new[]
+        public static IEnumerable<ApiScope> ApiScopes =>
+
+            new List<ApiScope>
             {
-                new ApiResource("orders", "Orders API")
+                new ApiScope("orders", "Orders API Access Scope"),
+                new ApiScope("users", "Users API Access Scope"),
+                new ApiScope("bff", "BFF API Access Scope")
                 {
-                    ApiSecrets = {new Secret("orders.secret".Sha256())},
-                },
-                new ApiResource("users", "Users API")
-                {
-                    ApiSecrets = {new Secret("users.secret".Sha256())}
-                },
-                new ApiResource("bff", "BFF API")
-                {
-                    ApiSecrets = {new Secret("bff.api.secret".Sha256())},
                     UserClaims =
                     {
+                        JwtClaimTypes.Subject,
                         JwtClaimTypes.Name,
                         JwtClaimTypes.Email
                     }
                 }
             };
-        }
 
-        public static IEnumerable<Client> GetClients()
-        {
-            return new[]
+        public static IEnumerable<ApiResource> ApiResources =>
+            new List<ApiResource>
+            {
+                new ApiResource("bff", "BFF API Resource")
+                {
+                    Scopes = {"bff"}
+                },
+                new ApiResource("users", "Users API Resource")
+                {
+                    Scopes = {"users"}
+                },
+                new ApiResource("orders", "Orders API Resource")
+                {
+                    Scopes = {"orders"}
+                }
+            };
+
+
+        public static IEnumerable<Client> Clients =>
+
+          new List<Client>
             {
                 new Client
                 {
@@ -54,9 +63,8 @@ namespace Identity
                     ClientName = "SPA Client",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
                     AllowAccessTokensViaBrowser = true,
-                    AccessTokenType = AccessTokenType.Reference,
+                    //AccessTokenType = AccessTokenType.Reference,
                     RequireClientSecret = false, //using secret in SPA is not secure anyway
 
                     RedirectUris =
@@ -75,6 +83,7 @@ namespace Identity
                 new Client
                 {
                     ClientId = "bffswaggerui",
+                    ClientSecrets = {new Secret("bff.api.secret".Sha256())},
                     ClientName = "BFF Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
@@ -93,6 +102,7 @@ namespace Identity
                 new Client
                 {
                     ClientId = "ordersswaggerui",
+                    ClientSecrets = {new Secret("orders.secret".Sha256())},
                     ClientName = "Orders Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
@@ -110,6 +120,7 @@ namespace Identity
                 new Client
                 {
                     ClientId = "usersswaggerui",
+                    ClientSecrets = {new Secret("users.secret".Sha256())},
                     ClientName = "Users Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
@@ -127,16 +138,12 @@ namespace Identity
                 new Client
                 {
                     ClientId = "bff",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = {new Secret("bff.client.secret".Sha256())},
 
-                    ClientSecrets =
-                    {
-                        new Secret("bff.client.secret".Sha256())
-                    },
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
 
                     AllowedScopes = {"users", "orders"}
                 }
             };
-        }
-    }
+    };
 }

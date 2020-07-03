@@ -80,7 +80,7 @@ namespace BFF
 
                     }, introspectionOptions =>
                     {
-                        introspectionOptions.ClientId = "bff";
+                        introspectionOptions.ClientId = "spa";
                         introspectionOptions.ClientSecret = "bff.api.secret";
                         introspectionOptions.EnableCaching = true;
                         introspectionOptions.CacheKeyPrefix = "introspection_";
@@ -180,7 +180,8 @@ namespace BFF
             {
                 options.OAuth2Client = new OAuth2ClientSettings
                 {
-                    ClientId = "bffswaggerui"
+                    ClientId = "bffswaggerui",
+                    ClientSecret = "bff.api.secret"
                 };
             });
 
