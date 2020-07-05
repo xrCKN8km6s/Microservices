@@ -1,0 +1,59 @@
+version: "3.7"
+
+services:
+
+  users:
+    environment:
+      Serilog__WriteTo__1__Name: Http
+      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
+      Serilog__WriteTo__1__Args__textFormatter: 'Serilog.Formatting.Elasticsearch.ElasticsearchJsonFormatter, Serilog.Formatting.Elasticsearch'
+
+  orders:
+    environment:
+      Serilog__WriteTo__1__Name: Http
+      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
+      Serilog__WriteTo__1__Args__textFormatter: 'Serilog.Formatting.Elasticsearch.ElasticsearchJsonFormatter, Serilog.Formatting.Elasticsearch'
+
+  bff:
+    environment:
+      Serilog__WriteTo__1__Name: Http
+      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
+      Serilog__WriteTo__1__Args__textFormatter: 'Serilog.Formatting.Elasticsearch.ElasticsearchJsonFormatter, Serilog.Formatting.Elasticsearch'
+  
+  identity:
+    environment:
+      Serilog__WriteTo__1__Name: Http
+      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
+      Serilog__WriteTo__1__Args__textFormatter: 'Serilog.Formatting.Elasticsearch.ElasticsearchJsonFormatter, Serilog.Formatting.Elasticsearch'
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    ports:
+     - 5601:5601
+    depends_on:
+     - elasticsearch
+    environment:
+     - ELASTICSEARCH_URL=http://elasticsearch:9200
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.8.0
+    ports:
+      - 8080:8080
+    volumes:
+      - ./elk/logstash.log.conf:/usr/share/logstash/pipeline/logstash.log.conf
+
+
+volumes:
+  elasticsearch-data:

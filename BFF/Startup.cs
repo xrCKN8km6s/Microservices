@@ -75,7 +75,7 @@ namespace BFF
                     options.Authority = Configuration["identityUrlInternal"];
 
                     options.ApiName = "bff";
-                    options.ApiSecret = "bff.api.secret";
+                    options.ApiSecret = "bff.introspection.secret";
 
                     options.EnableCaching = true;
                     options.CacheKeyPrefix = "introspection_";

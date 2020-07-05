@@ -40,7 +40,8 @@ namespace IdentityServer
             {
                 new ApiResource("bff", "BFF API Resource")
                 {
-                    Scopes = {"bff"}
+                    Scopes = {"bff"},
+                    ApiSecrets = {new Secret("bff.introspection.secret".Sha256())}
                 },
                 new ApiResource("users", "Users API Resource")
                 {

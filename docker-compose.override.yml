@@ -46,7 +46,6 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/users.pfx
-      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
     ports:
       - 5101:5101
     volumes:
@@ -64,7 +63,6 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/orders.pfx
-      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
     ports:
       - 5201:5201
     volumes:
@@ -84,7 +82,6 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/localhost.pfx
-      Serilog__WriteTo__1__Args__requestUri: http://logstash:8080
     ports:
       - 5001:5001
     volumes:
@@ -122,37 +119,7 @@ services:
     depends_on:
       - bff
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-    ports:
-      - 9200:9200
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    environment:
-      - xpack.monitoring.enabled=true
-      - xpack.watcher.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - discovery.type=single-node
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.7.0
-    ports:
-     - 5601:5601
-    depends_on:
-     - elasticsearch
-    environment:
-     - ELASTICSEARCH_URL=http://elasticsearch:9200
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.7.0
-    ports:
-      - 8080:8080
-    volumes:
-      - ./elk/logstash.log.conf:/usr/share/logstash/pipeline/logstash.log.conf
-
-
 volumes:
   rabbit-mnesia:
   postgres-data:
   pgAdmin-data:
-  elasticsearch-data:
