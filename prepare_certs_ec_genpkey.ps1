@@ -14,7 +14,7 @@ $rootCACert = "$dir/rootCA.crt"
 if (-not(Test-Path $rootCAKey -PathType Leaf) -and
     -not(Test-Path $rootCACert -PathType Leaf)) {
 
-    openssl genpkey -algorithm $curve -out $rootCAKey
+    openssl genpkey -algorithm $algorithm -out $rootCAKey
 
     openssl req -x509 -new -key $rootCAKey -days $days `
         -subj "/C=UA/O=MicroservicesDEV/CN=rootCA" `
@@ -35,8 +35,13 @@ commonName                  = $cn
 subjectAltName              = @alt_names
 [alt_names]
 DNS.1                       = $cn" > "$dir/$cn.conf"
-
-    openssl ecparam -name $curve -genkey -out "$dir/$cn.pem"
+#allows to reuse certificates either locally or inside Docker
+if ($cn -ne "localhost")
+{
+	Add-Content "$dir/$cn.conf" `
+"DNS.2                      = localhost"
+}
+    openssl genpkey -algorithm $algorithm -out "$dir/$cn.pem"
         
     openssl req -new -sha256 -config "$dir/$cn.conf" -nodes -key "$dir/$cn.pem" -out "$dir/$cn.csr"
     

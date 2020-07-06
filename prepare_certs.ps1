@@ -35,6 +35,12 @@ subjectAltName              = @alt_names
 [alt_names]
 DNS.1                       = $cn" > "$dir/$cn.conf"
 
+#allows to reuse certificates either locally or inside Docker
+if ($cn -ne "localhost")
+{
+	Add-Content "$dir/$cn.conf" `
+"DNS.2                      = localhost"
+}
     openssl genrsa -out "$dir/$cn.pem" 2048
 
     openssl req -new -sha256 -key "$dir/$cn.pem" -out "$dir/$cn.csr" -config "$dir/$cn.conf"

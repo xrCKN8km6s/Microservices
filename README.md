@@ -1,18 +1,20 @@
 # Prerequisites
 * Docker
 * NET Core SDK 3.1.301
-* PowerShell 7
+* PowerShell
 * OpenSSL
 * Node
 
 # Initial dev setup
 * Open repository directory
 * Run:
-  * `./prepare_certs_ec.ps1 localhost,orders,users qwerty1234`
+  * `./prepare_certs_ec.ps1 bff,bff_proxy,orders,users`
+  * Add `certs/rootCA.crt` to Trusted Root Certification Authorities (OS, browser)
   * `docker-compose up -d postgreSql`
   * `./seed_db_sql.ps1`
 
 # Back-end development setup
+* `docker-compose up -d postgreSql rabbitmq redis`
 * Open solution and set multiple startup projects to:
   * BFF
   * Orders/Orders.API

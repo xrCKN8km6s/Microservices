@@ -44,8 +44,8 @@ services:
       ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
       ASPNETCORE_URLS: https://+:5101
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/users.pfx
+      Kestrel__Certificates__Default__Password: qwerty1234
+      Kestrel__Certificates__Default__Path: /https/users.pfx
     ports:
       - 5101:5101
     volumes:
@@ -61,8 +61,8 @@ services:
       rabbitMQPassword: pwd
       ASPNETCORE_URLS: https://+:5201
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/orders.pfx
+      Kestrel__Certificates__Default__Password: qwerty1234
+      Kestrel__Certificates__Default__Path: /https/orders.pfx
     ports:
       - 5201:5201
     volumes:
@@ -80,12 +80,12 @@ services:
       origins__1: http://localhost:4200
       ASPNETCORE_URLS: https://+:5001
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_Kestrel__Certificates__Default__Password: qwerty1234
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/localhost.pfx
+      Kestrel__Certificates__Default__Password: qwerty1234
+      Kestrel__Certificates__Default__Path: /https/bff.pfx
     ports:
       - 5001:5001
     volumes:
-      - ./certs/localhost.pfx:/https/localhost.pfx
+      - ./certs/bff.pfx:/https/bff.pfx
 
   identity:
     build:
@@ -101,8 +101,8 @@ services:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./certs/localhost.crt:/etc/nginx/localhost.crt
-      - ./certs/localhost.pem:/etc/nginx/localhost.key
+      - ./certs/bff_proxy.crt:/etc/nginx/bff_proxy.crt
+      - ./certs/bff_proxy.pem:/etc/nginx/bff_proxy.key
     ports:
       - 1443:443
     depends_on:
