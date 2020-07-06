@@ -51,6 +51,7 @@ namespace IdentityServer
             //NOTE: There won't be Prod so this is fine
             //if (Environment.IsDevelopment())
             //{
+            //TODO: Add
             builder.AddDeveloperSigningCredential();
             //}
             //else
@@ -71,6 +72,8 @@ namespace IdentityServer
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthorization();
 
             app.UseIdentityServer();
 

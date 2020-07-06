@@ -79,8 +79,6 @@ namespace BFF
 
                     options.EnableCaching = true;
                     options.CacheKeyPrefix = "introspection_";
-
-                    options.RequireHttpsMetadata = false;
                 });
         }
 

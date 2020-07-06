@@ -104,8 +104,6 @@ namespace Orders.API
                 {
                     options.Authority = _config["identityUrlInternal"];
                     options.Audience = "orders";
-
-                    options.RequireHttpsMetadata = false;
                 });
         }
 

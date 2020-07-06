@@ -69,8 +69,6 @@ namespace Users.API
                 {
                     options.Authority = Configuration["identityUrlInternal"];
                     options.Audience = "users";
-
-                    options.RequireHttpsMetadata = false;
                 });
         }
 

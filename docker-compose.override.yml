@@ -39,8 +39,8 @@ services:
 
   users:
     environment:
-      identityUrl: http://localhost:3000
-      identityUrlInternal: http://identity
+      identityUrl: https://localhost:3001
+      identityUrlInternal: https://identity:3001
       ConnectionString: Host=postgreSql;Database=Users;Username=db_user;Password=db_pass
       ASPNETCORE_URLS: https://+:5101
       ASPNETCORE_ENVIRONMENT: Development
@@ -53,8 +53,8 @@ services:
 
   orders:
     environment:
-      identityUrl: http://localhost:3000
-      identityUrlInternal: http://identity
+      identityUrl: https://localhost:3001
+      identityUrlInternal: https://identity:3001
       ConnectionString: Host=postgreSql;Database=Orders;Username=db_user;Password=db_pass
       rabbitMQHostName: rabbitmq
       rabbitMQUserName: usr
@@ -70,14 +70,14 @@ services:
 
   bff:
     environment:
-      identityUrl: http://localhost:3000
-      identityUrlInternal: http://identity
+      identityUrl: https://localhost:3001
+      identityUrlInternal: https://identity:3001
       redisConfig: redis
       clients__scopes: users orders
       clients__users__baseUrl: https://users:5101
       clients__orders__baseUrl: https://orders:5201
       origins__0: https://localhost:1443
-      origins__1: http://localhost:4200
+      origins__1: https://localhost:4201
       ASPNETCORE_URLS: https://+:5001
       ASPNETCORE_ENVIRONMENT: Development
       Kestrel__Certificates__Default__Password: qwerty1234
@@ -92,10 +92,15 @@ services:
       context: ./Auth/Identity
       dockerfile: Dockerfile
     environment:
+      ASPNETCORE_URLS: https://+:3001
       ASPNETCORE_ENVIRONMENT: Development
-      issuerUri: http://identity
+      Kestrel__Certificates__Default__Password: qwerty1234
+      Kestrel__Certificates__Default__Path: /https/identity.pfx
+      issuerUri: https://identity:3001
     ports:
-      - 3000:80
+      - 3001:3001
+    volumes:
+      - ./certs/identity.pfx:/https/identity.pfx 
 
   bff_proxy:
     image: nginx:latest
@@ -114,8 +119,11 @@ services:
     build:
       context: ./Web
       dockerfile: Dockerfile
+    volumes:
+      - ./certs/web.crt:/etc/nginx/web.crt
+      - ./certs/web.pem:/etc/nginx/web.key
     ports:
-      - 4200:80
+      - 4201:443
     depends_on:
       - bff
 

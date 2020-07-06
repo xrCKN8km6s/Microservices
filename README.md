@@ -8,7 +8,7 @@
 # Initial dev setup
 * Open repository directory
 * Run:
-  * `./prepare_certs_ec.ps1 bff,bff_proxy,orders,users`
+  * `./prepare_certs_ec.ps1 bff,bff_proxy,orders,users,identity,web`
   * Add `certs/rootCA.crt` to Trusted Root Certification Authorities (OS, browser)
   * `docker-compose up -d postgreSql`
   * `./seed_db_sql.ps1`
@@ -34,8 +34,8 @@ To use EF Core CLI (e.g. `dotnet ef migrations add <migration name>`) run `dotne
 # Microservices DEV information
 Microservice | Url | Swagger
 --- | --- | ---
-Identity | http://localhost:3000 | NA
-Web | http://localhost:4200 | NA
+Identity | https://localhost:3001 | NA
+Web | https://localhost:4201 | NA
 BFF | https://localhost:5001 | https://localhost:5001/swagger
 BFF - NGINX Reverse Proxy | https://localhost:1443 | https://localhost:1443/swagger
 Users | https://localhost:5101 | https://localhost:5101/swagger

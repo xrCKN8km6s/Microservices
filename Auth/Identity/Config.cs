@@ -70,12 +70,12 @@ namespace IdentityServer
 
                     RedirectUris =
                     {
-                        "http://localhost:4200/signin-callback",
-                        "http://localhost:4200/assets/silent-callback.html"
+                        "https://localhost:4201/signin-callback",
+                        "https://localhost:4201/assets/silent-callback.html"
                     },
 
-                    PostLogoutRedirectUris = {"http://localhost:4200"},
-                    AllowedCorsOrigins = {"http://localhost:4200"},
+                    PostLogoutRedirectUris = {"https://localhost:4201"},
+                    AllowedCorsOrigins = {"https://localhost:4201"},
                     RequireConsent = false,
 
                     AllowedScopes = {"openid", "profile", "email", "bff"}

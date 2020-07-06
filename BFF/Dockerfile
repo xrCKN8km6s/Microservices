@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 COPY ["certs/rootCA.crt", "/usr/local/share/ca-certificates/"]
-RUN  update-ca-certificates
+RUN update-ca-certificates
 WORKDIR /app
 EXPOSE 443
 
