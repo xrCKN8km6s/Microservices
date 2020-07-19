@@ -74,7 +74,7 @@ namespace Users.API
                     new SecurityDefinitionAppender("oauth2", new[] { "users" }, new OpenApiSecurityScheme
                     {
                         Type = OpenApiSecuritySchemeType.OAuth2,
-                        Flow = OpenApiOAuth2Flow.Implicit,
+                        Flow = OpenApiOAuth2Flow.AccessCode,
                         AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
                         TokenUrl = $"{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
@@ -105,7 +105,8 @@ namespace Users.API
                 options.OAuth2Client = new OAuth2ClientSettings
                 {
                     ClientId = "usersswaggerui",
-                    ClientSecret  = "users.swagger.secret"
+                    AppName = "Users API",
+                    UsePkceWithAuthorizationCodeGrant = true
                 };
             });
 

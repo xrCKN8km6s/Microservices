@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using EventBus;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog;
@@ -7,8 +6,6 @@ using IntegrationEventLog.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -133,7 +130,7 @@ namespace Orders.API
                     new SecurityDefinitionAppender("oauth2", new[] { "orders" }, new OpenApiSecurityScheme
                     {
                         Type = OpenApiSecuritySchemeType.OAuth2,
-                        Flow = OpenApiOAuth2Flow.Implicit,
+                        Flow = OpenApiOAuth2Flow.AccessCode,
                         AuthorizationUrl = $"{_config["identityUrl"]}/connect/authorize",
                         TokenUrl = $"{_config["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
@@ -164,7 +161,9 @@ namespace Orders.API
             {
                 options.OAuth2Client = new OAuth2ClientSettings
                 {
-                    ClientId = "ordersswaggerui"
+                    ClientId = "ordersswaggerui",
+                    AppName = "Orders API",
+                    UsePkceWithAuthorizationCodeGrant = true
                 };
             });
 

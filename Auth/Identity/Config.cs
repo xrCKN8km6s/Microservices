@@ -77,11 +77,12 @@ namespace IdentityServer
                     ClientId = "bffswaggerui",
                     ClientName = "BFF Swagger UI",
                     AllowedGrantTypes = GrantTypes.Code,
-                    AllowAccessTokensViaBrowser = true,
+                    AllowAccessTokensViaBrowser = false,
+                    RequireConsent = false,
+                    RequirePkce = true,
                     RequireClientSecret = false,
 
                     AllowedCorsOrigins = {"https://localhost:5001"},
-                    RequireConsent = false,
 
                     RedirectUris =
                     {
@@ -96,9 +97,13 @@ namespace IdentityServer
                 {
                     ClientId = "ordersswaggerui",
                     ClientName = "Orders Swagger UI",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowAccessTokensViaBrowser = true,
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = false,
                     RequireConsent = false,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    AllowedCorsOrigins = {"https://localhost:5201"},
 
                     RedirectUris =
                     {
@@ -112,9 +117,13 @@ namespace IdentityServer
                 {
                     ClientId = "usersswaggerui",
                     ClientName = "Users Swagger UI",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowAccessTokensViaBrowser = true,
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = false,
                     RequireConsent = false,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    AllowedCorsOrigins = {"https://localhost:5101"},
 
                     RedirectUris =
                     {
