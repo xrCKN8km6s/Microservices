@@ -1,10 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,23 +27,7 @@ namespace Users.API
         {
             services
                 .AddControllers()
-                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
-                .ConfigureApiBehaviorOptions(options =>
-                {
-                    options.InvalidModelStateResponseFactory = context =>
-                    {
-                        var errors = context.ModelState
-                            .Where(w => w.Value.ValidationState == ModelValidationState.Invalid)
-                            .ToDictionary(k => k.Key, v => v.Value.Errors.Select(s => s.ErrorMessage));
-
-                        var problemDetails = new ValidationErrorDetails(
-                            context.HttpContext.TraceIdentifier,
-                            errors
-                        );
-
-                        return new BadRequestObjectResult(problemDetails);
-                    };
-                });
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
 
             AddAuthentication(services);
             AddAuthorization(services);
@@ -56,7 +37,7 @@ namespace Users.API
 
             services.AddDbContext<UsersContext>(options =>
                 options
-                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
+                    .UseNpgsql(connectionString, npgsqlOptions => { } /*npgsqlOptions.EnableRetryOnFailure()*/));
 
             services.AddScoped<IUsersQueries, UsersQueries>();
         }
@@ -65,10 +46,10 @@ namespace Users.API
         {
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = Configuration["identityUrlInternal"];
-                    options.Audience = "users";
+                    options.ApiName = "users";
                 });
         }
 
@@ -111,6 +92,8 @@ namespace Users.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -121,14 +104,15 @@ namespace Users.API
             {
                 options.OAuth2Client = new OAuth2ClientSettings
                 {
-                    ClientId = "usersswaggerui"
+                    ClientId = "usersswaggerui",
+                    ClientSecret  = "users.swagger.secret"
                 };
             });
 
             app.UseEndpoints(builder =>
             {
                 builder
-                    .MapDefaultControllerRoute()
+                    .MapControllers()
                     .RequireAuthorization();
             });
         }

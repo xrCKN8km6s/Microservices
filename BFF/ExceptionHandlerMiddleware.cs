@@ -1,23 +1,30 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Clients.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.Extensions.Options;
+using ProblemDetails = Clients.Common.ProblemDetails;
+using ValidationProblemDetails = Clients.Common.ValidationProblemDetails;
 
 namespace BFF
 {
-    //TODO: logging/error handling, improve
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlerMiddleware> _logger;
+        private readonly ApiBehaviorOptions _options;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
+        public ExceptionHandlerMiddleware(
+            RequestDelegate next,
+            ILogger<ExceptionHandlerMiddleware> logger,
+            IOptions<ApiBehaviorOptions> options)
         {
             _next = next;
             _logger = logger;
+            _options = options.Value;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -28,37 +35,36 @@ namespace BFF
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error");
+                _logger.LogError(ex, "Exception occured");
 
-                ErrorDetails error;
+                ProblemDetails error;
 
                 switch (ex)
                 {
-                    case ClientException<ValidationErrorDetails> clientException:
+                    case ApiException<ValidationProblemDetails> clientException when clientException.Result != null:
                         context.Response.StatusCode = clientException.StatusCode;
                         error = clientException.Result;
                         break;
-                    case ClientException<ErrorDetails> clientException:
+                    case ApiException<ProblemDetails> clientException when clientException.Result != null:
                         context.Response.StatusCode = clientException.StatusCode;
                         error = clientException.Result;
-                        break;
-                    case ClientException clientException:
-                        context.Response.StatusCode = clientException.StatusCode;
-                        error = new ErrorDetails
-                        {
-                            StatusCode = clientException.StatusCode,
-                            TraceId = context.TraceIdentifier,
-                            Message = clientException.Response
-                        };
                         break;
                     default:
+
                         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        error = new ErrorDetails
+                        error = new ProblemDetails
                         {
-                            StatusCode = StatusCodes.Status500InternalServerError,
-                            TraceId = context.TraceIdentifier,
-                            Message = ex.Message
+                            Type = _options.ClientErrorMapping[StatusCodes.Status500InternalServerError].Link,
+                            Title = _options.ClientErrorMapping[StatusCodes.Status500InternalServerError].Title,
+                            Status = StatusCodes.Status500InternalServerError,
+                            Detail = ex.Message
                         };
+
+                        var traceId = Activity.Current?.Id ?? context?.TraceIdentifier;
+                        if (traceId != null)
+                        {
+                            error.Extensions["traceId"] = traceId;
+                        }
                         break;
                 }
 

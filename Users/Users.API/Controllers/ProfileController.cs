@@ -19,16 +19,15 @@ namespace Users.API.Controllers
         }
 
         [HttpGet("{sub}")]
-        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         public async Task<ActionResult<UserProfileDto>> GetUserProfile(string sub)
         {
             var res = await _queries.GetUserProfileAsync(sub);
 
             if (res == null)
             {
-                return NotFound($"User profile {sub} was not found.");
+                return Problem(statusCode: StatusCodes.Status404NotFound, detail: $"User profile {sub} was not found.");
             }
 
             return Ok(res);

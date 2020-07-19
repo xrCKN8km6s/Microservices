@@ -41,23 +41,7 @@ namespace Orders.API
         {
             services
                 .AddControllers()
-                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
-                .ConfigureApiBehaviorOptions(options =>
-                {
-                    options.InvalidModelStateResponseFactory = context =>
-                    {
-                        var errors = context.ModelState
-                            .Where(w => w.Value.ValidationState == ModelValidationState.Invalid)
-                            .ToDictionary(k => k.Key, v => v.Value.Errors.Select(s => s.ErrorMessage));
-
-                        var problemDetails = new ValidationErrorDetails(
-                            context.HttpContext.TraceIdentifier,
-                            errors
-                        );
-
-                        return new BadRequestObjectResult(problemDetails);
-                    };
-                });
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
 
             AddAuthentication(services);
             AddAuthorization(services);
@@ -187,7 +171,7 @@ namespace Orders.API
             app.UseEndpoints(builder =>
             {
                 builder
-                    .MapDefaultControllerRoute()
+                    .MapControllers()
                     .RequireAuthorization();
             });
         }

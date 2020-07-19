@@ -64,7 +64,7 @@
       "disposeHttpClient": false,
       "protectedMethods": [],
       "generateExceptionClasses": false,
-      "exceptionClass": "ClientException",
+      //"exceptionClass": "ClientException",
       "wrapDtoExceptions": false,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
@@ -117,8 +117,8 @@
       "generateDefaultValues": true,
       "generateDataAnnotations": false,
       "excludedTypeNames": [
-        "ErrorDetails",
-        "ValidationErrorDetails"
+        "ProblemDetails",
+        "ValidationProblemDetails"
       ],
       "excludedParameterNames": [],
       "handleReferences": false,

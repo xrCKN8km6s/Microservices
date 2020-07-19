@@ -44,30 +44,28 @@ namespace Users.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         public async Task<ActionResult<RoleDto>> GetRoleById(long id)
         {
             var role = await _context.Roles.AsNoTracking().Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (role == null)
             {
-                return NotFound($"Role {id} was not found.");
+                return Problem($"Role {id} was not found.", statusCode: StatusCodes.Status404NotFound);
             }
 
             return MapRoleToDto(role);
         }
 
         [HttpDelete("{id}")]
-        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         public async Task<ActionResult> DeleteRole(long id)
         {
             var role = await _context.Roles.FindAsync(id);
             if (role == null)
             {
-                return NotFound($"Role {id} was not found.");
+                return Problem($"Role {id} was not found.", statusCode: StatusCodes.Status404NotFound);
             }
 
             role.IsActive = false;
@@ -78,7 +76,7 @@ namespace Users.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         public async Task<ActionResult> CreateRole([FromBody, Required] CreateEditRoleDto role)
         {
             var newRole = MapCreateDtoToRole(role);
@@ -89,16 +87,15 @@ namespace Users.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationErrorDetails))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         public async Task<ActionResult> UpdateRole([FromRoute] long id, [FromBody, Required] CreateEditRoleDto role)
         {
             var dbRole = await _context.Roles.Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == id);
             if (dbRole == null)
             {
-                return NotFound($"Role {id} was not found.");
+                return Problem($"Role {id} was not found.", statusCode: StatusCodes.Status404NotFound);
             }
 
             var allExistingPermissionIds = Enumeration.GetAll<Permission>().Select(s => s.Id);
@@ -106,7 +103,7 @@ namespace Users.API.Controllers
             var notFoundPermissions = role.Permissions.Except(allExistingPermissionIds).ToArray();
             if (notFoundPermissions.Length > 0)
             {
-                return NotFound($"Permissions {{{string.Join(',', notFoundPermissions)}}} were not found");
+                return Problem($"Permissions {{{string.Join(',', notFoundPermissions)}}} were not found", statusCode: StatusCodes.Status404NotFound);
             }
 
             if (!dbRole.IsGlobal && role.IsGlobal)

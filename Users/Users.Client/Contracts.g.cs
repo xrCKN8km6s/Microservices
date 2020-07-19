@@ -19,67 +19,67 @@ namespace Users.Client.Contracts
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial interface IUsersClient
     {
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfileDto> Profile_GetUserProfileAsync(string sub);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfileDto> Profile_GetUserProfileAsync(string sub, System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RolesViewModel> Roles_GetRolesViewModelAsync();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RolesViewModel> Roles_GetRolesViewModelAsync(System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<RoleDto>> Roles_GetRolesAsync();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<RoleDto>> Roles_GetRolesAsync(System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Roles_CreateRoleAsync(CreateEditRoleDto role);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Roles_CreateRoleAsync(CreateEditRoleDto role, System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RoleDto> Roles_GetRoleByIdAsync(long id);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RoleDto> Roles_GetRoleByIdAsync(long id, System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Roles_DeleteRoleAsync(long id);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Roles_DeleteRoleAsync(long id, System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Roles_UpdateRoleAsync(long id, CreateEditRoleDto role);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Roles_UpdateRoleAsync(long id, CreateEditRoleDto role, System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UsersViewModel> Users_GetViewModelAsync();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UsersViewModel> Users_GetViewModelAsync(System.Threading.CancellationToken cancellationToken);
     
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Users_UpdateUserRolesAsync(long id, UpdateUserRolesDto roles);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ClientException">A server side error occurred.</exception>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Users_UpdateUserRolesAsync(long id, UpdateUserRolesDto roles, System.Threading.CancellationToken cancellationToken);
     
     }

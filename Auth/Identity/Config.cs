@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using IdentityModel;
 using IdentityServer4.Models;
 using System.Collections.Generic;
 
@@ -25,14 +24,6 @@ namespace IdentityServer
                 new ApiScope("orders", "Orders API Access Scope"),
                 new ApiScope("users", "Users API Access Scope"),
                 new ApiScope("bff", "BFF API Access Scope")
-                {
-                    UserClaims =
-                    {
-                        JwtClaimTypes.Subject,
-                        JwtClaimTypes.Name,
-                        JwtClaimTypes.Email
-                    }
-                }
             };
 
         public static IEnumerable<ApiResource> ApiResources =>
@@ -85,8 +76,11 @@ namespace IdentityServer
                 {
                     ClientId = "bffswaggerui",
                     ClientName = "BFF Swagger UI",
-                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = true,
+                    RequireClientSecret = false,
+
+                    AllowedCorsOrigins = {"https://localhost:5001"},
                     RequireConsent = false,
 
                     RedirectUris =

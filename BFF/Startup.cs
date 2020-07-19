@@ -6,7 +6,6 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,8 +34,7 @@ namespace BFF
         {
             services
                 .AddControllers()
-                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
 
             var origins = Configuration.GetSection("origins")
                 .GetChildren().Select(s => s.Value).ToArray();
@@ -138,7 +136,7 @@ namespace BFF
                     new SecurityDefinitionAppender("oauth2", new[] { "bff" }, new OpenApiSecurityScheme
                     {
                         Type = OpenApiSecuritySchemeType.OAuth2,
-                        Flow = OpenApiOAuth2Flow.Implicit,
+                        Flow = OpenApiOAuth2Flow.AccessCode,
                         AuthorizationUrl = $"{Configuration["identityUrl"]}/connect/authorize",
                         TokenUrl = $"{Configuration["identityUrl"]}/connect/token",
                         Scopes = new Dictionary<string, string>
@@ -172,7 +170,9 @@ namespace BFF
             {
                 options.OAuth2Client = new OAuth2ClientSettings
                 {
-                    ClientId = "bffswaggerui"
+                    ClientId = "bffswaggerui",
+                    AppName = "BFF",
+                    UsePkceWithAuthorizationCodeGrant = true
                 };
             });
 

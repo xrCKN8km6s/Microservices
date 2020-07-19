@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.Extensions.Hosting;
 using IdentityServerHost.Quickstart.UI;
+using System.Security.Cryptography.X509Certificates;
+using static IdentityServer4.IdentityServerConstants;
 
 namespace IdentityServer
 {

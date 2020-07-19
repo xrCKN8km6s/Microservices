@@ -9,4 +9,9 @@
     <RepositoryUrl>https://github.com/xrckn8km6s/microservices</RepositoryUrl>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+
 </Project>

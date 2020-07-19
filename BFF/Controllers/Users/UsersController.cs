@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Clients.Common;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,7 +31,7 @@ namespace BFF.Controllers.Users
         [HttpPut("{id}/roles")]
         [Authorize(Policy = AuthorizePolicies.AdminUsersEdit)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Clients.Common.ProblemDetails))]
         public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody] UpdateUserRolesDto roles)
         {
             await _client.Users_UpdateUserRolesAsync(id, roles, HttpContext.RequestAborted);

@@ -36,15 +36,14 @@ namespace Users.API.Controllers
         }
 
         [HttpPut("{id}/roles")]
-        [NotFoundErrorDetailsFilter]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         public async Task<ActionResult> UpdateUserRoles([FromRoute] long id, [FromBody, Required] UpdateUserRolesDto roles)
         {
             var user = await _context.Users.Include(i => i.UserRoles).FirstOrDefaultAsync(f => f.Id == id);
             if (user == null)
             {
-                return NotFound($"User {id} was not found.");
+                return Problem($"User {id} was not found.", statusCode: StatusCodes.Status404NotFound);
             }
 
             var dbAllRoles = await _context.Roles.Select(r => r.Id).ToArrayAsync();
