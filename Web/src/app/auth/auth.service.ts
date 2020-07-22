@@ -34,7 +34,8 @@ export class AuthService {
       post_logout_redirect_uri: environment.webUrl,
       response_type: 'code',
       scope: environment.scope,
-      automaticSilentRenew: true
+      automaticSilentRenew: true,
+      loadUserInfo: false
     });
 
     Oidc.Log.logger = console;

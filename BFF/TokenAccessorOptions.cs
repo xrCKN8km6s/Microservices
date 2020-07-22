@@ -1,6 +1,6 @@
 namespace BFF
 {
-    public class TokenAccessorConfiguration
+    public class TokenAccessorOptions
     {
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }

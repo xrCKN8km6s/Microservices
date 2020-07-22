@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BFF
 {
@@ -17,15 +18,18 @@ namespace BFF
     public class TokenAccessor : ITokenAccessor
     {
         private readonly HttpClient _client;
-        private readonly TokenAccessorConfiguration _config;
+        private readonly TokenAccessorOptions _config;
         private readonly IDistributedCache _cache;
         private readonly ILogger<TokenAccessor> _logger;
 
-        public TokenAccessor([NotNull] HttpClient client, [NotNull] TokenAccessorConfiguration config,
-            [NotNull] IDistributedCache cache, [NotNull] ILogger<TokenAccessor> logger)
+        public TokenAccessor(
+            [NotNull] HttpClient client,
+            [NotNull] IOptions<TokenAccessorOptions> config,
+            [NotNull] IDistributedCache cache,
+            [NotNull] ILogger<TokenAccessor> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -52,7 +56,7 @@ namespace BFF
             {
                 _logger.LogError(token.Exception, "Exception while retrieving access token for {client}",
                     _config.ClientId);
-                return string.Empty;
+                throw new Exception("Error while retrieving access token.");
             }
 
             var cacheOptions = new DistributedCacheEntryOptions

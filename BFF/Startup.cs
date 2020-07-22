@@ -5,11 +5,11 @@ using System.Linq;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
@@ -33,7 +33,10 @@ namespace BFF
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddControllers()
+                .AddControllers(options =>
+                    options.Filters.Add(
+                        new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status500InternalServerError))
+                )
                 .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
 
             var origins = Configuration.GetSection("origins")
@@ -103,22 +106,11 @@ namespace BFF
 
         private void AddClients(IServiceCollection services)
         {
-            var tokenConfig = new TokenAccessorConfiguration
-            {
-                ClientId = "bff",
-                ClientSecret = "bff.client.secret",
-                Scopes = Configuration["clients:scopes"]
-            };
+            services.Configure<TokenAccessorOptions>(Configuration.GetSection("tokenAccessor"));
 
             services.AddHttpClient("tokenClient", c =>
                     c.BaseAddress = new Uri($"{Configuration["identityUrlInternal"]}/connect/token"))
-                .AddTypedClient<ITokenAccessor>((httpClient, sp) =>
-                {
-                    var cache = sp.GetRequiredService<IDistributedCache>();
-                    var logger = sp.GetRequiredService<ILogger<TokenAccessor>>();
-
-                    return new TokenAccessor(httpClient, tokenConfig, cache, logger);
-                });
+                .AddTypedClient<ITokenAccessor, TokenAccessor>();
 
             services.AddTransient<BearerTokenDelegatingHandler>();
 
@@ -154,6 +146,8 @@ namespace BFF
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseExceptionHandler("/error");
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost

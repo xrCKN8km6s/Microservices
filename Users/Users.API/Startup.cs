@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,8 +28,11 @@ namespace Users.API
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddControllers()
-                .AddJsonOptions(options => { options.JsonSerializerOptions.IgnoreNullValues = true; });
+                .AddControllers(options =>
+                    options.Filters.Add(
+                        new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status500InternalServerError))
+                )
+                .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
 
             AddAuthentication(services);
             AddAuthorization(services);
@@ -37,7 +42,7 @@ namespace Users.API
 
             services.AddDbContext<UsersContext>(options =>
                 options
-                    .UseNpgsql(connectionString, npgsqlOptions => { } /*npgsqlOptions.EnableRetryOnFailure()*/));
+                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
             services.AddScoped<IUsersQueries, UsersQueries>();
         }
@@ -92,7 +97,7 @@ namespace Users.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            app.UseStaticFiles();
+            app.UseExceptionHandler("/error");
 
             app.UseRouting();
 

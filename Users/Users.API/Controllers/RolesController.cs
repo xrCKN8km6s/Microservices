@@ -27,6 +27,7 @@ namespace Users.API.Controllers
         }
 
         [HttpGet("viewmodel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<RolesViewModel>> GetRolesViewModel()
         {
             var res = await _queries.GetRolesViewModelAsync();
@@ -35,6 +36,7 @@ namespace Users.API.Controllers
         }
 
         [HttpGet("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
             var roles = await _context.Roles.AsNoTracking().ToArrayAsync();

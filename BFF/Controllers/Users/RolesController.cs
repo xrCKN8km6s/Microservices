@@ -51,6 +51,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpGet("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
             var res = await _client.Roles_GetRolesAsync(HttpContext.RequestAborted);
@@ -58,6 +59,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpGet("viewmodel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<RolesViewModel>> GetRolesViewModel()
         {
             var res = await _client.Roles_GetRolesViewModelAsync(HttpContext.RequestAborted);

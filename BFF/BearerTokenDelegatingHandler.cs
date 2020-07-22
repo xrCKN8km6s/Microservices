@@ -1,4 +1,4 @@
-using System.Net;
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,10 +21,7 @@ namespace BFF
 
             if (string.IsNullOrWhiteSpace(token))
             {
-                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-                {
-                    Content = new StringContent("Error while retrieving access token.")
-                };
+                throw new Exception("Error while retrieving access token.");
             }
 
             request.SetBearerToken(token);

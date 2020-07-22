@@ -23,6 +23,7 @@ namespace Users.API.Controllers
         }
 
         [HttpGet("viewmodel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<UsersViewModel>> GetViewModel()
         {
             var users = await _context.Users.AsNoTracking().Include(i => i.UserRoles).ThenInclude(i => i.Role).ToArrayAsync();
