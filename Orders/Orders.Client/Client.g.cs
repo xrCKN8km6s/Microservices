@@ -82,6 +82,12 @@ namespace Orders.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "500") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new ApiException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == "200") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<OrderModel>>(response_, headers_).ConfigureAwait(false);
@@ -109,14 +115,14 @@ namespace Orders.Client
         }
     
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name)
+        public System.Threading.Tasks.Task Orders_CreateOrderAsync(string name)
         {
             return Orders_CreateOrderAsync(name, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task Orders_CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Orders/create?");
@@ -129,7 +135,6 @@ namespace Orders.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -149,12 +154,15 @@ namespace Orders.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200" || status_ == "206") 
+                        if (status_ == "500") 
                         {
-                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse((int)response_.StatusCode, headers_, responseStream_, null, response_); 
-                            client_ = null; response_ = null; // response and client are disposed by FileResponse
-                            return fileResponse_;
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new ApiException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "200") 
+                        {
+                            return;
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -162,8 +170,6 @@ namespace Orders.Client
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new ApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
-            
-                        return default(FileResponse);
                     }
                     finally
                     {
@@ -178,14 +184,14 @@ namespace Orders.Client
         }
     
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status)
+        public System.Threading.Tasks.Task Orders_UpdateOrderStatusAsync(long orderId, int status)
         {
             return Orders_UpdateOrderStatusAsync(orderId, status, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task Orders_UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken)
         {
             if (orderId == null)
                 throw new System.ArgumentNullException("orderId");
@@ -205,7 +211,6 @@ namespace Orders.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -225,12 +230,15 @@ namespace Orders.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200" || status_ == "206") 
+                        if (status_ == "500") 
                         {
-                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse((int)response_.StatusCode, headers_, responseStream_, null, response_); 
-                            client_ = null; response_ = null; // response and client are disposed by FileResponse
-                            return fileResponse_;
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new ApiException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "200") 
+                        {
+                            return;
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -238,8 +246,6 @@ namespace Orders.Client
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new ApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
-            
-                        return default(FileResponse);
                     }
                     finally
                     {

@@ -27,18 +27,18 @@ namespace Orders.Client.Contracts
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrderModel>> Orders_GetAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name);
+        System.Threading.Tasks.Task Orders_CreateOrderAsync(string name);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> Orders_CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task Orders_CreateOrderAsync(string name, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status);
+        System.Threading.Tasks.Task Orders_UpdateOrderStatusAsync(long orderId, int status);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> Orders_UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task Orders_UpdateOrderStatusAsync(long orderId, int status, System.Threading.CancellationToken cancellationToken);
     
     }
 
@@ -58,43 +58,6 @@ namespace Orders.Client.Contracts
         public int OrderStatus { get; set; }
     
     
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class FileResponse : System.IDisposable
-    {
-        private System.IDisposable _client; 
-        private System.IDisposable _response; 
-
-        public int StatusCode { get; private set; }
-
-        public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
-
-        public System.IO.Stream Stream { get; private set; }
-
-        public bool IsPartial
-        {
-            get { return StatusCode == 206; }
-        }
-
-        public FileResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable client, System.IDisposable response)
-        {
-            StatusCode = statusCode; 
-            Headers = headers; 
-            Stream = stream; 
-            _client = client; 
-            _response = response;
-        }
-
-        public void Dispose() 
-        {
-            if (Stream != null)
-                Stream.Dispose();
-            if (_response != null)
-                _response.Dispose();
-            if (_client != null)
-                _client.Dispose();
-        }
     }
 
 }

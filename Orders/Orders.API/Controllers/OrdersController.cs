@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Orders.API.Application.Commands;
 using Orders.API.Application.Queries;
@@ -21,12 +22,14 @@ namespace Orders.API.Controllers
         }
 
         [HttpGet("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<OrderModel>>> Get()
         {
             return Ok(await _query.GetOrdersAsync());
         }
 
         [HttpGet("create")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateOrder([FromQuery] CreateOrderCommand command)
         {
             await _mediator.Send(command);
@@ -35,6 +38,7 @@ namespace Orders.API.Controllers
         }
 
         [HttpGet("setStatus")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> UpdateOrderStatus([FromQuery] ChangeOrderStatusCommand command)
         {
             await _mediator.Send(command);
