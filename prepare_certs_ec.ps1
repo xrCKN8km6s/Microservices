@@ -39,7 +39,7 @@ DNS.1                       = $cn" > "$dir/$cn.conf"
 #allows to reuse certificates either locally or inside Docker
 if ($cn -ne "localhost")
 {
-	Add-Content "$dir/$cn.conf" `
+    Add-Content "$dir/$cn.conf" `
 "DNS.2                      = localhost"
 }
 
@@ -55,6 +55,6 @@ if ($cn -ne "localhost")
         -out "$dir/$cn.pfx" `
         -inkey "$dir/$cn.pem" `
         -in "$dir/$cn.crt";
-        
+
     Remove-Item "$dir/$cn.csr", "$dir/$cn.conf"
 }

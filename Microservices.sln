@@ -18,7 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		docker-compose.bff.yml = docker-compose.bff.yml
 		docker-compose.elk.yml = docker-compose.elk.yml
 		docker-compose.override.yml = docker-compose.override.yml
 		docker-compose.users.unittests.yml = docker-compose.users.unittests.yml
