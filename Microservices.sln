@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		docker-compose.override.yml = docker-compose.override.yml
 		docker-compose.users.unittests.yml = docker-compose.users.unittests.yml
 		docker-compose.yml = docker-compose.yml
+		global.json = global.json
 		nginx.conf = nginx.conf
 		NuGet.Config = NuGet.Config
 		prepare_certs.ps1 = prepare_certs.ps1
