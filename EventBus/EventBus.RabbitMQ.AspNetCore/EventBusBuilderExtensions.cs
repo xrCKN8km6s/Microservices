@@ -25,6 +25,21 @@ namespace Microsoft.Extensions.DependencyInjection
             var options = new RabbitMQOptions();
             setupOptions(options);
 
+            return UseRabbitMQ(builder, options);
+        }
+
+        public static EventBusBuilder UseRabbitMQ(this EventBusBuilder builder, RabbitMQOptions options)
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             builder.Services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
             {
                 var connectionLogger = sp.GetRequiredService<ILogger<RabbitMQConnection>>();

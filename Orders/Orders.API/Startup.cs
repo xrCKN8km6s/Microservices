@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EventBus;
+using EventBus.RabbitMQ.AspNetCore;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog;
 using IntegrationEventLog.Services;
@@ -111,15 +112,7 @@ namespace Orders.API
                 builder
                     .UseInMemorySubscriptionManager()
                     .UseJsonNetSerializer()
-                    .UseRabbitMQ(options =>
-                    {
-                        options.HostName = _config["rabbitMQHostName"];
-                        options.UserName = _config["rabbitMQUserName"];
-                        options.Password = _config["rabbitMQPassword"];
-                        options.ConnectRetryAttempts = 4;
-                        options.ExchangeName = "microservices";
-                        options.QueueName = "orders";
-                    });
+                    .UseRabbitMQ(_config.GetSection("RabbitMQ").Get<RabbitMQOptions>());
             });
 
             services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
@@ -155,9 +148,6 @@ namespace Orders.API
         {
             app.UseExceptionHandler("/error");
 
-            var bus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            bus.Subscribe<OrderStatusChangedIntegrationEvent, OrderStatusChangedIntegrationEventHandler>();
-
             app.UseRouting();
 
             app.UseAuthentication();
@@ -180,6 +170,9 @@ namespace Orders.API
                     .MapControllers()
                     .RequireAuthorization();
             });
+
+            var bus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            bus.Subscribe<OrderStatusChangedIntegrationEvent, OrderStatusChangedIntegrationEventHandler>();
         }
     }
 }
