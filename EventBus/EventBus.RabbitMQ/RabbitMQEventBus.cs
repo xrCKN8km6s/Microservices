@@ -14,28 +14,28 @@ namespace EventBus.RabbitMQ
 {
     public class RabbitMQEventBus : IEventBus, IDisposable
     {
-        private readonly string _exchangeName;
         private readonly IRabbitMQConnection _connection;
         private readonly ILogger<RabbitMQEventBus> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IEventBusSubscriptionManager _subManager;
         private readonly IEventBusSerializer _serializer;
-        private string _queueName;
-        private readonly int _retryCount;
+        private readonly RabbitMQEventBusOptions _options;
         private IModel _consumerChannel;
 
-        public RabbitMQEventBus(IRabbitMQConnection connection, ILogger<RabbitMQEventBus> logger,
-            IServiceScopeFactory serviceScopeFactory, IEventBusSubscriptionManager subManager, IEventBusSerializer serializer,
-            string exchangeName, string queueName, int retryCount)
+        public RabbitMQEventBus(
+            IRabbitMQConnection connection,
+            ILogger<RabbitMQEventBus> logger,
+            IServiceScopeFactory serviceScopeFactory,
+            IEventBusSubscriptionManager subManager,
+            IEventBusSerializer serializer,
+            RabbitMQEventBusOptions options)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
             _subManager = subManager ?? throw new ArgumentNullException(nameof(subManager));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _exchangeName = exchangeName;
-            _queueName = queueName;
-            _retryCount = retryCount;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _subManager.OnEventRemoved += SubsManager_OnEventRemoved;
             _consumerChannel = CreateConsumerChannel();
         }
@@ -49,13 +49,13 @@ namespace EventBus.RabbitMQ
 
             using (var channel = _connection.CreateModel())
             {
-                channel.QueueUnbind(queue: _queueName,
-                    exchange: _exchangeName,
+                channel.QueueUnbind(
+                    queue: _options.QueueName,
+                    exchange: _options.ExchangeName,
                     routingKey: eventName);
 
                 if (_subManager.IsEmpty)
                 {
-                    _queueName = string.Empty;
                     _consumerChannel.Close();
                 }
             }
@@ -93,7 +93,7 @@ namespace EventBus.RabbitMQ
             var policy = Policy
                 .Handle<BrokerUnreachableException>()
                 .Or<SocketException>()
-                .WaitAndRetry(_retryCount, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+                .WaitAndRetry(_options.PublishRetryAttempts, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
                     (exception, span) =>
                     {
                         _logger.LogWarning(exception,
@@ -104,7 +104,7 @@ namespace EventBus.RabbitMQ
             using (var channel = _connection.CreateModel())
             {
                 channel.ExchangeDeclare(
-                    exchange: _exchangeName,
+                    exchange: _options.ExchangeName,
                     type: ExchangeType.Direct,
                     durable: true);
 
@@ -124,7 +124,7 @@ namespace EventBus.RabbitMQ
 
                     _logger.LogTrace("Publishing event to RabbitMQ: {EventId}", eventId);
 
-                    channel.BasicPublish(_exchangeName, eventName, true, properties, body);
+                    channel.BasicPublish(_options.ExchangeName, eventName, true, properties, body);
                 });
             }
         }
@@ -154,15 +154,16 @@ namespace EventBus.RabbitMQ
 
                 using (var channel = _connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: _queueName,
+                    channel.QueueDeclare(queue: _options.QueueName,
                         durable: true,
                         exclusive: false,
                         autoDelete: false,
                         arguments: null);
 
-                    channel.QueueBind(queue: _queueName,
-                                      exchange: _exchangeName,
-                                      routingKey: eventName);
+                    channel.QueueBind(
+                        queue: _options.QueueName,
+                        exchange: _options.ExchangeName,
+                        routingKey: eventName);
                 }
             }
         }
@@ -189,11 +190,11 @@ namespace EventBus.RabbitMQ
 
             var channel = _connection.CreateModel();
 
-            channel.ExchangeDeclare(exchange: _exchangeName,
+            channel.ExchangeDeclare(exchange: _options.ExchangeName,
                                     type: ExchangeType.Direct,
                                     durable: true);
 
-            channel.QueueDeclare(queue: _queueName,
+            channel.QueueDeclare(queue: _options.QueueName,
                                  durable: true,
                                  exclusive: false,
                                  autoDelete: false,
@@ -222,7 +223,7 @@ namespace EventBus.RabbitMQ
                 consumer.Received += Consumer_Received;
 
                 _consumerChannel.BasicConsume(
-                    queue: _queueName,
+                    queue: _options.QueueName,
                     autoAck: false,
                     consumer: consumer);
             }

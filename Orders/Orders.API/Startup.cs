@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using EventBus;
-using EventBus.RabbitMQ.AspNetCore;
+using EventBus.RabbitMQ;
 using IdentityServer4.AccessTokenValidation;
 using IntegrationEventLog;
 using IntegrationEventLog.Services;
@@ -112,7 +112,10 @@ namespace Orders.API
                 builder
                     .UseInMemorySubscriptionManager()
                     .UseJsonNetSerializer()
-                    .UseRabbitMQ(_config.GetSection("RabbitMQ").Get<RabbitMQOptions>());
+                    .UseRabbitMQ(
+                        _config.GetSection("RabbitMQ:Connection").Get<RabbitMQConnectionOptions>(),
+                        _config.GetSection("RabbitMQ:EventBus").Get<RabbitMQEventBusOptions>()
+                    );
             });
 
             services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
