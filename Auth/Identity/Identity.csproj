@@ -11,7 +11,7 @@
     <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="8.2.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="Serilog.Sinks.Http" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.Http" Version="7.0.1" />
   </ItemGroup>
 
 </Project>
