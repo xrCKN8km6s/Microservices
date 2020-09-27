@@ -14,7 +14,7 @@
   * `./seed_db_sql.ps1`
 
 # Back-end development setup
-* `docker-compose up -d postgreSql rabbitmq redis`
+* `docker-compose up -d postgreSql redis redis-event-bus`
 * Open solution and set multiple startup projects to:
   * BFF
   * Orders/Orders.API
