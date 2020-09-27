@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\EventBus\EventBus.RabbitMQ.AspNetCore\EventBus.RabbitMQ.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\EventBus\EventBus.Redis.AspNetCore\EventBus.Redis.AspNetCore.csproj" />
     <ProjectReference Include="..\..\IntegrationEventLog\IntegrationEventLog.csproj" />
     <ProjectReference Include="..\Orders.Domain\Orders.Domain.csproj" />
     <ProjectReference Include="..\Orders.Infrastructure\Orders.Infrastructure.csproj" />

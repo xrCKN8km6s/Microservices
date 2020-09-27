@@ -21,24 +21,31 @@ namespace EventBus
 
         public void AddSubscription<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>
         {
-            var key = GetEventKey<T>();
-            var handlerType = typeof(TH);
+            AddSubscription(typeof(T), typeof(TH));
+        }
+
+        public void AddSubscription(Type eventType, Type eventHandlerType)
+        {
+            if (eventType == null) throw new ArgumentNullException(nameof(eventType));
+            if (eventHandlerType == null) throw new ArgumentNullException(nameof(eventHandlerType));
+
+            var key = GetEventKey(eventType);
 
             if (!HasSubscriptionsForEvent(key))
             {
                 _handlers.Add(key, new List<SubscriptionInfo>());
             }
 
-            if (_handlers[key].Any(a => a.HandlerType == handlerType))
+            if (_handlers[key].Any(a => a.HandlerType == eventHandlerType))
             {
-                throw new ArgumentException($"Handler {handlerType.Name} is already registered for {key}.");
+                throw new ArgumentException($"Handler {eventHandlerType.Name} is already registered for {key}.");
             }
 
-            _handlers[key].Add(SubscriptionInfo.Typed(handlerType));
+            _handlers[key].Add(SubscriptionInfo.Typed(eventHandlerType));
 
-            if (!_eventTypes.Contains(typeof(T)))
+            if (!_eventTypes.Contains(eventType))
             {
-                _eventTypes.Add(typeof(T));
+                _eventTypes.Add(eventType);
             }
         }
 
@@ -95,7 +102,9 @@ namespace EventBus
 
         public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(s => s.Name == eventName);
 
-        public string GetEventKey<T>() => typeof(T).Name;
+        public string GetEventKey<T>() => GetEventKey(typeof(T));
+
+        public string GetEventKey(Type eventType) => eventType.Name;
 
         public void Clear()
         {

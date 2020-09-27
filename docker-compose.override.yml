@@ -37,6 +37,10 @@ services:
     ports:
       - 6379:6379
 
+  redis-event-bus:
+    ports:
+      - 6380:6379
+
   users:
     environment:
       identityUrl: https://localhost:3001
@@ -56,13 +60,17 @@ services:
       identityUrl: https://localhost:3001
       identityUrlInternal: https://identity:3001
       ConnectionString: Host=postgreSql;Database=Orders;Username=db_user;Password=db_pass
-      RabbitMQ__Connection__HostName: rabbitmq
-      RabbitMQ__Connection__VirtualHost: /
-      RabbitMQ__Connection__UserName: usr
-      RabbitMQ__Connection__Password: pwd
-      RabbitMQ__Connection__ConnectRetryAttempts: 3
-      RabbitMQ__EventBus__ExchangeName: microservices
-      RabbitMQ__EventBus__QueueName: orders
+      #RabbitMQ__Connection__HostName: rabbitmq
+      #RabbitMQ__Connection__VirtualHost: /
+      #RabbitMQ__Connection__UserName: usr
+      #RabbitMQ__Connection__Password: pwd
+      #RabbitMQ__Connection__ConnectRetryAttempts: 3
+      #RabbitMQ__EventBus__ExchangeName: microservices
+      #RabbitMQ__EventBus__QueueName: orders
+      RedisEventBus__Configuration: localhost:6380
+      RedisEventBus__ConsumerGroupName: Orders
+      RedisEventBus__ConsumerName: orders-consumer
+      RedisEventBus__BatchPerGroupSize: 5
       ASPNETCORE_URLS: https://+:5201
       ASPNETCORE_ENVIRONMENT: Development
       Kestrel__Certificates__Default__Password: qwerty1234

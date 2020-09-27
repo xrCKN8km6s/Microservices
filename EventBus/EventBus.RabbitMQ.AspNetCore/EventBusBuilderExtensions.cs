@@ -72,9 +72,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 var logger = sp.GetRequiredService<ILogger<RabbitMQEventBus>>();
                 var subManager = sp.GetRequiredService<IEventBusSubscriptionManager>();
                 var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-                var serialzier = sp.GetRequiredService<IEventBusSerializer>();
+                var serializer = sp.GetRequiredService<IEventBusSerializer>();
 
-                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, serialzier, eventBusOptions);
+                return new RabbitMQEventBus(connection, logger, serviceScopeFactory, subManager, serializer, eventBusOptions);
             });
 
             return builder;

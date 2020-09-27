@@ -8,7 +8,7 @@ namespace EventBus
 
         void Publish(Guid eventId, string eventName, string content);
 
-        void Subscribe<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>;
+        void Subscribe(Action<EventSubscriptions> setupSubscriptions);
 
         void Unsubscribe<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>;
     }

@@ -18,7 +18,7 @@ namespace Orders.API.Application.IntegrationEvents.EventHandlers
         public Task Handle(OrderStatusChangedIntegrationEvent e)
         {
             _logger.LogInformation("Handling integration event {@event}", e);
-            return Task.CompletedTask;
+            return Task.Delay(500);
         }
     }
 }

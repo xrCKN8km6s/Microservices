@@ -11,6 +11,9 @@ services:
   redis:
     image: redis:latest
 
+  redis-event-bus:
+    image: redis:latest
+
   users:
     image: users:${USERS_TAG:-latest}
     build:

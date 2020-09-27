@@ -129,16 +129,26 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        public void Subscribe<T, TH>()
-            where T : IIntegrationEvent
-            where TH : IIntegrationEventHandler<T>
+        public void Subscribe(Action<EventSubscriptions> setupSubscriptions)
         {
-            var eventName = _subManager.GetEventKey<T>();
-            DoInternalSubscription(eventName);
+            if (setupSubscriptions == null)
+            {
+                throw new ArgumentNullException(nameof(setupSubscriptions));
+            }
 
-            _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, typeof(TH).GetGenericTypeName());
+            var subs = new EventSubscriptions();
+            setupSubscriptions(subs);
 
-            _subManager.AddSubscription<T, TH>();
+            foreach (var eventSubscription in subs.Subscriptions)
+            {
+                var eventName = _subManager.GetEventKey(eventSubscription.EventType);
+                DoInternalSubscription(eventName);
+
+                _logger.LogInformation("Subscribing to event {EventName} with {EventHandler}", eventName, eventSubscription.HandlerType.GetGenericTypeName());
+
+                _subManager.AddSubscription(eventSubscription.EventType, eventSubscription.HandlerType);
+            }
+
             StartBasicConsume();
         }
 

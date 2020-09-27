@@ -15,6 +15,8 @@ namespace EventBus
 
         void AddSubscription<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>;
 
+        void AddSubscription(Type eventType, Type eventHandlerType);
+
         void RemoveSubscription<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>;
 
         void Clear();
@@ -26,5 +28,7 @@ namespace EventBus
         Type GetEventTypeByName(string eventName);
 
         string GetEventKey<T>();
+
+        string GetEventKey(Type eventType);
     }
 }
