@@ -15,7 +15,7 @@ namespace EventBus.Redis
         private readonly IEventBusSubscriptionManager _subManager;
         private readonly IEventBusSerializer _serializer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private IRedisStreamsConsumer _consumer;
+        private readonly IRedisStreamsConsumer _consumer;
 
         public RedisEventBus(
             ILogger<RedisEventBus> logger,

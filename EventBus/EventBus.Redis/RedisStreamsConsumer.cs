@@ -39,7 +39,7 @@ namespace EventBus.Redis
 
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
-            _readerTask = Task.Factory.StartNew(() => FetchItems(streams.ToArray(), _cts.Token), _cts.Token,
+            _readerTask = Task.Factory.StartNew(() => FetchItems(streams.ToArray()), _cts.Token,
                 TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach |
                 TaskCreationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
         }
@@ -58,28 +58,39 @@ namespace EventBus.Redis
             }
         }
 
-        private void FetchItems(string[] streams, CancellationToken token)
+        private void FetchItems(string[] streams)
         {
+            ProcessPending(streams);
+
+            _cts.Token.ThrowIfCancellationRequested();
+
+            ProcessLive(streams);
+        }
+
+        private void ProcessPending(string[] streams)
+        {
+            //https://redis.io/commands/xreadgroup#usage-example
+            //ID 0 - read pending items
             var pendingPositions = streams.Select(s => new StreamPosition(s, "0")).ToArray();
-            var livePositions = streams.Select(s => new StreamPosition(s, ">")).ToArray();
 
             bool hasPending;
 
-            // process PEL items
+            //process pending entries list items
             do
             {
                 var pendingItems = _db.StreamReadGroup(pendingPositions, _groupName, _consumerName, _batchPerGroupSize);
-
                 hasPending = pendingItems.SelectMany(s => s.Entries).Any();
-
                 LoopOverStreams(pendingItems);
 
+                _cts.Token.ThrowIfCancellationRequested();
             } while (hasPending);
+        }
 
-            token.ThrowIfCancellationRequested();
+        private void ProcessLive(string[] streams)
+        {
+            var livePositions = streams.Select(s => new StreamPosition(s, ">")).ToArray();
 
-            //actual live loop
-            while (!token.IsCancellationRequested)
+            while (!_cts.Token.IsCancellationRequested)
             {
                 var items = _db.StreamReadGroup(livePositions, _groupName, _consumerName, _batchPerGroupSize);
 
@@ -93,7 +104,7 @@ namespace EventBus.Redis
                     Thread.Sleep(_sleepDuration);
                 }
 
-                token.ThrowIfCancellationRequested();
+                _cts.Token.ThrowIfCancellationRequested();
             }
         }
 

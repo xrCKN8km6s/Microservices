@@ -12,7 +12,7 @@ namespace Orders.Domain
 
         public void AddDomainEvent(INotification eventItem)
         {
-            _domainEvents = _domainEvents ?? new List<INotification>();
+            _domainEvents ??= new List<INotification>();
             _domainEvents.Add(eventItem);
         }
 
@@ -56,8 +56,7 @@ namespace Orders.Domain
         {
             if (!IsTransient())
             {
-                if (!_requestedHashCode.HasValue)
-                    _requestedHashCode = Id.GetHashCode() ^ 31;
+                _requestedHashCode ??= Id.GetHashCode() ^ 31;
 
                 return _requestedHashCode.Value;
             }

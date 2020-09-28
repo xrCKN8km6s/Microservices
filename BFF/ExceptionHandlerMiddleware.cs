@@ -60,7 +60,7 @@ namespace BFF
                             Detail = ex.Message
                         };
 
-                        var traceId = Activity.Current?.Id ?? context?.TraceIdentifier;
+                        var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
                         if (traceId != null)
                         {
                             error.Extensions["traceId"] = traceId;
