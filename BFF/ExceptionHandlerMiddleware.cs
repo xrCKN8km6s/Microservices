@@ -29,13 +29,15 @@ namespace BFF
 
         public async Task InvokeAsync(HttpContext context)
         {
+            _ = context ?? throw new NullReferenceException(nameof(context));
+
             try
             {
                 await _next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occured");
+                _logger.LogError(ex, "Exception occurred");
 
                 ProblemDetails error;
 
@@ -50,7 +52,6 @@ namespace BFF
                         error = clientException.Result;
                         break;
                     default:
-
                         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                         error = new ProblemDetails
                         {

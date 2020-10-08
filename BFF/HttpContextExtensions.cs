@@ -20,17 +20,11 @@ namespace BFF
         public static Task WriteResultAsync<TResult>(this HttpContext context, TResult result)
             where TResult : IActionResult
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            _ = context ?? throw new ArgumentNullException(nameof(context));
 
-            var executor = context.RequestServices.GetService<IActionResultExecutor<TResult>>();
-
-            if (executor == null)
-            {
-                throw new InvalidOperationException($"No result executor for '{typeof(TResult).FullName}' has been registered.");
-            }
+            var executor = context.RequestServices.GetService<IActionResultExecutor<TResult>>() ??
+                           throw new InvalidOperationException(
+                               $"No result executor for '{typeof(TResult).FullName}' has been registered.");
 
             var routeData = context.GetRouteData() ?? EmptyRouteData;
 

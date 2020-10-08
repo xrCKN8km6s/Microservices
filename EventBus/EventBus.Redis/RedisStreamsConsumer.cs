@@ -32,10 +32,7 @@ namespace EventBus.Redis
 
         public void Start(IReadOnlyCollection<string> streams, Func<string, StreamEntry, Task> handler)
         {
-            if (streams == null)
-            {
-                throw new ArgumentNullException(nameof(streams));
-            }
+            _ = streams ?? throw new ArgumentNullException(nameof(streams));
 
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
 

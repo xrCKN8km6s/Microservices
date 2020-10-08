@@ -30,45 +30,28 @@ namespace BFF
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            _ = context ?? throw new ArgumentNullException(nameof(context));
 
             var sub = context.User.FindFirstValue(JwtClaimTypes.Subject);
 
             if (sub == null)
             {
                 _logger.LogError("sub claim is missing.");
-                context.Response.StatusCode = 401;
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return;
             }
 
-            var profileCacheKey = $"profile_{sub}";
+            var profileCacheKey = $"profile:{sub}";
 
-            var cached = await _cache.GetAsync(profileCacheKey);
+            var cached = await GetCachedProfile(profileCacheKey);
 
             UserProfileDto profile;
 
             if (cached == null)
             {
-                profile = await _usersClient.Profile_GetUserProfileAsync(sub);
-
                 var exp = context.User.FindFirstValue(JwtClaimTypes.Expiration);
-
-                if (long.TryParse(exp, out var unixEpochSecs))
-                {
-                    var identityExp = DateTimeOffset.FromUnixTimeSeconds(unixEpochSecs);
-
-                    var offset = DateTimeOffset.UtcNow.AddMinutes(10);
-
-                    var absExp = offset > identityExp ? identityExp : offset;
-
-                    var content = JsonSerializer.SerializeToUtf8Bytes(profile);
-
-                    await _cache.SetAsync(profileCacheKey, content,
-                        new DistributedCacheEntryOptions { AbsoluteExpiration = absExp });
-                }
+                profile = await _usersClient.Profile_GetUserProfileAsync(sub);
+                await CacheProfile(profile, profileCacheKey, exp);
             }
             else
             {
@@ -89,6 +72,44 @@ namespace BFF
             var customIdentity = new ClaimsIdentity(claims, "CustomAuthentication", JwtClaimTypes.Name, JwtClaimTypes.Role);
 
             context.User.AddIdentity(customIdentity);
+        }
+
+        private async Task<byte[]> GetCachedProfile(string profileCacheKey)
+        {
+            byte[] cached = null;
+
+            try
+            {
+                cached = await _cache.GetAsync(profileCacheKey);
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(e, "Error while connecting to cache server.");
+            }
+
+            return cached;
+        }
+
+        private async Task CacheProfile(UserProfileDto profile, string profileCacheKey, string exp)
+        {
+            if (long.TryParse(exp, out var unixEpochSecs))
+            {
+                var identityExp = DateTimeOffset.FromUnixTimeSeconds(unixEpochSecs);
+                var offset = DateTimeOffset.UtcNow.AddMinutes(10);
+                var absExp = offset > identityExp ? identityExp : offset;
+
+                var content = JsonSerializer.SerializeToUtf8Bytes(profile);
+
+                try
+                {
+                    await _cache.SetAsync(profileCacheKey, content,
+                        new DistributedCacheEntryOptions {AbsoluteExpiration = absExp});
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Error while connecting to cache server.");
+                }
+            }
         }
     }
 }

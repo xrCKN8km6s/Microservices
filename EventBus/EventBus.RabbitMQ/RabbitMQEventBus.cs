@@ -131,10 +131,7 @@ namespace EventBus.RabbitMQ
 
         public void Subscribe(Action<EventSubscriptions> setupSubscriptions)
         {
-            if (setupSubscriptions == null)
-            {
-                throw new ArgumentNullException(nameof(setupSubscriptions));
-            }
+            _ = setupSubscriptions ?? throw new ArgumentNullException(nameof(setupSubscriptions));
 
             var subs = new EventSubscriptions();
             setupSubscriptions(subs);

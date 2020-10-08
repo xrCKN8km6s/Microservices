@@ -51,6 +51,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpGet("")]
+        [Authorize(Policy = AuthorizePolicies.AdminRolesView)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
@@ -59,6 +60,7 @@ namespace BFF.Controllers.Users
         }
 
         [HttpGet("viewmodel")]
+        [Authorize(Policy = AuthorizePolicies.AdminRolesView)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<RolesViewModel>> GetRolesViewModel()
         {

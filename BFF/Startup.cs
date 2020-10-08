@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -70,8 +70,8 @@ namespace BFF
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services
-                .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = Configuration["identityUrlInternal"];
 
@@ -79,7 +79,7 @@ namespace BFF
                     options.ApiSecret = "bff.introspection.secret";
 
                     options.EnableCaching = true;
-                    options.CacheKeyPrefix = "introspection_";
+                    options.CacheKeyPrefix = "introspection:";
                 });
         }
 
@@ -87,20 +87,28 @@ namespace BFF
         {
             services.AddAuthorization(options =>
             {
-                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .RequireScope("bff")
                     .Build();
 
-                options.AddPolicy(AuthorizePolicies.OrdersView, policy => policy.RequireRole(Permission.OrdersView));
-                options.AddPolicy(AuthorizePolicies.OrdersEdit, policy => policy.RequireRole(Permission.OrdersEdit));
+                static Action<AuthorizationPolicyBuilder> ConfigurePolicy(string role)
+                {
+                    return policy => policy
+                        .RequireAuthenticatedUser()
+                        .RequireScope("bff")
+                        .RequireRole(role);
+                }
 
-                options.AddPolicy(AuthorizePolicies.AdminView, policy => policy.RequireRole(Permission.AdminView));
-                options.AddPolicy(AuthorizePolicies.AdminRolesView, policy => policy.RequireRole(Permission.AdminRolesView));
-                options.AddPolicy(AuthorizePolicies.AdminRolesEdit, policy => policy.RequireRole(Permission.AdminRolesEdit));
-                options.AddPolicy(AuthorizePolicies.AdminRolesDelete, policy => policy.RequireRole(Permission.AdminRolesDelete));
-                options.AddPolicy(AuthorizePolicies.AdminUsersView, policy => policy.RequireRole(Permission.AdminUsersView));
-                options.AddPolicy(AuthorizePolicies.AdminUsersEdit, policy => policy.RequireRole(Permission.AdminUsersEdit));
+                options.AddPolicy(AuthorizePolicies.OrdersView, ConfigurePolicy(AuthorizePolicies.OrdersView));
+                options.AddPolicy(AuthorizePolicies.OrdersEdit, ConfigurePolicy(Permission.OrdersEdit));
+
+                options.AddPolicy(AuthorizePolicies.AdminView, ConfigurePolicy(Permission.AdminView));
+                options.AddPolicy(AuthorizePolicies.AdminRolesView, ConfigurePolicy(Permission.AdminRolesView));
+                options.AddPolicy(AuthorizePolicies.AdminRolesEdit, ConfigurePolicy(Permission.AdminRolesEdit));
+                options.AddPolicy(AuthorizePolicies.AdminRolesDelete, ConfigurePolicy(Permission.AdminRolesDelete));
+                options.AddPolicy(AuthorizePolicies.AdminUsersView, ConfigurePolicy(Permission.AdminUsersView));
+                options.AddPolicy(AuthorizePolicies.AdminUsersEdit, ConfigurePolicy(Permission.AdminUsersEdit));
             });
         }
 
