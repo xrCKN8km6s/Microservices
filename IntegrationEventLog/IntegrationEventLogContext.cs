@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,10 +12,7 @@ namespace IntegrationEventLog
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if (modelBuilder is null)
-            {
-                throw new System.ArgumentNullException(nameof(modelBuilder));
-            }
+            if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
 
             modelBuilder.ApplyConfiguration(new IntegrationEventLogItemTypeConfiguration());
         }
@@ -24,10 +22,7 @@ namespace IntegrationEventLog
     {
         public void Configure(EntityTypeBuilder<IntegrationEventLogItem> builder)
         {
-            if (builder is null)
-            {
-                throw new System.ArgumentNullException(nameof(builder));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             builder.ToTable("integration_event_logs");
 

@@ -13,20 +13,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<RabbitMQConnectionOptions> setupConnectionOptions,
             Action<RabbitMQEventBusOptions> setupEventBusOptions)
         {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (setupConnectionOptions is null)
-            {
-                throw new ArgumentNullException(nameof(setupConnectionOptions));
-            }
-
-            if (setupEventBusOptions is null)
-            {
-                throw new ArgumentNullException(nameof(setupEventBusOptions));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (setupConnectionOptions == null) throw new ArgumentNullException(nameof(setupConnectionOptions));
+            if (setupEventBusOptions == null) throw new ArgumentNullException(nameof(setupEventBusOptions));
 
             var connectionOptions = new RabbitMQConnectionOptions();
             setupConnectionOptions(connectionOptions);
@@ -41,20 +30,9 @@ namespace Microsoft.Extensions.DependencyInjection
             RabbitMQConnectionOptions connectionOptions,
             RabbitMQEventBusOptions eventBusOptions)
         {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (connectionOptions is null)
-            {
-                throw new ArgumentNullException(nameof(connectionOptions));
-            }
-
-            if (eventBusOptions is null)
-            {
-                throw new ArgumentNullException(nameof(eventBusOptions));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (connectionOptions == null) throw new ArgumentNullException(nameof(connectionOptions));
+            if (eventBusOptions == null) throw new ArgumentNullException(nameof(eventBusOptions));
 
             builder.Services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
             {

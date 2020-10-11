@@ -7,10 +7,7 @@ namespace EventBus.Redis
     {
         public static string GetGenericTypeName(this Type type)
         {
-            if (type is null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            if (type == null) throw new ArgumentNullException(nameof(type));
 
             string typeName;
 
@@ -29,10 +26,7 @@ namespace EventBus.Redis
 
         public static string GetGenericTypeName(this object o)
         {
-            if (o is null)
-            {
-                throw new ArgumentNullException(nameof(o));
-            }
+            if (o == null) throw new ArgumentNullException(nameof(o));
 
             return o.GetType().GetGenericTypeName();
         }

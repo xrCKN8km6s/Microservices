@@ -150,10 +150,7 @@ namespace Users.API.Controllers
 
         public static RoleDto MapRoleToDto(Role role)
         {
-            if (role is null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            if (role == null) throw new ArgumentNullException(nameof(role));
 
             var dto = new RoleDto
             {

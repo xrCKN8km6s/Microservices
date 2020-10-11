@@ -2,16 +2,16 @@ version: "3.7"
 
 services:
 
-  rabbitmq:
-    hostname: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: usr
-      RABBITMQ_DEFAULT_PASS: pwd
-    ports:
-      - 15672:15672
-      - 5672:5672
-    volumes:
-      - rabbit-mnesia:/var/lib/rabbitmq/mnesia/rabbit@rabbitmq
+  #rabbitmq:
+  #  hostname: rabbitmq
+  #  environment:
+  #    RABBITMQ_DEFAULT_USER: usr
+  #    RABBITMQ_DEFAULT_PASS: pwd
+  #  ports:
+  #    - 15672:15672
+  #    - 5672:5672
+  #  volumes:
+  #    - rabbit-mnesia:/var/lib/rabbitmq/mnesia/rabbit@rabbitmq
 
   postgreSql:
     environment:

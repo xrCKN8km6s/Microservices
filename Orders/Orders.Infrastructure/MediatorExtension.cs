@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -9,10 +10,7 @@ namespace Orders.Infrastructure
     {
         public static async Task DispatchDomainEventsAsync(this IMediator mediator, OrdersContext ctx)
         {
-            if (ctx is null)
-            {
-                throw new System.ArgumentNullException(nameof(ctx));
-            }
+            if (ctx == null) throw new ArgumentNullException(nameof(ctx));
 
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()

@@ -8,10 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static EventBusBuilder UseSubscriptionManager<T>(this EventBusBuilder builder) where T : class, IEventBusSubscriptionManager
         {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             builder.Services.AddSingleton<IEventBusSubscriptionManager, T>();
             return builder;
@@ -24,10 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static EventBusBuilder UseSerializer<T>(this EventBusBuilder builder) where T : class, IEventBusSerializer
         {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             builder.Services.AddSingleton<IEventBusSerializer, JsonNetEventBusSerializer>();
             return builder;

@@ -63,10 +63,7 @@ namespace EventBus.RabbitMQ
 
         public void Publish(IIntegrationEvent e)
         {
-            if (e is null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
+            if (e == null) throw new ArgumentNullException(nameof(e));
 
             var eventName = e.GetType().Name;
             var body = _serializer.Serialize(e);

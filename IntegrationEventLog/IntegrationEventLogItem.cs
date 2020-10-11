@@ -27,10 +27,7 @@ namespace IntegrationEventLog
 
         public static IntegrationEventLogItem Create(IIntegrationEvent e, Guid transactionId)
         {
-            if (e is null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
+            if (e == null) throw new ArgumentNullException(nameof(e));
 
             return new IntegrationEventLogItem
             {

@@ -12,15 +12,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static EventBusBuilder UseRedis(this EventBusBuilder builder,
             Action<RedisEventBusOptions> setupOptions)
         {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (setupOptions is null)
-            {
-                throw new ArgumentNullException(nameof(setupOptions));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (setupOptions == null) throw new ArgumentNullException(nameof(setupOptions));
 
             var connectionOptions = new RedisEventBusOptions();
             setupOptions(connectionOptions);
@@ -31,15 +24,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static EventBusBuilder UseRedis(this EventBusBuilder builder,
             RedisEventBusOptions options)
         {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (options == null) throw new ArgumentNullException(nameof(options));
 
             builder.Services.AddSingleton<IEventBus>(sp =>
             {

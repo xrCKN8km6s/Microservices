@@ -42,11 +42,9 @@ namespace IntegrationEventLog.Services
 
         public async Task AddAsync(IIntegrationEvent e, IDbContextTransaction transaction)
         {
-            if (transaction == null)
-            {
-                throw new ArgumentNullException(nameof(transaction),
-                    "Transaction instance is required to ensure atomicity.");
-            }
+            if (e == null) throw new ArgumentNullException(nameof(e));
+            if (transaction == null) throw new ArgumentNullException(nameof(transaction),
+                "Transaction instance is required to ensure atomicity.");
 
             var entry = IntegrationEventLogItem.Create(e, transaction.TransactionId);
 
