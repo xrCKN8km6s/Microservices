@@ -1,4 +1,4 @@
-﻿namespace Users.API.DTO
+namespace Users.API.DTO
 {
     public class UsersViewModel
     {
