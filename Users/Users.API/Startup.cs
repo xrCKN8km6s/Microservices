@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
+using Users.API.GrpcServices;
 using Users.API.Infrastructure;
 using Users.API.Queries;
 
@@ -45,6 +46,8 @@ namespace Users.API
                     .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
             services.AddScoped<IUsersQueries, UsersQueries>();
+
+            services.AddGrpc();
         }
 
         private void AddAuthentication(IServiceCollection services)
@@ -120,6 +123,8 @@ namespace Users.API
                 builder
                     .MapControllers()
                     .RequireAuthorization();
+
+                builder.MapGrpcService<UsersService>();
             });
         }
     }

@@ -26,4 +26,9 @@
     <ProjectReference Include="..\Users\Users.Client\Users.Client.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.32.0" />
+    <Protobuf Include="..\proto\users.proto" GrpcServices="Client" Link="proto\users.proto" />
+  </ItemGroup>
+
 </Project>

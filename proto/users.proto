@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package Microservices;
+
+import "google/protobuf/empty.proto";
+
+// The greeting service definition.
+service Users {
+	// Sends a greeting
+	rpc GetProfile (ProfileRequest) returns (UserProfileReply);
+
+	rpc GetRoles (google.protobuf.Empty) returns (RolesReply);
+
+	rpc GetRoleById(IdRequest) returns (RoleReply);
+}
+
+
+message ProfileRequest {
+	string sub = 1;
+}
+
+message IdRequest {
+	int64 id = 1;
+}
+
+message UserProfileReply {
+	message PermissionReply {
+		int64 id = 1;
+		string name = 2;
+		string description = 3;
+	}
+	int64 id = 1;
+	string sub = 2;
+	string name = 3;
+	string email = 4;
+	bool hasGlobalRole = 5;
+	repeated PermissionReply permissions = 6;
+}
+
+message RoleReply {
+	int64 id = 1;
+	string name = 2;
+	repeated int64 permissions = 3;
+	bool isGlobal = 4;
+}
+
+message RolesReply {
+	repeated RoleReply roles = 1;
+}

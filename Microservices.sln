@@ -65,6 +65,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Redis", "EventBus\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Redis.AspNetCore", "EventBus\EventBus.Redis.AspNetCore\EventBus.Redis.AspNetCore.csproj", "{595C97B4-4FC2-4578-AC65-D5E55ADBA13F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_proto", "_proto", "{066097C2-26D1-4EC5-996F-4361B6570D53}"
+	ProjectSection(SolutionItems) = preProject
+		proto\users.proto = proto\users.proto
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
