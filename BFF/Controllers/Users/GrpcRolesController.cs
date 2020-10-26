@@ -75,7 +75,7 @@ namespace BFF.Controllers.Users
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Clients.Common.ProblemDetails))]
         public async Task<ActionResult<RoleReply>> GetRoleById(long id)
         {
-            var res = await _users.GetRoleByIdAsync(new IdRequest {Id = id});
+            var res = await _users.GetRoleByIdAsync(new Int64Value {Value = id});
             return Ok(res);
         }
     }

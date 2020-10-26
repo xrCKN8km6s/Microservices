@@ -27,18 +27,18 @@ namespace Users.API.GrpcServices
         }
 
         [Authorize]
-        public override async Task<UserProfileReply> GetProfile(ProfileRequest request, ServerCallContext context)
+        public override async Task<UserProfileReply> GetProfile(StringValue request, ServerCallContext context)
         {
-            _logger.LogInformation("Requesting profile for user {sub}", request?.Sub);
-            if (string.IsNullOrWhiteSpace(request?.Sub))
+            _logger.LogInformation("Requesting profile for user {sub}", request?.Value);
+            if (string.IsNullOrWhiteSpace(request?.Value))
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid argument."));
             }
 
-            var res = await _queries.GetUserProfileAsync(request.Sub);
+            var res = await _queries.GetUserProfileAsync(request.Value);
             if (res == null)
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"User profile {request.Sub} was not found."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, $"User profile {request.Value} was not found."));
             }
 
             return MapReply(res);
@@ -65,17 +65,17 @@ namespace Users.API.GrpcServices
             return res;
         }
 
-        public override async Task<RoleReply> GetRoleById(IdRequest request, ServerCallContext context)
+        public override async Task<RoleReply> GetRoleById(Int64Value request, ServerCallContext context)
         {
-            if (request?.Id <= 0)
+            if (request?.Value <= 0)
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"{request?.Id} is invalid."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, $"{request?.Value} is invalid."));
             }
 
-            var role = await _context.Roles.AsNoTracking().Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == request.Id);
+            var role = await _context.Roles.AsNoTracking().Include(i => i.PermissionRoles).FirstOrDefaultAsync(r => r.Id == request.Value);
             if (role == null)
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Role {request?.Id} was not found."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Role {request?.Value} was not found."), new Metadata{});
             }
 
             return MapRoleToDto(role);

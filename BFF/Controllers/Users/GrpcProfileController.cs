@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using IdentityModel;
 using Microservices;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +24,7 @@ namespace BFF.Controllers.Users
         public async Task<ActionResult<UserProfileReply>> Get()
         {
             var sub = User.FindFirst(JwtClaimTypes.Subject).Value;
-            return await _users.GetProfileAsync(new ProfileRequest{Sub = sub});
+            return await _users.GetProfileAsync(new StringValue{Value = sub});
         }
     }
 }

@@ -3,24 +3,16 @@ syntax = "proto3";
 package Microservices;
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 // The greeting service definition.
 service Users {
 	// Sends a greeting
-	rpc GetProfile (ProfileRequest) returns (UserProfileReply);
+	rpc GetProfile (google.protobuf.StringValue) returns (UserProfileReply);
 
 	rpc GetRoles (google.protobuf.Empty) returns (RolesReply);
 
-	rpc GetRoleById(IdRequest) returns (RoleReply);
-}
-
-
-message ProfileRequest {
-	string sub = 1;
-}
-
-message IdRequest {
-	int64 id = 1;
+	rpc GetRoleById (google.protobuf.Int64Value) returns (RoleReply);
 }
 
 message UserProfileReply {

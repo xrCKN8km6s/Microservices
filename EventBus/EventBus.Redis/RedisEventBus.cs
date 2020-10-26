@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Text;
@@ -11,25 +10,22 @@ namespace EventBus.Redis
     public class RedisEventBus : IEventBus, IDisposable
     {
         private readonly ILogger<RedisEventBus> _logger;
-        private readonly IDatabase _db;
         private readonly IEventBusSubscriptionManager _subManager;
         private readonly IEventBusSerializer _serializer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IRedisStreamsConsumer _consumer;
+        private readonly IRedisStreamsConnection _connection;
 
         public RedisEventBus(
             ILogger<RedisEventBus> logger,
-            IDatabase db,
             IEventBusSubscriptionManager subManager,
             IEventBusSerializer serializer,
-            IRedisStreamsConsumer consumer,
+            IRedisStreamsConnection connection,
             IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _db = db ?? throw new ArgumentNullException(nameof(db));
             _subManager = subManager ?? throw new ArgumentNullException(nameof(subManager));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         }
 
@@ -52,10 +48,7 @@ namespace EventBus.Redis
 
         private void Publish(Guid eventId, string eventName, byte[] body)
         {
-            _db.StreamAdd(eventName, new[] { 
-                new NameValueEntry("id", eventId.ToString()),
-                new NameValueEntry("content", body)
-            });
+            _connection.PublishEvent(eventId.ToString(), eventName, body);
         }
 
         public void Subscribe(Action<EventSubscriptions> setupSubscriptions)
@@ -69,12 +62,7 @@ namespace EventBus.Redis
             {
                 var eventName = sub.EventType.Name;
 
-                //rewrite to check if group exists
-                try
-                {
-                    _db.StreamCreateConsumerGroup(eventName, "Orders", StreamPosition.Beginning);
-                }
-                catch (RedisServerException) {}
+                _connection.CreateConsumerGroup(eventName);
 
                 _logger.LogDebug("Subscribing to event {EventName} with {EventHandler}", eventName, sub.HandlerType.GetGenericTypeName());
 
@@ -84,13 +72,11 @@ namespace EventBus.Redis
             //"OrderStatusChangedIntegrationEvent"
             var eventNames = subs.Subscriptions.Select(s => s.EventType.Name).ToArray();
 
-            _consumer.Start(eventNames, async (eventName, streamEntry) => { await ProcessEvent(eventName, streamEntry); });
+            _connection.Start(eventNames, async (eventName, id, message) => { await ProcessEvent(eventName, id, message); });
         }
 
-        private async Task ProcessEvent(string name, StreamEntry item)
+        private async Task ProcessEvent(string name, string id, string message)
         {
-            var (id, message) = (item.Id, item["content"]);
-
             if (_subManager.HasSubscriptionsForEvent(name))
             {
                 using var scope = _serviceScopeFactory.CreateScope();
@@ -121,7 +107,7 @@ namespace EventBus.Redis
         {
             var eventName = _subManager.GetEventKey<T>();
 
-            _db.StreamDeleteConsumerGroup(eventName, "Orders");
+            _connection.DeleteConsumerGroup(eventName);
 
             _logger.LogDebug("Unsubscribing from event {EventName}", eventName);
 
@@ -130,7 +116,7 @@ namespace EventBus.Redis
 
         public void Dispose()
         {
-            _consumer.Stop();
+            _connection.Stop();
             _subManager.Clear();
         }
     }

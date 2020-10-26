@@ -47,7 +47,10 @@ namespace Users.API
 
             services.AddScoped<IUsersQueries, UsersQueries>();
 
-            services.AddGrpc();
+            services.AddGrpc(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
         }
 
         private void AddAuthentication(IServiceCollection services)
