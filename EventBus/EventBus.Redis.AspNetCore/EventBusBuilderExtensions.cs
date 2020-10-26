@@ -27,12 +27,17 @@ namespace Microsoft.Extensions.DependencyInjection
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             if (options == null) throw new ArgumentNullException(nameof(options));
 
-            builder.Services.AddSingleton<IEventBus>(sp =>
+            builder.Services.AddSingleton(sp =>
             {
                 var connection = ConnectionMultiplexer.Connect(options.Configuration);
-                var db = connection.GetDatabase();
+                return connection.GetDatabase();
+            });
 
-                var consumer = new RedisStreamsConsumer(db, options.ConsumerGroupName, options.ConsumerName, options.BatchPerGroupSize);
+            builder.Services.AddSingleton<IEventBus>(sp =>
+            {
+                var db = sp.GetRequiredService<IDatabase>();
+
+                var consumer = new RedisStreamsConnection(db, options.ConsumerGroupName, options.ConsumerName, options.BatchPerGroupSize);
 
                 var logger = sp.GetService<ILogger<RedisEventBus>>();
                 var subManager = sp.GetRequiredService<IEventBusSubscriptionManager>();
@@ -41,7 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 var bus = new RedisEventBus(
                     logger,
-                    db,
                     subManager,
                     serializer,
                     consumer,

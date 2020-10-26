@@ -63,6 +63,13 @@ namespace BFF
             AddClients(services);
 
             AddSwagger(services);
+
+            services
+                .AddGrpcClient<Microservices.Users.UsersClient>(c =>
+                {
+                    c.Address = new Uri(Configuration["clients:users:baseUrl"]);
+                })
+                .AddHttpMessageHandler<BearerTokenDelegatingHandler>();
         }
 
         private void AddAuthentication(IServiceCollection services)
@@ -114,6 +121,7 @@ namespace BFF
 
         private void AddClients(IServiceCollection services)
         {
+            //Move token accessor to separate method.
             services.Configure<TokenAccessorOptions>(Configuration.GetSection("tokenAccessor"));
 
             services.AddHttpClient("tokenClient", c =>

@@ -7,7 +7,7 @@ using StackExchange.Redis;
 
 namespace EventBus.Redis
 {
-    public class RedisStreamsConsumer : IRedisStreamsConsumer
+    public class RedisStreamsConnection : IRedisStreamsConnection
     {
         private readonly IDatabase _db;
         private readonly string _groupName;
@@ -19,9 +19,9 @@ namespace EventBus.Redis
 
         private readonly TimeSpan _sleepDuration = TimeSpan.FromMilliseconds(1000);
 
-        private Func<string, StreamEntry, Task> _handler;
+        private Func<string, string, string, Task> _handler;
 
-        public RedisStreamsConsumer(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize)
+        public RedisStreamsConnection(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize)
         {
             _db = db;
             _groupName = consumerGroupName;
@@ -30,7 +30,29 @@ namespace EventBus.Redis
             _cts = new CancellationTokenSource();
         }
 
-        public void Start(IReadOnlyCollection<string> streams, Func<string, StreamEntry, Task> handler)
+        public void CreateConsumerGroup(string eventName)
+        {
+            try
+            {
+                _db.StreamCreateConsumerGroup(eventName, _groupName, StreamPosition.Beginning);
+            }
+            catch (RedisServerException ex) when (ex.Message == "BUSYGROUP Consumer Group name already exists") {}
+        }
+
+        public void DeleteConsumerGroup(string eventName)
+        {
+            _db.StreamDeleteConsumerGroup(eventName, _groupName);
+        }
+
+        public void PublishEvent(string eventId, string eventName, byte[] body)
+        {
+            _db.StreamAdd(eventName, new[] {
+                new NameValueEntry("id", eventId),
+                new NameValueEntry("content", body)
+            });
+        }
+
+        public void Start(IReadOnlyCollection<string> streams, Func<string, string, string, Task> handler)
         {
             _ = streams ?? throw new ArgumentNullException(nameof(streams));
 
@@ -67,7 +89,7 @@ namespace EventBus.Redis
         private void ProcessPending(string[] streams)
         {
             //https://redis.io/commands/xreadgroup#usage-example
-            //ID 0 - read pending items
+            //ID = 0 - read pending items
             var pendingPositions = streams.Select(s => new StreamPosition(s, "0")).ToArray();
 
             bool hasPending;
@@ -113,7 +135,8 @@ namespace EventBus.Redis
                 {
                     try
                     {
-                        _handler(stream.Key, entry).Wait();
+                        var (id, message) = (entry.Id, entry["content"]);
+                        _handler(stream.Key, id, message).Wait();
                         _db.StreamAcknowledge(stream.Key, _groupName, entry.Id);
                     }
                     catch (AggregateException)
