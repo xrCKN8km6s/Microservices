@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,14 +18,14 @@ namespace BFF
     {
         private readonly HttpClient _client;
         private readonly TokenAccessorOptions _config;
-        private readonly IDistributedCache _cache;
+        private readonly ISafeDistributedCache _cache;
         private readonly ILogger<TokenAccessor> _logger;
 
         public TokenAccessor(
-            [NotNull] HttpClient client,
-            [NotNull] IOptions<TokenAccessorOptions> config,
-            [NotNull] IDistributedCache cache,
-            [NotNull] ILogger<TokenAccessor> logger)
+            HttpClient client,
+            IOptions<TokenAccessorOptions> config,
+            ISafeDistributedCache cache,
+            ILogger<TokenAccessor> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
@@ -36,7 +35,7 @@ namespace BFF
 
         public async Task<string> GetAccessToken(CancellationToken cancellationToken)
         {
-            var cacheKey = $"client_token_{_config.ClientId}";
+            var cacheKey = $"access_token:{_config.ClientId}";
 
             var cachedToken = await _cache.GetStringAsync(cacheKey, cancellationToken);
 
@@ -54,9 +53,10 @@ namespace BFF
 
             if (token.IsError)
             {
-                _logger.LogError(token.Exception, "Exception while retrieving access token for {client}",
+                _logger.LogError(token.Exception, "Exception while retrieving access token for {client}.",
                     _config.ClientId);
-                throw new Exception("Error while retrieving access token.");
+
+                throw new Exception("Error while retrieving access token.", token.Exception);
             }
 
             var cacheOptions = new DistributedCacheEntryOptions

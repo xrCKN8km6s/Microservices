@@ -57,6 +57,8 @@ namespace BFF
                 .AddHttpContextAccessor()
                 .AddStackExchangeRedisCache(options => { options.Configuration = Configuration["redisConfig"]; });
 
+            services.AddSingleton<ISafeDistributedCache, SafeDistributedCache>();
+
             AddAuthentication(services);
             AddAuthorization(services);
 

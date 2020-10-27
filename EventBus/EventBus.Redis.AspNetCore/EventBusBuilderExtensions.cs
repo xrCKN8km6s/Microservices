@@ -37,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 var db = sp.GetRequiredService<IDatabase>();
 
-                var consumer = new RedisStreamsConnection(db, options.ConsumerGroupName, options.ConsumerName, options.BatchPerGroupSize);
+                var consumer = new RedisStreamsManager(db, options.ConsumerGroupName, options.ConsumerName, options.BatchPerGroupSize);
 
                 var logger = sp.GetService<ILogger<RedisEventBus>>();
                 var subManager = sp.GetRequiredService<IEventBusSubscriptionManager>();

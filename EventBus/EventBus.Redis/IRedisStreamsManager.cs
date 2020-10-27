@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StackExchange.Redis;
 
 namespace EventBus.Redis
 {
-    public interface IRedisStreamsConnection
+    public interface IRedisStreamsManager
     {
         void CreateConsumerGroup(string eventName);
         void DeleteConsumerGroup(string eventName);

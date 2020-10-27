@@ -7,21 +7,19 @@ using StackExchange.Redis;
 
 namespace EventBus.Redis
 {
-    public class RedisStreamsConnection : IRedisStreamsConnection
+    public class RedisStreamsManager : IRedisStreamsManager
     {
         private readonly IDatabase _db;
         private readonly string _groupName;
         private readonly string _consumerName;
         private readonly int _batchPerGroupSize;
-
-        private readonly CancellationTokenSource _cts;
-        private Task _readerTask;
-
         private readonly TimeSpan _sleepDuration = TimeSpan.FromMilliseconds(1000);
 
+        private Task _readerTask;
+        private readonly CancellationTokenSource _cts;
         private Func<string, string, string, Task> _handler;
 
-        public RedisStreamsConnection(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize)
+        public RedisStreamsManager(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize)
         {
             _db = db;
             _groupName = consumerGroupName;
@@ -135,8 +133,7 @@ namespace EventBus.Redis
                 {
                     try
                     {
-                        var (id, message) = (entry.Id, entry["content"]);
-                        _handler(stream.Key, id, message).Wait();
+                        _handler(stream.Key, entry.Id, entry["content"]).Wait();
                         _db.StreamAcknowledge(stream.Key, _groupName, entry.Id);
                     }
                     catch (AggregateException)

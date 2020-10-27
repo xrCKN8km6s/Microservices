@@ -36,7 +36,7 @@ namespace BFF.Controllers.Users
         {
             await _client.Users_UpdateUserRolesAsync(id, roles, HttpContext.RequestAborted);
             //TODO: refactor
-            await _cache.RemoveAsync($"profile_{User.FindFirst(JwtClaimTypes.Subject).Value}");
+            await _cache.RemoveAsync($"profile:{User.FindFirst(JwtClaimTypes.Subject).Value}");
             return NoContent();
         }
     }

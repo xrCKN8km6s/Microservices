@@ -13,19 +13,19 @@ namespace EventBus.Redis
         private readonly IEventBusSubscriptionManager _subManager;
         private readonly IEventBusSerializer _serializer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IRedisStreamsConnection _connection;
+        private readonly IRedisStreamsManager _manager;
 
         public RedisEventBus(
             ILogger<RedisEventBus> logger,
             IEventBusSubscriptionManager subManager,
             IEventBusSerializer serializer,
-            IRedisStreamsConnection connection,
+            IRedisStreamsManager manager,
             IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _subManager = subManager ?? throw new ArgumentNullException(nameof(subManager));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         }
 
@@ -48,7 +48,7 @@ namespace EventBus.Redis
 
         private void Publish(Guid eventId, string eventName, byte[] body)
         {
-            _connection.PublishEvent(eventId.ToString(), eventName, body);
+            _manager.PublishEvent(eventId.ToString(), eventName, body);
         }
 
         public void Subscribe(Action<EventSubscriptions> setupSubscriptions)
@@ -62,7 +62,7 @@ namespace EventBus.Redis
             {
                 var eventName = sub.EventType.Name;
 
-                _connection.CreateConsumerGroup(eventName);
+                _manager.CreateConsumerGroup(eventName);
 
                 _logger.LogDebug("Subscribing to event {EventName} with {EventHandler}", eventName, sub.HandlerType.GetGenericTypeName());
 
@@ -72,7 +72,7 @@ namespace EventBus.Redis
             //"OrderStatusChangedIntegrationEvent"
             var eventNames = subs.Subscriptions.Select(s => s.EventType.Name).ToArray();
 
-            _connection.Start(eventNames, async (eventName, id, message) => { await ProcessEvent(eventName, id, message); });
+            _manager.Start(eventNames, async (eventName, id, message) => { await ProcessEvent(eventName, id, message); });
         }
 
         private async Task ProcessEvent(string name, string id, string message)
@@ -107,7 +107,7 @@ namespace EventBus.Redis
         {
             var eventName = _subManager.GetEventKey<T>();
 
-            _connection.DeleteConsumerGroup(eventName);
+            _manager.DeleteConsumerGroup(eventName);
 
             _logger.LogDebug("Unsubscribing from event {EventName}", eventName);
 
@@ -116,7 +116,7 @@ namespace EventBus.Redis
 
         public void Dispose()
         {
-            _connection.Stop();
+            _manager.Stop();
             _subManager.Clear();
         }
     }

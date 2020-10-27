@@ -16,11 +16,11 @@ namespace BFF
     {
         private readonly RequestDelegate _next;
         private readonly IUsersClient _usersClient;
-        private readonly IDistributedCache _cache;
+        private readonly ISafeDistributedCache _cache;
         private readonly ILogger<UserProfileMiddleware> _logger;
 
         public UserProfileMiddleware(RequestDelegate next, IUsersClient usersClient,
-            IDistributedCache cache, ILogger<UserProfileMiddleware> logger)
+            ISafeDistributedCache cache, ILogger<UserProfileMiddleware> logger)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _usersClient = usersClient ?? throw new ArgumentNullException(nameof(usersClient));
@@ -43,7 +43,7 @@ namespace BFF
 
             var profileCacheKey = $"profile:{sub}";
 
-            var cached = await GetCachedProfile(profileCacheKey);
+            var cached = await _cache.GetAsync(profileCacheKey);
 
             UserProfileDto profile;
 
@@ -74,22 +74,6 @@ namespace BFF
             context.User.AddIdentity(customIdentity);
         }
 
-        private async Task<byte[]> GetCachedProfile(string profileCacheKey)
-        {
-            byte[] cached = null;
-
-            try
-            {
-                cached = await _cache.GetAsync(profileCacheKey);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Error while connecting to cache server.");
-            }
-
-            return cached;
-        }
-
         private async Task CacheProfile(UserProfileDto profile, string profileCacheKey, string exp)
         {
             if (long.TryParse(exp, out var unixEpochSecs))
@@ -100,15 +84,8 @@ namespace BFF
 
                 var content = JsonSerializer.SerializeToUtf8Bytes(profile);
 
-                try
-                {
-                    await _cache.SetAsync(profileCacheKey, content,
-                        new DistributedCacheEntryOptions {AbsoluteExpiration = absExp});
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(e, "Error while connecting to cache server.");
-                }
+                await _cache.SetAsync(profileCacheKey, content,
+                    new DistributedCacheEntryOptions {AbsoluteExpiration = absExp});
             }
         }
     }
