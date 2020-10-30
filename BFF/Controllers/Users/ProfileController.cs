@@ -22,7 +22,7 @@ namespace BFF.Controllers.Users
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Clients.Common.ProblemDetails))]
         public async Task<ActionResult<UserProfileDto>> Get()
         {
-            var sub = User.FindFirst(JwtClaimTypes.Subject).Value;
+            var sub = User.FindFirst(JwtClaimTypes.Subject)?.Value;
             return await _client.Profile_GetUserProfileAsync(sub, HttpContext.RequestAborted);
         }
     }

@@ -13,8 +13,6 @@ namespace BFF
     // https://github.com/aspnet/Mvc/issues/7238
     public static class HttpContextExtensions
     {
-        private static readonly RouteData EmptyRouteData = new RouteData();
-
         private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
 
         public static Task WriteResultAsync<TResult>(this HttpContext context, TResult result)
@@ -26,7 +24,7 @@ namespace BFF
                            throw new InvalidOperationException(
                                $"No result executor for '{typeof(TResult).FullName}' has been registered.");
 
-            var routeData = context.GetRouteData() ?? EmptyRouteData;
+            var routeData = context.GetRouteData();
 
             var actionContext = new ActionContext(context, routeData, EmptyActionDescriptor);
 

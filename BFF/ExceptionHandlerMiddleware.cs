@@ -62,10 +62,7 @@ namespace BFF
                         };
 
                         var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
-                        if (traceId != null)
-                        {
-                            error.Extensions["traceId"] = traceId;
-                        }
+                        error.Extensions["traceId"] = traceId;
                         break;
                 }
 

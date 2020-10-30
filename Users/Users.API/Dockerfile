@@ -1,19 +1,20 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
 COPY ["certs/rootCA.crt", "/usr/local/share/ca-certificates/"]
 RUN update-ca-certificates
 WORKDIR /app
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 ARG GPR_NuGet_Passwd
 WORKDIR /src
-COPY ["Users/Users.API/Users.API.csproj", "./Users.API/"]
-COPY ["Users/Users.UnitTests/Users.UnitTests.csproj", "./Users.UnitTests/"]
+COPY ["Users/Users.API/Users.API.csproj", "./Users/Users.API/"]
+COPY ["Users/Users.UnitTests/Users.UnitTests.csproj", "./Users/Users.UnitTests/"]
 #COPY ["NuGet.Config", "."]
-RUN dotnet restore "Users.API/Users.API.csproj"
-RUN dotnet restore "Users.UnitTests/Users.UnitTests.csproj"
-COPY ["Users/", "."]
-RUN dotnet publish "Users.API/Users.API.csproj" -c Release -o /app/publish --no-restore
+RUN dotnet restore "Users/Users.API/Users.API.csproj"
+RUN dotnet restore "Users/Users.UnitTests/Users.UnitTests.csproj"
+COPY ["Users/", "./Users/"]
+COPY ["proto/", "./proto/"]
+RUN dotnet publish "Users/Users.API/Users.API.csproj" -c Release -o /app/publish --no-restore
 
 FROM build as unittests
 WORKDIR /src/Users.UnitTests
