@@ -72,16 +72,16 @@ namespace EventBus.Redis
             //"OrderStatusChangedIntegrationEvent"
             var eventNames = subs.Subscriptions.Select(s => s.EventType.Name).ToArray();
 
-            _manager.Start(eventNames, async (eventName, id, message) => { await ProcessEvent(eventName, id, message); });
+            _manager.Start(eventNames, async (message) => { await ProcessEvent(message); });
         }
 
-        private async Task ProcessEvent(string name, string id, string message)
+        private async Task ProcessEvent(StreamsMessage message)
         {
-            if (_subManager.HasSubscriptionsForEvent(name))
+            if (_subManager.HasSubscriptionsForEvent(message.EventName))
             {
                 using var scope = _serviceScopeFactory.CreateScope();
 
-                var subscriptions = _subManager.GetHandlersForEvent(name);
+                var subscriptions = _subManager.GetHandlersForEvent(message.EventName);
                 foreach (var subscription in subscriptions)
                 {
                     var handler = scope.ServiceProvider.GetService(subscription.HandlerType);
@@ -90,13 +90,13 @@ namespace EventBus.Redis
                         continue;
                     }
 
-                    var eventType = _subManager.GetEventTypeByName(name);
-                    var integrationEvent = _serializer.Deserialize(message, eventType);
+                    var eventType = _subManager.GetEventTypeByName(message.EventName);
+                    var integrationEvent = _serializer.Deserialize(message.Content, eventType);
                     var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
 
                     await (Task)concreteType.GetMethod("Handle").Invoke(handler, new[] { integrationEvent });
 
-                    _logger.LogTrace("Processed {EventName} {EventId}", name, id);
+                    _logger.LogTrace("Processed {EventName} {EventId}", message.EventName, message.MessageId);
                 }
             }
         }

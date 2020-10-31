@@ -82,7 +82,7 @@ namespace IdentityServer
                     RequirePkce = true,
                     RequireClientSecret = false,
 
-                    AllowedCorsOrigins = {"https://localhost:5001","https://localhost:1443"},
+                    AllowedCorsOrigins = {"https://localhost:5001", "https://localhost:1443"},
 
                     RedirectUris =
                     {
