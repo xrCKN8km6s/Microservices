@@ -9,7 +9,7 @@ namespace EventBus.Redis
         void CreateConsumerGroup(string eventName);
         void DeleteConsumerGroup(string eventName);
         void PublishEvent(string eventId, string eventName, byte[] body);
-        void Start(IReadOnlyCollection<string> streams, Func<string, string, string, Task> handler);
+        void Start(IReadOnlyCollection<string> streams, Func<StreamsMessage, Task> handler);
         void Stop();
     }
 }

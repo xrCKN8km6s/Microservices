@@ -17,7 +17,7 @@ namespace EventBus.Redis
 
         private Task _readerTask;
         private readonly CancellationTokenSource _cts;
-        private Func<string, string, string, Task> _handler;
+        private Func<StreamsMessage, Task> _handler;
 
         public RedisStreamsManager(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize)
         {
@@ -50,7 +50,7 @@ namespace EventBus.Redis
             });
         }
 
-        public void Start(IReadOnlyCollection<string> streams, Func<string, string, string, Task> handler)
+        public void Start(IReadOnlyCollection<string> streams, Func<StreamsMessage, Task> handler)
         {
             _ = streams ?? throw new ArgumentNullException(nameof(streams));
 
@@ -133,7 +133,8 @@ namespace EventBus.Redis
                 {
                     try
                     {
-                        _handler(stream.Key, entry.Id, entry["content"]).Wait();
+                        var message = new StreamsMessage(stream.Key, entry.Id, entry["content"]);
+                        _handler(message).Wait();
                         _db.StreamAcknowledge(stream.Key, _groupName, entry.Id);
                     }
                     catch (AggregateException)
