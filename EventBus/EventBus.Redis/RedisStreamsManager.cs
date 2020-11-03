@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
 namespace EventBus.Redis
@@ -13,26 +14,28 @@ namespace EventBus.Redis
         private readonly string _groupName;
         private readonly string _consumerName;
         private readonly int _batchPerGroupSize;
+        private readonly ILogger<RedisStreamsManager> _logger;
         private readonly TimeSpan _sleepDuration = TimeSpan.FromMilliseconds(1000);
 
         private Task _readerTask;
         private readonly CancellationTokenSource _cts;
         private Func<StreamsMessage, Task> _handler;
 
-        public RedisStreamsManager(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize)
+        public RedisStreamsManager(IDatabase db, string consumerGroupName, string consumerName, int batchPerGroupSize, ILogger<RedisStreamsManager> logger)
         {
             _db = db;
             _groupName = consumerGroupName;
             _consumerName = consumerName;
             _batchPerGroupSize = batchPerGroupSize;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _cts = new CancellationTokenSource();
         }
 
-        public void CreateConsumerGroup(string eventName)
+        public async Task CreateConsumerGroup(string eventName)
         {
             try
             {
-                _db.StreamCreateConsumerGroup(eventName, _groupName, StreamPosition.Beginning);
+                await _db.StreamCreateConsumerGroupAsync(eventName, _groupName, StreamPosition.Beginning);
             }
             catch (RedisServerException ex) when (ex.Message == "BUSYGROUP Consumer Group name already exists") {}
         }
@@ -42,9 +45,9 @@ namespace EventBus.Redis
             _db.StreamDeleteConsumerGroup(eventName, _groupName);
         }
 
-        public void PublishEvent(string eventId, string eventName, byte[] body)
+        public async Task PublishEvent(string eventId, string eventName, byte[] body)
         {
-            _db.StreamAdd(eventName, new[] {
+            await _db.StreamAddAsync(eventName, new[] {
                 new NameValueEntry("id", eventId),
                 new NameValueEntry("content", body)
             });
@@ -137,9 +140,9 @@ namespace EventBus.Redis
                         _handler(message).Wait();
                         _db.StreamAcknowledge(stream.Key, _groupName, entry.Id);
                     }
-                    catch (AggregateException)
+                    catch (AggregateException e)
                     {
-                        //log
+                        _logger.LogWarning(e, "Exception while processing event {eventId}", entry.Id);
                     }
 
                     _cts.Token.ThrowIfCancellationRequested();

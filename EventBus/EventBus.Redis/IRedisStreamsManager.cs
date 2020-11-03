@@ -6,9 +6,9 @@ namespace EventBus.Redis
 {
     public interface IRedisStreamsManager
     {
-        void CreateConsumerGroup(string eventName);
+        Task CreateConsumerGroup(string eventName);
         void DeleteConsumerGroup(string eventName);
-        void PublishEvent(string eventId, string eventName, byte[] body);
+        Task PublishEvent(string eventId, string eventName, byte[] body);
         void Start(IReadOnlyCollection<string> streams, Func<StreamsMessage, Task> handler);
         void Stop();
     }

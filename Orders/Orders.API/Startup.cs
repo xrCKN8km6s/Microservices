@@ -57,21 +57,7 @@ namespace Orders.API
 
             var connectionString = _config.GetValue<string>("ConnectionString");
 
-            static void ConfigureNpgsql(NpgsqlDbContextOptionsBuilder npgsqlOptions) =>
-                npgsqlOptions.EnableRetryOnFailure();
-
-            services.AddDbContext<OrdersContext>(options =>
-            {
-                options.UseNpgsql(connectionString, ConfigureNpgsql);
-            });
-
-            services.AddDbContext<IntegrationEventLogContext>((sp, options) =>
-            {
-                var context = sp.GetRequiredService<OrdersContext>();
-                var dbConnection = context.Database.GetDbConnection();
-
-                options.UseNpgsql(dbConnection, ConfigureNpgsql);
-            });
+            AddDatabase(services, connectionString);
 
             services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
 
@@ -81,6 +67,22 @@ namespace Orders.API
             services.AddScoped<IOrderQueries, OrderQueries>(_ => new OrderQueries(connectionString));
 
             services.AddTransient<OrderStatusChangedIntegrationEventHandler>();
+        }
+
+        private static void AddDatabase(IServiceCollection services, string connectionString)
+        {
+            static void ConfigureNpgsql(NpgsqlDbContextOptionsBuilder npgsqlOptions) =>
+                npgsqlOptions.EnableRetryOnFailure();
+
+            services.AddDbContext<OrdersContext>(options => { options.UseNpgsql(connectionString, ConfigureNpgsql); });
+
+            services.AddDbContext<IntegrationEventLogContext>((sp, options) =>
+            {
+                var context = sp.GetRequiredService<OrdersContext>();
+                var dbConnection = context.Database.GetDbConnection();
+
+                options.UseNpgsql(dbConnection, ConfigureNpgsql);
+            });
         }
 
         private void AddAuthentication(IServiceCollection services)

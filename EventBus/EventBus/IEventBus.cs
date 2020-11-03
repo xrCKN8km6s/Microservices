@@ -1,14 +1,15 @@
 using System;
+using System.Threading.Tasks;
 
 namespace EventBus
 {
     public interface IEventBus
     {
-        void Publish(IIntegrationEvent e);
+        Task Publish(IIntegrationEvent e);
 
-        void Publish(Guid eventId, string eventName, string content);
+        Task Publish(Guid eventId, string eventName, string content);
 
-        void Subscribe(Action<EventSubscriptions> setupSubscriptions);
+        Task Subscribe(Action<EventSubscriptions> setupSubscriptions);
 
         void Unsubscribe<T, TH>() where T : IIntegrationEvent where TH : IIntegrationEventHandler<T>;
     }

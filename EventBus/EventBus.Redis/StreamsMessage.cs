@@ -1,6 +1,6 @@
 namespace EventBus.Redis
 {
-    public readonly struct StreamsMessage
+    public class StreamsMessage
     {
         public StreamsMessage(string eventName, string messageId, string content)
         {
