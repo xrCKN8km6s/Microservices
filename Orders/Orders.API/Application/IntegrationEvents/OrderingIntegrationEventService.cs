@@ -35,7 +35,7 @@ namespace Orders.API.Application.IntegrationEvents
             {
                 try
                 {
-                    _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
+                    await _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
                     await _integrationEventLogService.MarkAsPublishedAsync(integrationEvent.EventId);
                 }
                 catch (Exception ex)

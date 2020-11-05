@@ -61,24 +61,24 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        public void Publish(IIntegrationEvent e)
+        public async Task Publish(IIntegrationEvent e)
         {
             if (e == null) throw new ArgumentNullException(nameof(e));
 
             var eventName = e.GetType().Name;
             var body = _serializer.Serialize(e);
 
-            Publish(e.Id, eventName, body);
+            await Publish(e.Id, eventName, body);
         }
 
-        public void Publish(Guid eventId, string eventName, string content)
+        public async Task Publish(Guid eventId, string eventName, string content)
         {
             var body = Encoding.UTF8.GetBytes(content);
 
-            Publish(eventId, eventName, body);
+            await Publish(eventId, eventName, body);
         }
 
-        private void Publish(Guid eventId, string eventName, byte[] body)
+        private Task Publish(Guid eventId, string eventName, byte[] body)
         {
             if (!_connection.IsConnected)
             {
@@ -124,9 +124,11 @@ namespace EventBus.RabbitMQ
                     channel.BasicPublish(_options.ExchangeName, eventName, true, properties, body);
                 });
             }
+
+            return Task.CompletedTask;
         }
 
-        public void Subscribe(Action<EventSubscriptions> setupSubscriptions)
+        public Task Subscribe(Action<EventSubscriptions> setupSubscriptions)
         {
             _ = setupSubscriptions ?? throw new ArgumentNullException(nameof(setupSubscriptions));
 
@@ -144,6 +146,8 @@ namespace EventBus.RabbitMQ
             }
 
             StartBasicConsume();
+
+            return Task.CompletedTask;
         }
 
         private void DoInternalSubscription(string eventName)

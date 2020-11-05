@@ -29,29 +29,29 @@ namespace EventBus.Redis
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         }
 
-        public void Publish(IIntegrationEvent e)
+        public async Task Publish(IIntegrationEvent e)
         {
             if (e == null) throw new ArgumentNullException(nameof(e));
 
             var eventName = e.GetType().Name;
             var body = _serializer.Serialize(e);
 
-            Publish(e.Id, eventName, body);
+            await Publish(e.Id, eventName, body);
         }
 
-        public void Publish(Guid eventId, string eventName, string content)
+        public async Task Publish(Guid eventId, string eventName, string content)
         {
             var body = Encoding.UTF8.GetBytes(content);
 
-            Publish(eventId, eventName, body);
+            await Publish(eventId, eventName, body);
         }
 
-        private void Publish(Guid eventId, string eventName, byte[] body)
+        private async Task Publish(Guid eventId, string eventName, byte[] body)
         {
-            _manager.PublishEvent(eventId.ToString(), eventName, body);
+            await _manager.PublishEvent(eventId.ToString(), eventName, body);
         }
 
-        public void Subscribe(Action<EventSubscriptions> setupSubscriptions)
+        public async Task Subscribe(Action<EventSubscriptions> setupSubscriptions)
         {
             _ = setupSubscriptions ?? throw new ArgumentNullException(nameof(setupSubscriptions));
 
@@ -62,7 +62,7 @@ namespace EventBus.Redis
             {
                 var eventName = sub.EventType.Name;
 
-                _manager.CreateConsumerGroup(eventName);
+                await _manager.CreateConsumerGroup(eventName);
 
                 _logger.LogDebug("Subscribing to event {EventName} with {EventHandler}", eventName, sub.HandlerType.GetGenericTypeName());
 
