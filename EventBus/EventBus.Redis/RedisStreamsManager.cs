@@ -60,8 +60,7 @@ namespace EventBus.Redis
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
             _readerTask = Task.Factory.StartNew(() => FetchItems(streams.ToArray()), _cts.Token,
-                TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach |
-                TaskCreationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
+                TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
         }
 
         public void Stop()

@@ -23,7 +23,7 @@ namespace BFF.Controllers.Users
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Clients.Common.ProblemDetails))]
         public async Task<ActionResult<UserProfileReply>> Get()
         {
-            var sub = User.FindFirst(JwtClaimTypes.Subject).Value;
+            var sub = User.FindFirst(JwtClaimTypes.Subject)?.Value;
             return await _users.GetProfileAsync(new StringValue{Value = sub});
         }
     }

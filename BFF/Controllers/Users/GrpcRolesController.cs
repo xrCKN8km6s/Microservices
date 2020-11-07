@@ -5,7 +5,6 @@ using Microservices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Users.Client.Contracts;
 
 namespace BFF.Controllers.Users
 {
