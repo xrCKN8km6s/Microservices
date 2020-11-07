@@ -13,8 +13,8 @@ COPY ["Orders/Orders.Infrastructure/Orders.Infrastructure.csproj", "Orders/Order
 
 COPY ["EventBus/EventBus/EventBus.csproj", "EventBus/EventBus/"]
 COPY ["EventBus/EventBus.AspNetCore/EventBus.AspNetCore.csproj", "EventBus/EventBus.AspNetCore/"]
-COPY ["EventBus/EventBus.RabbitMQ/EventBus.RabbitMQ.csproj", "EventBus/EventBus.RabbitMQ/"]
-COPY ["EventBus/EventBus.RabbitMQ.AspNetCore/EventBus.RabbitMQ.AspNetCore.csproj", "EventBus/EventBus.RabbitMQ.AspNetCore/"]
+COPY ["EventBus/EventBus.Redis/EventBus.Redis.csproj", "EventBus/EventBus.Redis/"]
+COPY ["EventBus/EventBus.Redis.AspNetCore/EventBus.Redis.AspNetCore.csproj", "EventBus/EventBus.Redis.AspNetCore/"]
 
 COPY ["IntegrationEventLog/IntegrationEventLog.csproj", "IntegrationEventLog/"]
 #COPY ["NuGet.Config", "Orders.API/"]
@@ -23,8 +23,8 @@ COPY ["Orders/", "Orders/"]
 
 COPY ["EventBus/EventBus/", "EventBus/EventBus/"]
 COPY ["EventBus/EventBus.AspNetCore/", "EventBus/EventBus.AspNetCore/"]
-COPY ["EventBus/EventBus.RabbitMQ/", "EventBus/EventBus.RabbitMQ/"]
-COPY ["EventBus/EventBus.RabbitMQ.AspNetCore/", "EventBus/EventBus.RabbitMQ.AspNetCore/"]
+COPY ["EventBus/EventBus.Redis/", "EventBus/EventBus.Redis/"]
+COPY ["EventBus/EventBus.Redis.AspNetCore/", "EventBus/EventBus.Redis.AspNetCore/"]
 
 COPY ["IntegrationEventLog/", "IntegrationEventLog/"]
 

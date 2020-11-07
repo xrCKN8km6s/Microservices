@@ -20,6 +20,7 @@ COPY ["BFF/", "BFF/"]
 COPY ["Clients.Common/", "Clients.Common/"]
 COPY ["Users/Users.Client/", "Users/Users.Client/"]
 COPY ["Orders/Orders.Client/", "Orders/Orders.Client/"]
+COPY ["proto/", "./proto/"]
 RUN dotnet publish "BFF/BFF.csproj" -c Release -o /app/publish --no-restore /p:GenerateClientCode=false
 
 FROM base AS final
