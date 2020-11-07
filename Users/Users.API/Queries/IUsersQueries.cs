@@ -10,7 +10,7 @@ namespace Users.API.Queries
     //TODO: remove mappings, convert to repository
     public interface IUsersQueries
     {
-        Task<UserProfileDto> GetUserProfileAsync(string sub);
+        Task<UserProfileDto> GetUserProfileAsync(string id);
         Task<RolesViewModel> GetRolesViewModelAsync();
     }
 
@@ -23,13 +23,13 @@ namespace Users.API.Queries
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<UserProfileDto> GetUserProfileAsync(string sub)
+        public async Task<UserProfileDto> GetUserProfileAsync(string id)
         {
             var user = await _context.Users.AsNoTracking()
                 .Include(u => u.UserRoles)
                 .ThenInclude(t => t.Role)
                 .ThenInclude(t => t.PermissionRoles)
-                .FirstOrDefaultAsync(f => f.Sub == sub);
+                .FirstOrDefaultAsync(f => f.Sub == id);
 
             return user == null ? null : MapUserToDto(user);
         }

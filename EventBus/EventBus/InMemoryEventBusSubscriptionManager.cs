@@ -104,7 +104,10 @@ namespace EventBus
 
         public string GetEventKey<T>() => GetEventKey(typeof(T));
 
-        public string GetEventKey(Type eventType) => eventType.Name;
+        public string GetEventKey(Type eventType)
+        {
+            return eventType?.Name ?? throw new ArgumentNullException(nameof(eventType));
+        }
 
         public void Clear()
         {
