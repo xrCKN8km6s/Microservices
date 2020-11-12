@@ -41,11 +41,12 @@ namespace Users.API
 
         public static implicit operator string(Enumeration permission)
         {
-            return permission.Name;
+            return permission?.Name;
         }
 
         public override int GetHashCode(Enumeration obj)
         {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
             return obj.Id.GetHashCode();
         }
 
@@ -88,6 +89,11 @@ namespace Users.API
             if (ReferenceEquals(null, obj)) return 1;
             if (ReferenceEquals(this, obj)) return 0;
             return obj is Enumeration other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(Enumeration)}");
+        }
+
+        public override string ToString()
+        {
+            return $"{Id}:{Name}:{Description}";
         }
     }
 }
