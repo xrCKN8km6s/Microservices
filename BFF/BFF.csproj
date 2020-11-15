@@ -12,7 +12,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.9" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.8.2" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.9.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="8.4.1" />
