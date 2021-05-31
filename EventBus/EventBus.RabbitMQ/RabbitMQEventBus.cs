@@ -47,17 +47,16 @@ namespace EventBus.RabbitMQ
                 _connection.TryConnect();
             }
 
-            using (var channel = _connection.CreateModel())
-            {
-                channel.QueueUnbind(
-                    queue: _options.QueueName,
-                    exchange: _options.ExchangeName,
-                    routingKey: eventName);
+            using var channel = _connection.CreateModel();
 
-                if (_subManager.IsEmpty)
-                {
-                    _consumerChannel.Close();
-                }
+            channel.QueueUnbind(
+                queue: _options.QueueName,
+                exchange: _options.ExchangeName,
+                routingKey: eventName);
+
+            if (_subManager.IsEmpty)
+            {
+                _consumerChannel.Close();
             }
         }
 
@@ -160,19 +159,18 @@ namespace EventBus.RabbitMQ
                     _connection.TryConnect();
                 }
 
-                using (var channel = _connection.CreateModel())
-                {
-                    channel.QueueDeclare(queue: _options.QueueName,
-                        durable: true,
-                        exclusive: false,
-                        autoDelete: false,
-                        arguments: null);
+                using var channel = _connection.CreateModel();
 
-                    channel.QueueBind(
-                        queue: _options.QueueName,
-                        exchange: _options.ExchangeName,
-                        routingKey: eventName);
-                }
+                channel.QueueDeclare(queue: _options.QueueName,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null);
+
+                channel.QueueBind(
+                    queue: _options.QueueName,
+                    exchange: _options.ExchangeName,
+                    routingKey: eventName);
             }
         }
 
@@ -267,25 +265,24 @@ namespace EventBus.RabbitMQ
         {
             if (_subManager.HasSubscriptionsForEvent(eventName))
             {
-                using (var scope = _serviceScopeFactory.CreateScope())
+                using var scope = _serviceScopeFactory.CreateScope();
+
+                var subscriptions = _subManager.GetHandlersForEvent(eventName);
+                foreach (var subscription in subscriptions)
                 {
-                    var subscriptions = _subManager.GetHandlersForEvent(eventName);
-                    foreach (var subscription in subscriptions)
+                    var handler = scope.ServiceProvider.GetService(subscription.HandlerType);
+                    if (handler == null)
                     {
-                        var handler = scope.ServiceProvider.GetService(subscription.HandlerType);
-                        if (handler == null)
-                        {
-                            continue;
-                        }
-
-                        var eventType = _subManager.GetEventTypeByName(eventName);
-                        var integrationEvent = _serializer.Deserialize(message, eventType);
-                        var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
-
-                        await Task.Yield();
-                        await ((Task)concreteType.GetMethod("Handle").Invoke(handler, new[] { integrationEvent }))
-                            .ConfigureAwait(false);
+                        continue;
                     }
+
+                    var eventType = _subManager.GetEventTypeByName(eventName);
+                    var integrationEvent = _serializer.Deserialize(message, eventType);
+                    var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+
+                    await Task.Yield();
+                    await ((Task)concreteType.GetMethod("Handle").Invoke(handler, new[] { integrationEvent }))
+                        .ConfigureAwait(false);
                 }
             }
         }

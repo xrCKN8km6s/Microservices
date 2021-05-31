@@ -23,11 +23,10 @@ namespace Orders.API.Application.Queries
 
         public async Task<OrderModel[]> GetOrdersAsync()
         {
-            using (var conn = new NpgsqlConnection(_connectionString))
-            {
-                var res = await conn.QueryAsync<OrderModel>("SELECT * FROM orders");
-                return res.ToArray();
-            }
+            await using var conn = new NpgsqlConnection(_connectionString);
+
+            var res = await conn.QueryAsync<OrderModel>("SELECT * FROM orders");
+            return res.ToArray();
         }
     }
 

@@ -15,9 +15,9 @@ namespace EventBus.RabbitMQ
         private readonly IConnectionFactory _connectionFactory;
         private readonly ILogger<RabbitMQConnection> _logger;
         private readonly int _retryCount;
-        IConnection _connection;
-        bool _disposed;
-        readonly object syncRoot = new object();
+        private IConnection _connection;
+        private bool _disposed;
+        private readonly object _syncRoot = new();
 
         public RabbitMQConnection(IConnectionFactory connectionFactory, ILogger<RabbitMQConnection> logger, int retryCount = 5)
         {
@@ -58,7 +58,7 @@ namespace EventBus.RabbitMQ
         {
             _logger.LogInformation("RabbitMQ Client is trying to connect");
 
-            lock (syncRoot)
+            lock (_syncRoot)
             {
                 var policy = RetryPolicy.Handle<SocketException>()
                     .Or<BrokerUnreachableException>()

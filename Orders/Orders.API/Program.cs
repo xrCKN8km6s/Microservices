@@ -37,9 +37,7 @@ namespace Orders.API
 
                 return 0;
             }
-#pragma warning disable CA1031 // We want to catch ALL unhandled exceptions here
             catch (Exception ex)
-#pragma warning restore CA1031
             {
                 Log.Fatal(ex, "Host terminated unexpectedly");
                 return 1;

@@ -13,9 +13,9 @@ namespace BFF
     // https://github.com/aspnet/Mvc/issues/7238
     public static class HttpContextExtensions
     {
-        private static readonly RouteData EmptyRouteData = new RouteData();
+        private static readonly RouteData EmptyRouteData = new();
 
-        private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
+        private static readonly ActionDescriptor EmptyActionDescriptor = new();
 
         public static Task WriteResultAsync<TResult>(this HttpContext context, TResult result)
             where TResult : IActionResult

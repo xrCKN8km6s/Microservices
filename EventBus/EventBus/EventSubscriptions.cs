@@ -13,7 +13,7 @@ namespace EventBus
             internal EventSubscription() {}
         }
 
-        private readonly List<EventSubscription> _subscriptions = new List<EventSubscription>();
+        private readonly List<EventSubscription> _subscriptions = new();
 
         public IReadOnlyCollection<EventSubscription> Subscriptions => _subscriptions.AsReadOnly();
 
