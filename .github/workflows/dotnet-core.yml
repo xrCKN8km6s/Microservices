@@ -5,8 +5,6 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  workflow_dispatch:
-    branches: [ master ]
 
 jobs:
   build:
@@ -20,7 +18,7 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: 5.0.300
     - name: Install dependencies
       run: dotnet restore -s https://api.nuget.org/v3/index.json
     - name: Build
