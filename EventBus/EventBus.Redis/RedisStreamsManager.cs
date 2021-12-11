@@ -136,6 +136,7 @@ namespace EventBus.Redis
                     try
                     {
                         var message = new StreamsMessage(stream.Key, entry.Id, entry["content"]);
+                        Task.Run(async () => { await _handler(message); }).Wait();
                         _handler(message).Wait();
                         _db.StreamAcknowledge(stream.Key, _groupName, entry.Id);
                     }
