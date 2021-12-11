@@ -1,77 +1,75 @@
-using System.Collections.Generic;
 using MediatR;
 
-namespace Orders.Domain
+namespace Orders.Domain;
+
+public abstract class Entity
 {
-    public abstract class Entity
+    public virtual long Id { get; protected set; }
+
+    private List<INotification> _domainEvents;
+    public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
+
+    public void AddDomainEvent(INotification eventItem)
     {
-        public virtual long Id { get; protected set; }
+        _domainEvents ??= new List<INotification>();
+        _domainEvents.Add(eventItem);
+    }
 
-        private List<INotification> _domainEvents;
-        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
+    public void RemoveDomainEvent(INotification eventItem)
+    {
+        _domainEvents?.Remove(eventItem);
+    }
 
-        public void AddDomainEvent(INotification eventItem)
+    public void ClearDomainEvents()
+    {
+        _domainEvents?.Clear();
+    }
+
+    public bool IsTransient()
+    {
+        return Id == default;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (!(obj is Entity))
+            return false;
+
+        if (ReferenceEquals(this, obj))
+            return true;
+
+        if (GetType() != obj.GetType())
+            return false;
+
+        var item = (Entity)obj;
+
+        if (item.IsTransient() || IsTransient())
+            return false;
+        else
+            return item.Id == Id;
+    }
+
+    private int? _requestedHashCode;
+
+    public override int GetHashCode()
+    {
+        if (!IsTransient())
         {
-            _domainEvents ??= new List<INotification>();
-            _domainEvents.Add(eventItem);
+            _requestedHashCode ??= Id.GetHashCode() ^ 31;
+
+            return _requestedHashCode.Value;
         }
 
-        public void RemoveDomainEvent(INotification eventItem)
-        {
-            _domainEvents?.Remove(eventItem);
-        }
+        return base.GetHashCode();
 
-        public void ClearDomainEvents()
-        {
-            _domainEvents?.Clear();
-        }
+    }
+    public static bool operator ==(Entity left, Entity right)
+    {
+        return left?.Equals(right) ?? Equals(right, null);
+    }
 
-        public bool IsTransient()
-        {
-            return Id == default;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is Entity))
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (GetType() != obj.GetType())
-                return false;
-
-            var item = (Entity)obj;
-
-            if (item.IsTransient() || IsTransient())
-                return false;
-            else
-                return item.Id == Id;
-        }
-
-        private int? _requestedHashCode;
-
-        public override int GetHashCode()
-        {
-            if (!IsTransient())
-            {
-                _requestedHashCode ??= Id.GetHashCode() ^ 31;
-
-                return _requestedHashCode.Value;
-            }
-
-            return base.GetHashCode();
-
-        }
-        public static bool operator ==(Entity left, Entity right)
-        {
-            return left?.Equals(right) ?? Equals(right, null);
-        }
-
-        public static bool operator !=(Entity left, Entity right)
-        {
-            return !(left == right);
-        }
+    public static bool operator !=(Entity left, Entity right)
+    {
+        return !(left == right);
     }
 }

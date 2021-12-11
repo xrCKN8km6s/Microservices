@@ -1,32 +1,29 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Orders.Domain.Aggregates.Order;
 
-namespace Orders.API.Application.Commands
+namespace Orders.API.Application.Commands;
+
+public class ChangeOrderStatusCommand : IRequest<bool>
 {
-    public class ChangeOrderStatusCommand : IRequest<bool>
+    public long OrderId { get; set; }
+    public int Status { get; set; }
+}
+
+public class ChangeOrderStatusCommandHandler : IRequestHandler<ChangeOrderStatusCommand, bool>
+{
+    private readonly IOrderRepository _repo;
+
+    public ChangeOrderStatusCommandHandler(IOrderRepository repo)
     {
-        public long OrderId { get; set; }
-        public int Status { get; set; }
+        _repo = repo;
     }
 
-    public class ChangeOrderStatusCommandHandler : IRequestHandler<ChangeOrderStatusCommand, bool>
+    public async Task<bool> Handle(ChangeOrderStatusCommand request, CancellationToken cancellationToken)
     {
-        private readonly IOrderRepository _repo;
+        var order = await _repo.GetAsync(request.OrderId);
 
-        public ChangeOrderStatusCommandHandler(IOrderRepository repo)
-        {
-            _repo = repo;
-        }
+        order.SetStatusTo(request.Status);
 
-        public async Task<bool> Handle(ChangeOrderStatusCommand request, CancellationToken cancellationToken)
-        {
-            var order = await _repo.GetAsync(request.OrderId);
-
-            order.SetStatusTo(request.Status);
-
-            return await _repo.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-        }
+        return await _repo.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     }
 }

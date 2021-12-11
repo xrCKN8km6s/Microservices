@@ -1,31 +1,26 @@
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using IdentityModel.Client;
 
-namespace BFF
+namespace BFF;
+
+public class BearerTokenDelegatingHandler : DelegatingHandler
 {
-    public class BearerTokenDelegatingHandler : DelegatingHandler
+    private readonly ITokenAccessor _tokenAccessor;
+
+    public BearerTokenDelegatingHandler(ITokenAccessor tokenAccessor)
     {
-        private readonly ITokenAccessor _tokenAccessor;
+        _tokenAccessor = tokenAccessor;
+    }
 
-        public BearerTokenDelegatingHandler(ITokenAccessor tokenAccessor)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        var token = await _tokenAccessor.GetAccessToken(cancellationToken);
+
+        if (string.IsNullOrWhiteSpace(token))
         {
-            _tokenAccessor = tokenAccessor;
+            throw new Exception("Error while retrieving access token.");
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var token = await _tokenAccessor.GetAccessToken(cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                throw new Exception("Error while retrieving access token.");
-            }
-
-            request.SetBearerToken(token);
-            return await base.SendAsync(request, cancellationToken);
-        }
+        request.SetBearerToken(token);
+        return await base.SendAsync(request, cancellationToken);
     }
 }

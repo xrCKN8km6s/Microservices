@@ -1,10 +1,9 @@
-namespace IntegrationEventLog
+namespace IntegrationEventLog;
+
+public enum IntegrationEventState
 {
-    public enum IntegrationEventState
-    {
-        NotPublished,
-        InProgress,
-        Published,
-        Failed
-    }
+    NotPublished,
+    InProgress,
+    Published,
+    Failed
 }

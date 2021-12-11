@@ -1,64 +1,60 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Orders.Domain;
 using Orders.Domain.Aggregates.Order;
 
-namespace Orders.Infrastructure
+namespace Orders.Infrastructure;
+
+public class OrdersContext : DbContext, IUnitOfWork
 {
-    public class OrdersContext : DbContext, IUnitOfWork
+    private readonly IMediator _mediator;
+
+    public DbSet<Order> Orders { get; set; }
+
+    public OrdersContext(DbContextOptions<OrdersContext> options, IMediator mediator) : base(options)
     {
-        private readonly IMediator _mediator;
-
-        public DbSet<Order> Orders { get; set; }
-
-        public OrdersContext(DbContextOptions<OrdersContext> options, IMediator mediator) : base(options)
-        {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        }
-
-        #region Transaction
-
-        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
-        {
-            await _mediator.DispatchDomainEventsAsync(this).ConfigureAwait(false);
-
-            await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-            return true;
-        }
-
-        #endregion
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
-        }
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
-    public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
+    #region Transaction
+
+    public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
-        //https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#field-only-property-names-should-match-the-field-name
-        public void Configure(EntityTypeBuilder<Order> builder)
-        {
-            builder.ToTable("orders");
+        await _mediator.DispatchDomainEventsAsync(this).ConfigureAwait(false);
 
-            builder.HasKey(p => p.Id);
+        await SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            builder.HasIndex(p => p.Id);
+        return true;
+    }
 
-            builder.Property(p => p.Id).IsRequired();
+    #endregion
 
-            builder.Property<DateTime>("_creationDateTime").HasColumnName("CreationDateTime").IsRequired();
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
+    }
+}
 
-            builder.Property<int>("_orderStatus").HasColumnName("OrderStatus").IsRequired();
+public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
+{
+    //https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#field-only-property-names-should-match-the-field-name
+    public void Configure(EntityTypeBuilder<Order> builder)
+    {
+        builder.ToTable("orders");
 
-            builder.Property<string>("_name").HasColumnName("Name").IsRequired();
+        builder.HasKey(p => p.Id);
 
-            builder.Ignore(p => p.DomainEvents);
-        }
+        builder.HasIndex(p => p.Id);
+
+        builder.Property(p => p.Id).IsRequired();
+
+        builder.Property<DateTime>("_creationDateTime").HasColumnName("CreationDateTime").IsRequired();
+
+        builder.Property<int>("_orderStatus").HasColumnName("OrderStatus").IsRequired();
+
+        builder.Property<string>("_name").HasColumnName("Name").IsRequired();
+
+        builder.Ignore(p => p.DomainEvents);
     }
 }

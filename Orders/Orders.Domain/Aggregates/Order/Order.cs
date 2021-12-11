@@ -1,58 +1,56 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Orders.Domain.Events;
 
-namespace Orders.Domain.Aggregates.Order
+namespace Orders.Domain.Aggregates.Order;
+
+public class Order : Entity, IAggregateRoot
 {
-    public class Order : Entity, IAggregateRoot
-    {
-        // Implicitly used by EF Core
+    // Implicitly used by EF Core
 #pragma warning disable 414
 #pragma warning disable IDE0052
-        private DateTime _creationDateTime;
+    private DateTime _creationDateTime;
 #pragma warning restore IDE0052
 #pragma warning restore 414
 
-        private int _orderStatus;
+    private int _orderStatus;
 
-        private string _name;
+    private string _name;
 
-        private Order() { }
+    private Order() { }
 
-        public static Order CreateNew([NotNull] string name)
+    public static Order CreateNew([NotNull] string name)
+    {
+        var order = new Order { _creationDateTime = DateTime.UtcNow, _orderStatus = -1 };
+        order.SetName(name);
+        return order;
+    }
+
+    public void SetStatusTo(int newStatus)
+    {
+        if (newStatus <= _orderStatus)
         {
-            var order = new Order { _creationDateTime = DateTime.UtcNow, _orderStatus = -1 };
-            order.SetName(name);
-            return order;
+            return;
         }
 
-        public void SetStatusTo(int newStatus)
+        AddDomainEvent(new OrderStatusChangedDomainEvent(Id, _orderStatus, newStatus));
+
+        _orderStatus = newStatus;
+    }
+
+    public void SetName(string newName)
+    {
+        ValidateName(newName);
+
+        _name = newName;
+    }
+
+    private void ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
         {
-            if (newStatus <= _orderStatus)
-            {
-                return;
-            }
-
-            AddDomainEvent(new OrderStatusChangedDomainEvent(Id, _orderStatus, newStatus));
-
-            _orderStatus = newStatus;
+            throw new ArgumentNullException(nameof(name));
         }
 
-        public void SetName(string newName)
-        {
-            ValidateName(newName);
-
-            _name = newName;
-        }
-
-        private void ValidateName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            _name = name;
-        }
+        _name = name;
     }
 }

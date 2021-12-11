@@ -1,8 +1,7 @@
-namespace Users.API.DTO
+namespace Users.API.DTO;
+
+public class UsersViewModel
 {
-    public class UsersViewModel
-    {
-        public UserDto[] Users { get; set; }
-        public RoleDto[] Roles { get; set; }
-    }
+    public UserDto[] Users { get; set; }
+    public RoleDto[] Roles { get; set; }
 }

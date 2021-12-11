@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
     <GenerateClientCode>false</GenerateClientCode>
+	<ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 </Project>
