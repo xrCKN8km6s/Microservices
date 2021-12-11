@@ -1,54 +1,50 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using EventBus;
 using IntegrationEventLog.Services;
-using Microsoft.Extensions.Logging;
 using Orders.Infrastructure;
 
-namespace Orders.API.Application.IntegrationEvents
+namespace Orders.API.Application.IntegrationEvents;
+
+public class OrderingIntegrationEventService : IOrderingIntegrationEventService
 {
-    public class OrderingIntegrationEventService : IOrderingIntegrationEventService
+    private readonly OrdersContext _context;
+    private readonly IEventBus _eventBus;
+    private readonly ILogger<OrderingIntegrationEventService> _logger;
+    private readonly IIntegrationEventLogService _integrationEventLogService;
+
+    public OrderingIntegrationEventService(
+        [NotNull] IIntegrationEventLogService integrationEventLogService,
+        [NotNull] OrdersContext context,
+        [NotNull] IEventBus eventBus,
+        [NotNull] ILogger<OrderingIntegrationEventService> logger)
     {
-        private readonly OrdersContext _context;
-        private readonly IEventBus _eventBus;
-        private readonly ILogger<OrderingIntegrationEventService> _logger;
-        private readonly IIntegrationEventLogService _integrationEventLogService;
+        _integrationEventLogService = integrationEventLogService ?? throw new ArgumentNullException(nameof(integrationEventLogService));
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        public OrderingIntegrationEventService(
-            [NotNull] IIntegrationEventLogService integrationEventLogService,
-            [NotNull] OrdersContext context,
-            [NotNull] IEventBus eventBus,
-            [NotNull] ILogger<OrderingIntegrationEventService> logger)
+    public async Task PublishEventsAsync(Guid transactionId)
+    {
+        var pendingIntegrationEvents = await _integrationEventLogService.GetPendingAsync(transactionId);
+
+        foreach (var integrationEvent in pendingIntegrationEvents)
         {
-            _integrationEventLogService = integrationEventLogService ?? throw new ArgumentNullException(nameof(integrationEventLogService));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        public async Task PublishEventsAsync(Guid transactionId)
-        {
-            var pendingIntegrationEvents = await _integrationEventLogService.GetPendingAsync(transactionId);
-
-            foreach (var integrationEvent in pendingIntegrationEvents)
+            try
             {
-                try
-                {
-                    await _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
-                    await _integrationEventLogService.MarkAsPublishedAsync(integrationEvent.EventId);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error while processing IntegrationEvent {EventId}", integrationEvent.EventId);
-                    await _integrationEventLogService.MarkAsFailedAsync(integrationEvent.EventId);
-                }
+                await _eventBus.Publish(integrationEvent.EventId, integrationEvent.EventName, integrationEvent.Content);
+                await _integrationEventLogService.MarkAsPublishedAsync(integrationEvent.EventId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while processing IntegrationEvent {EventId}", integrationEvent.EventId);
+                await _integrationEventLogService.MarkAsFailedAsync(integrationEvent.EventId);
             }
         }
+    }
 
-        public async Task SaveEventAsync(IIntegrationEvent e)
-        {
-            await _integrationEventLogService.AddAsync(e, _context.Database.CurrentTransaction);
-        }
+    public async Task SaveEventAsync(IIntegrationEvent e)
+    {
+        await _integrationEventLogService.AddAsync(e, _context.Database.CurrentTransaction);
     }
 }

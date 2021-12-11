@@ -1,4 +1,3 @@
-namespace Orders.Domain
-{
-    public interface IAggregateRoot {}
-}
+namespace Orders.Domain;
+
+public interface IAggregateRoot {}

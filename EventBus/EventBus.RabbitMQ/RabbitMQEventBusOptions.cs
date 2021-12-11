@@ -1,9 +1,8 @@
-namespace EventBus.RabbitMQ
+namespace EventBus.RabbitMQ;
+
+public class RabbitMQEventBusOptions
 {
-    public class RabbitMQEventBusOptions
-    {
-        public string ExchangeName { get; set; }
-        public string QueueName { get; set; }
-        public int PublishRetryAttempts { get; set; } = 1;
-    }
+    public string ExchangeName { get; set; }
+    public string QueueName { get; set; }
+    public int PublishRetryAttempts { get; set; } = 1;
 }

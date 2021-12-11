@@ -1,14 +1,12 @@
-using System;
 using RabbitMQ.Client;
 
-namespace EventBus.RabbitMQ
+namespace EventBus.RabbitMQ;
+
+public interface IRabbitMQConnection : IDisposable
 {
-    public interface IRabbitMQConnection : IDisposable
-    {
-        bool IsConnected { get; }
+    bool IsConnected { get; }
 
-        bool TryConnect();
+    bool TryConnect();
 
-        IModel CreateModel();
-    }
+    IModel CreateModel();
 }

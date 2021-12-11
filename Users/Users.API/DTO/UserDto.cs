@@ -1,9 +1,8 @@
-namespace Users.API.DTO
+namespace Users.API.DTO;
+
+public class UserDto
 {
-    public class UserDto
-    {
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public long[] Roles { get; set; }
-    }
+    public long Id { get; set; }
+    public string Name { get; set; }
+    public long[] Roles { get; set; }
 }

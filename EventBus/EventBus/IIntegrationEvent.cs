@@ -1,11 +1,8 @@
-using System;
+namespace EventBus;
 
-namespace EventBus
+public interface IIntegrationEvent
 {
-    public interface IIntegrationEvent
-    {
-        public Guid Id { get; }
+    public Guid Id { get; }
 
-        public DateTimeOffset CreationDate { get; }
-    }
+    public DateTimeOffset CreationDate { get; }
 }

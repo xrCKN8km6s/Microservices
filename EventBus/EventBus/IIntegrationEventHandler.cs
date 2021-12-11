@@ -1,9 +1,6 @@
-using System.Threading.Tasks;
+namespace EventBus;
 
-namespace EventBus
+public interface IIntegrationEventHandler<in TIntegrationEvent> where TIntegrationEvent : IIntegrationEvent
 {
-    public interface IIntegrationEventHandler<in TIntegrationEvent> where TIntegrationEvent : IIntegrationEvent
-    {
-        Task Handle(TIntegrationEvent e);
-    }
+    Task Handle(TIntegrationEvent e);
 }

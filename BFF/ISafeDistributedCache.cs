@@ -1,83 +1,78 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 
-namespace BFF
+namespace BFF;
+
+public interface ISafeDistributedCache
 {
-    public interface ISafeDistributedCache
+    Task<string> GetStringAsync(string key, CancellationToken token);
+
+    Task SetStringAsync(string key, string value, DistributedCacheEntryOptions options,
+        CancellationToken token = default);
+
+    Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default);
+
+    Task<byte[]> GetAsync(string key, CancellationToken token = default);
+}
+
+public class SafeDistributedCache : ISafeDistributedCache
+{
+    private readonly IDistributedCache _cache;
+    private readonly ILogger<SafeDistributedCache> _logger;
+
+    public SafeDistributedCache(IDistributedCache cache, ILogger<SafeDistributedCache> logger)
     {
-        Task<string> GetStringAsync(string key, CancellationToken token);
-
-        Task SetStringAsync(string key, string value, DistributedCacheEntryOptions options,
-            CancellationToken token = default);
-
-        Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default);
-
-        Task<byte[]> GetAsync(string key, CancellationToken token = default);
+        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public class SafeDistributedCache : ISafeDistributedCache
+    public async Task<string> GetStringAsync(string key, CancellationToken token)
     {
-        private readonly IDistributedCache _cache;
-        private readonly ILogger<SafeDistributedCache> _logger;
-
-        public SafeDistributedCache(IDistributedCache cache, ILogger<SafeDistributedCache> logger)
+        try
         {
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            return await _cache.GetStringAsync(key, token);
         }
-
-        public async Task<string> GetStringAsync(string key, CancellationToken token)
+        catch (Exception e)
         {
-            try
-            {
-                return await _cache.GetStringAsync(key, token);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Exception while accessing cache server.");
-                return null;
-            }
+            _logger.LogWarning(e, "Exception while accessing cache server.");
+            return null;
         }
+    }
 
-        public async Task SetStringAsync(string key, string value, DistributedCacheEntryOptions options,
-            CancellationToken token)
+    public async Task SetStringAsync(string key, string value, DistributedCacheEntryOptions options,
+        CancellationToken token)
+    {
+        try
         {
-            try
-            {
-                await _cache.SetStringAsync(key, value, options, token);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Exception while accessing cache server.");
-            }
+            await _cache.SetStringAsync(key, value, options, token);
         }
-
-        public async Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
+        catch (Exception e)
         {
-            try
-            {
-                await _cache.SetAsync(key, value, options, token);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Exception while accessing cache server.");
-            }
+            _logger.LogWarning(e, "Exception while accessing cache server.");
         }
+    }
 
-        public async Task<byte[]> GetAsync(string key, CancellationToken token = default)
+    public async Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
+    {
+        try
         {
-            try
-            {
-                return await _cache.GetAsync(key, token);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Exception while accessing cache server.");
-                return null;
-            }
+            await _cache.SetAsync(key, value, options, token);
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning(e, "Exception while accessing cache server.");
+        }
+    }
+
+    public async Task<byte[]> GetAsync(string key, CancellationToken token = default)
+    {
+        try
+        {
+            return await _cache.GetAsync(key, token);
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning(e, "Exception while accessing cache server.");
+            return null;
         }
     }
 }

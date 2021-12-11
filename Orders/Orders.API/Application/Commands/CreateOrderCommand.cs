@@ -1,31 +1,28 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Orders.Domain.Aggregates.Order;
 
-namespace Orders.API.Application.Commands
+namespace Orders.API.Application.Commands;
+
+public class CreateOrderCommand : IRequest<bool>
 {
-    public class CreateOrderCommand : IRequest<bool>
+    public string Name { get; set; }
+}
+
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
+{
+    private readonly IOrderRepository _repo;
+
+    public CreateOrderCommandHandler(IOrderRepository repo)
     {
-        public string Name { get; set; }
+        _repo = repo;
     }
 
-    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
+    public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        private readonly IOrderRepository _repo;
+        var order = Order.CreateNew(request.Name);
 
-        public CreateOrderCommandHandler(IOrderRepository repo)
-        {
-            _repo = repo;
-        }
+        await _repo.AddAsync(order);
 
-        public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
-        {
-            var order = Order.CreateNew(request.Name);
-
-            await _repo.AddAsync(order);
-
-            return await _repo.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-        }
+        return await _repo.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     }
 }

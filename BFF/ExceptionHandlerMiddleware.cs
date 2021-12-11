@@ -1,76 +1,68 @@
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Clients.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ProblemDetails = Clients.Common.ProblemDetails;
 using ValidationProblemDetails = Clients.Common.ValidationProblemDetails;
 
-namespace BFF
+namespace BFF;
+
+public class ExceptionHandlerMiddleware
 {
-    public class ExceptionHandlerMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionHandlerMiddleware> _logger;
+    private readonly ApiBehaviorOptions _options;
+
+    public ExceptionHandlerMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionHandlerMiddleware> logger,
+        IOptions<ApiBehaviorOptions> options)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionHandlerMiddleware> _logger;
-        private readonly ApiBehaviorOptions _options;
+        _next = next;
+        _logger = logger;
+        _options = options.Value;
+    }
 
-        public ExceptionHandlerMiddleware(
-            RequestDelegate next,
-            ILogger<ExceptionHandlerMiddleware> logger,
-            IOptions<ApiBehaviorOptions> options)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        _ = context ?? throw new NullReferenceException(nameof(context));
+
+        try
         {
-            _next = next;
-            _logger = logger;
-            _options = options.Value;
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (Exception ex)
         {
-            _ = context ?? throw new NullReferenceException(nameof(context));
+            _logger.LogError(ex, "Exception occurred");
 
-            try
+            ProblemDetails error;
+
+            switch (ex)
             {
-                await _next(context);
+                case ApiException<ValidationProblemDetails> clientException when clientException.Result != null:
+                    context.Response.StatusCode = clientException.StatusCode;
+                    error = clientException.Result;
+                    break;
+                case ApiException<ProblemDetails> clientException when clientException.Result != null:
+                    context.Response.StatusCode = clientException.StatusCode;
+                    error = clientException.Result;
+                    break;
+                default:
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    error = new ProblemDetails
+                    {
+                        Type = _options.ClientErrorMapping[StatusCodes.Status500InternalServerError].Link,
+                        Title = _options.ClientErrorMapping[StatusCodes.Status500InternalServerError].Title,
+                        Status = StatusCodes.Status500InternalServerError,
+                        Detail = ex.Message
+                    };
+
+                    var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
+                    error.Extensions["traceId"] = traceId;
+                    break;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Exception occurred");
 
-                ProblemDetails error;
-
-                switch (ex)
-                {
-                    case ApiException<ValidationProblemDetails> clientException when clientException.Result != null:
-                        context.Response.StatusCode = clientException.StatusCode;
-                        error = clientException.Result;
-                        break;
-                    case ApiException<ProblemDetails> clientException when clientException.Result != null:
-                        context.Response.StatusCode = clientException.StatusCode;
-                        error = clientException.Result;
-                        break;
-                    default:
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        error = new ProblemDetails
-                        {
-                            Type = _options.ClientErrorMapping[StatusCodes.Status500InternalServerError].Link,
-                            Title = _options.ClientErrorMapping[StatusCodes.Status500InternalServerError].Title,
-                            Status = StatusCodes.Status500InternalServerError,
-                            Detail = ex.Message
-                        };
-
-                        var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
-                        if (traceId != null)
-                        {
-                            error.Extensions["traceId"] = traceId;
-                        }
-                        break;
-                }
-
-                await context.WriteResultAsync(new ObjectResult(error));
-            }
+            await context.WriteResultAsync(new ObjectResult(error));
         }
     }
 }

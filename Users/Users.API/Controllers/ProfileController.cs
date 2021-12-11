@@ -1,36 +1,32 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Users.API.DTO;
 using Users.API.Queries;
 
-namespace Users.API.Controllers
+namespace Users.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ProfileController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProfileController : ControllerBase
+    private readonly IUsersQueries _queries;
+
+    public ProfileController(IUsersQueries queries)
     {
-        private readonly IUsersQueries _queries;
+        _queries = queries ?? throw new ArgumentNullException(nameof(queries));
+    }
 
-        public ProfileController(IUsersQueries queries)
+    [HttpGet("{sub}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
+    public async Task<ActionResult<UserProfileDto>> GetUserProfile(string sub)
+    {
+        var res = await _queries.GetUserProfileAsync(sub);
+
+        if (res == null)
         {
-            _queries = queries ?? throw new ArgumentNullException(nameof(queries));
+            return Problem(statusCode: StatusCodes.Status404NotFound, detail: $"User profile {sub} was not found.");
         }
 
-        [HttpGet("{sub}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
-        public async Task<ActionResult<UserProfileDto>> GetUserProfile(string sub)
-        {
-            var res = await _queries.GetUserProfileAsync(sub);
-
-            if (res == null)
-            {
-                return Problem(statusCode: StatusCodes.Status404NotFound, detail: $"User profile {sub} was not found.");
-            }
-
-            return Ok(res);
-        }
+        return Ok(res);
     }
 }

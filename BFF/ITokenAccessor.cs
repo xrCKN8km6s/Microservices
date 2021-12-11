@@ -1,72 +1,66 @@
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BFF
+namespace BFF;
+
+public interface ITokenAccessor
 {
-    public interface ITokenAccessor
+    Task<string> GetAccessToken(CancellationToken cancellationToken);
+}
+
+public class TokenAccessor : ITokenAccessor
+{
+    private readonly HttpClient _client;
+    private readonly TokenAccessorOptions _config;
+    private readonly ISafeDistributedCache _cache;
+    private readonly ILogger<TokenAccessor> _logger;
+
+    public TokenAccessor(
+        HttpClient client,
+        IOptions<TokenAccessorOptions> config,
+        ISafeDistributedCache cache,
+        ILogger<TokenAccessor> logger)
     {
-        Task<string> GetAccessToken(CancellationToken cancellationToken);
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
+        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public class TokenAccessor : ITokenAccessor
+    public async Task<string> GetAccessToken(CancellationToken cancellationToken)
     {
-        private readonly HttpClient _client;
-        private readonly TokenAccessorOptions _config;
-        private readonly ISafeDistributedCache _cache;
-        private readonly ILogger<TokenAccessor> _logger;
+        var cacheKey = $"access_token:{_config.ClientId}";
 
-        public TokenAccessor(
-            HttpClient client,
-            IOptions<TokenAccessorOptions> config,
-            ISafeDistributedCache cache,
-            ILogger<TokenAccessor> logger)
+        var cachedToken = await _cache.GetStringAsync(cacheKey, cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(cachedToken))
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            return cachedToken;
         }
 
-        public async Task<string> GetAccessToken(CancellationToken cancellationToken)
+        var token = await _client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
         {
-            var cacheKey = $"access_token:{_config.ClientId}";
+            ClientId = _config.ClientId,
+            ClientSecret = _config.ClientSecret,
+            Scope = _config.Scopes
+        }, cancellationToken);
 
-            var cachedToken = await _cache.GetStringAsync(cacheKey, cancellationToken);
+        if (token.IsError)
+        {
+            _logger.LogError(token.Exception, "Exception while retrieving access token for {client}.",
+                _config.ClientId);
 
-            if (!string.IsNullOrWhiteSpace(cachedToken))
-            {
-                return cachedToken;
-            }
-
-            var token = await _client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-            {
-                ClientId = _config.ClientId,
-                ClientSecret = _config.ClientSecret,
-                Scope = _config.Scopes
-            }, cancellationToken);
-
-            if (token.IsError)
-            {
-                _logger.LogError(token.Exception, "Exception while retrieving access token for {client}.",
-                    _config.ClientId);
-
-                throw new Exception("Error while retrieving access token.", token.Exception);
-            }
-
-            var cacheOptions = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(token.ExpiresIn * 0.95)
-            };
-
-            await _cache.SetStringAsync(cacheKey, token.AccessToken, cacheOptions, cancellationToken);
-
-            return token.AccessToken;
+            throw new Exception("Error while retrieving access token.", token.Exception);
         }
+
+        var cacheOptions = new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(token.ExpiresIn * 0.95)
+        };
+
+        await _cache.SetStringAsync(cacheKey, token.AccessToken, cacheOptions, cancellationToken);
+
+        return token.AccessToken;
     }
 }

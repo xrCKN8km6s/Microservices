@@ -1,11 +1,8 @@
-using System;
+namespace EventBus;
 
-namespace EventBus
+public interface IEventBusSerializer
 {
-    public interface IEventBusSerializer
-    {
-        byte[] Serialize(object item);
+    byte[] Serialize(object item);
 
-        object Deserialize(string message, Type type);
-    }
+    object Deserialize(string message, Type type);
 }

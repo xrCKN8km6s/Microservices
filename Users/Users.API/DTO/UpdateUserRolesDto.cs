@@ -1,7 +1,6 @@
-namespace Users.API.DTO
+namespace Users.API.DTO;
+
+public class UpdateUserRolesDto
 {
-    public class UpdateUserRolesDto
-    {
-        public long[] Roles { get; set; }
-    }
+    public long[] Roles { get; set; }
 }

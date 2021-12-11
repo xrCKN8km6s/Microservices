@@ -1,10 +1,10 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 COPY ["certs/rootCA.crt", "/usr/local/share/ca-certificates/"]
 RUN update-ca-certificates
 WORKDIR /app
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG GPR_NuGet_Passwd
 WORKDIR /src
 COPY ["BFF/BFF.csproj", "BFF/"]

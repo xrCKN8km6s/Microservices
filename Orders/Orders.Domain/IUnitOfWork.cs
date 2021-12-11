@@ -1,13 +1,8 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+namespace Orders.Domain;
 
-namespace Orders.Domain
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
-        Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default);
-    }
+    Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default);
 }
