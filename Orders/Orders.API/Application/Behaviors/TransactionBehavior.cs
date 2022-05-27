@@ -7,7 +7,7 @@ using Serilog.Context;
 
 namespace Orders.API.Application.Behaviors;
 
-public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
     private readonly OrdersContext _dbContext;
     private readonly ILogger<TransactionBehaviour<TRequest, TResponse>> _logger;
@@ -43,8 +43,7 @@ public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
                 Guid transactionId;
 
                 await using (var transaction =
-                             await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken)
-                            )
+                             await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))
                 using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                 {
                     _logger.LogInformation("Begin transaction {TransactionId} for {CommandName} ({@Command})",
